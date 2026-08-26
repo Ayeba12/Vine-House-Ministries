@@ -1,0 +1,7 @@
+{
+  "name": "Vine House Ministries",
+  "description": "Registered charity in England & Wales (No: 1148977) serving Greater London and Essex. Features sermon broadcasting, community events, visit planning, and pastoral care.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
