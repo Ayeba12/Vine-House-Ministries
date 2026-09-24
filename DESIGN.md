@@ -53,20 +53,21 @@ And against the dark grounds:
 |---|---|---|
 | Warm Sand | 10.69:1 | 14.61:1 |
 | Soft Honey | 5.06:1 | 6.92:1 |
-| Muted Sage | 3.84:1 (large only) | — |
+| Muted Sage | **3.84:1 — fails** | — |
 
-**Sage and honey are dark-ground colours.** They are the identity of the brand on
-olive and slate, and they are unreadable on sand. This single fact drives the token
-structure below: accents are named by the ground they sit on, so the failing
-combinations become hard to express by accident.
+**Neither accent swatch is a text colour.** Honey carries the brand on olive and slate but
+is unreadable on sand; sage falls below AA on *both* grounds. This drives the token
+structure below: text tokens are named by the ground they sit on and re-tinted until they
+pass there, so the failing combinations become hard to express by accident.
 
-Darkened equivalents for light grounds, derived to clear AA:
+Re-tinted equivalents, derived to clear AA on their own ground:
 
-| Token | Hex | Ratio on sand | Use |
+| Token | Hex | Ratio | Use |
 |---|---|---|---|
-| `--accent-on-light` | `#9B6530` | 4.56:1 | any size |
-| `--accent-on-light-large` | `#C4803E` | 3.02:1 | 24px+ only |
-| `--ink-on-light-muted` | `#667662` | 4.53:1 | any size |
+| `--accent-on-light` | `#9B6530` | 4.56:1 on sand | any size |
+| `--accent-on-light-large` | `#C4803E` | 3.02:1 on sand | 24px+ only |
+| `--ink-on-light-muted` | `#667662` | 4.53:1 on sand | any size |
+| `--ink-on-dark-muted` | `#B2BDB0` | 5.89:1 on olive | any size |
 
 ### 2.3 Semantic tokens
 
@@ -91,14 +92,14 @@ Darkened equivalents for light grounds, derived to clear AA:
 | `--surface-dark` | `#2C3E2D` | olive blocks |
 | `--surface-dark-deep` | `#1E242B` | slate blocks, footer |
 | `--ink-on-dark` | `#F9F7F2` | body and headings |
-| `--ink-on-dark-muted` | `#8A9A86` | metadata, 24px+ only |
+| `--ink-on-dark-muted` | `#B2BDB0` | metadata, any size |
 | `--accent-on-dark` | `#D4A373` | eyebrows, highlights, active states |
 | `--border-on-dark` | `rgba(212,163,115,.25)` | hairlines |
 
 ### 2.4 Rules
 
-- Every foreground **must** pair with a token from its own ground. Honey on sand and
-  sage on sand are defects, not style choices.
+- Every foreground **must** pair with a token from its own ground. Honey on sand, and sage
+  on either ground, are defects rather than style choices.
 - Accent colour never carries meaning alone — pair with text, weight or an icon.
 - Dark blocks are structural punctuation. Roughly one per two light sections;
   consecutive dark blocks flatten the rhythm.
@@ -231,7 +232,7 @@ reads as a growth funnel. The site should sound like a person offering a seat.
 - Add `useReducedMotion()` to every animated component.
 
 **Don't**
-- Put sage or honey text on warm sand.
+- Use the raw brand swatches as text on any ground.
 - Set Anton below 24px, or use it for body copy.
 - Introduce a new colour, radius or shadow without adding it here first.
 - Use arbitrary Tailwind type sizes when a scale step exists.

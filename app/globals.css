@@ -13,9 +13,11 @@
   --color-muted-sage: #8A9A86;
   --color-soft-honey: #D4A373;
 
-  /* Light-ground variants. The raw sage and honey fail WCAG AA on warm sand
-     (2.78:1 and 2.11:1); these are the darkened equivalents that pass. */
+  /* Ground variants. Raw sage and honey fail WCAG AA as text: sage on both
+     grounds (2.78:1 on sand, 3.84:1 on olive), honey on sand (2.11:1). These
+     are the re-tinted equivalents that pass on each ground. */
   --color-sage-ink: #667662;        /* 4.53:1 on warm sand - body text */
+  --color-sage-ink-dark: #B2BDB0;   /* 5.89:1 on sanctuary olive - body text */
   --color-sage-ink-large: #82937E;  /* 3.05:1 on warm sand - 24px+ only */
   --color-honey-ink: #9B6530;       /* 4.56:1 on warm sand - body text */
   --color-honey-ink-large: #C4803E; /* 3.02:1 on warm sand - 24px+ only */
@@ -56,7 +58,7 @@
     --surface-dark: #2C3E2D;
     --surface-dark-deep: #1E242B;
     --ink-on-dark: #F9F7F2;           /* 14.61:1 on slate, 10.69:1 on olive */
-    --ink-on-dark-muted: #8A9A86;     /*  3.84:1 on olive - large text only */
+    --ink-on-dark-muted: #B2BDB0;     /*  5.89:1 on olive - sage lightened for the dark ground */
     --accent-on-dark: #D4A373;        /*  5.06:1 on olive, 6.92:1 on slate */
     --border-on-dark: rgba(212, 163, 115, 0.25);
 
