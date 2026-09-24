@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { Subscriber } from '@/lib/types';
@@ -146,9 +147,16 @@ export function Footer({ onSubscribe, onPlanVisit }: FooterProps) {
           </div>
         </div>
 
-        {/* The wordmark */}
-        <Reveal className="flex justify-end overflow-hidden pb-6 pt-14 sm:pt-20">
-          <p className="font-anton scale-step-display select-none text-right leading-none text-ink-on-dark">Vine House.</p>
+        {/* The emblem and the wordmark. Gold on slate: see DESIGN.md §2.5. */}
+        <Reveal className="flex flex-col gap-10 overflow-hidden pb-6 pt-14 sm:flex-row sm:items-end sm:justify-between sm:pt-20">
+          <Image
+            src="/brand/vine-house-emblem-gold.png"
+            alt="Vine House Ministries emblem"
+            width={112}
+            height={112}
+            className="h-20 w-20 shrink-0 select-none sm:h-24 sm:w-24 lg:h-28 lg:w-28"
+          />
+          <p className="font-anton scale-step-display select-none leading-none text-ink-on-dark sm:text-right">Vine House.</p>
         </Reveal>
 
         <div className="meta flex flex-col gap-3 border-t border-hairline-dark pt-6 text-ink-on-dark-muted sm:flex-row sm:items-center sm:justify-between">
