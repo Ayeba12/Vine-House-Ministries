@@ -33,7 +33,7 @@ export function SermonArchive({ sermons, activeSermon, isPlaying, onPlaySermon }
               <span className="h-px w-8 bg-current" aria-hidden="true" />
               Selected teachings
             </p>
-            <h2 className="font-anton scale-step-h2 mt-4 uppercase text-ink-on-dark">Messages that anchor us</h2>
+            <h2 className="font-anton scale-step-h2 mt-4 uppercase text-ink-on-dark">Sermons that anchor us</h2>
           </div>
           <div className="flex flex-col items-start gap-3 md:items-end">
             <p className="meta text-ink-on-dark-muted">Archive / Series / 2026</p>

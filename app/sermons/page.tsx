@@ -62,7 +62,7 @@ export default function SermonsPage() {
         lead="Weekly pastoral teachings from Pastor Mercy Yerifor and ministry guests, grounded in original biblical languages, historical theology, and contemplative practice."
         aside={
           <dl className="meta grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-ink-muted">
-            <dt>Messages</dt>
+            <dt>Sermons</dt>
             <dd className="text-ink">{sermons.length} in the archive</dd>
             <dt>Series</dt>
             <dd className="text-ink">{allSeries.length - 1}</dd>
@@ -89,7 +89,7 @@ export default function SermonsPage() {
                 <div className="mt-8 flex flex-wrap items-center gap-6">
                   <button onClick={() => play(latest)} className="btn btn-on-dark">
                     {playingId === latest.id ? <Pause className="h-3.5 w-3.5 fill-current" /> : <Play className="h-3.5 w-3.5 fill-current" />}
-                    <span>{playingId === latest.id ? 'Pause' : 'Listen to the message'}</span>
+                    <span>{playingId === latest.id ? 'Pause' : 'Listen to the sermon'}</span>
                   </button>
                   <button onClick={() => setReading(latest)} className="link-arrow text-ink-on-dark">
                     <span>Read the transcript</span>
@@ -110,7 +110,7 @@ export default function SermonsPage() {
 
       {/* Archive */}
       <section className={`${CONTAINER} col-rules py-24 sm:py-32`}>
-        <SectionHeader eyebrow="The archive" title="Every message" meta={`${visible.length} of ${sermons.length} messages`} />
+        <SectionHeader eyebrow="The archive" title="Every sermon" meta={`${visible.length} of ${sermons.length} sermons`} />
 
         {/* One row: search, then two dropdowns. Applied filters appear as chips beneath. */}
         <div className="mt-8 grid grid-cols-1 gap-x-8 gap-y-6 lg:grid-cols-12 lg:items-end">
@@ -212,7 +212,7 @@ export default function SermonsPage() {
         </div>
 
         {visible.length === 0 && (
-          <p className="meta py-16 text-center text-ink-muted">No messages match. Try another series, topic or search term.</p>
+          <p className="meta py-16 text-center text-ink-muted">No sermons match. Try another series, topic or search term.</p>
         )}
       </section>
 
