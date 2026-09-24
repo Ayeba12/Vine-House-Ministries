@@ -66,6 +66,7 @@ directly.
 | Event | CPT `church_event` — the events plugin, native meta | `INITIAL_EVENTS` | 4 |
 | Gathering pillar | CPT `gathering` | `GATHERING_PILLARS` | 4 |
 | Testimonial | CPT `testimonial` | `TESTIMONIALS` | 3 |
+| Message | standard WP `post` with categories — the journal | `MESSAGES` | 5 |
 | Notice banner | ACF options page | hardcoded in `app/page.tsx` | 1 |
 
 **Sermon** fields: `series`, `speaker`, `speaker_role`, `date`, `duration`,
@@ -187,7 +188,7 @@ Order, easiest first, so the pattern is proven on low-risk pages:
 
 | # | Route | Data | Client islands | Risk |
 | --- | --- | --- | --- | --- |
-| 1 | `/gatherings` | gatherings | interest form, borough filter | low |
+| 1 | `/messages` and `/messages/[slug]` | posts | search, category filter | low |
 | 2 | `/about` | testimonials | none | low |
 | 3 | `/contact` | none | contact form | low |
 | 4 | `/visit` | none | pass generator, map, FAQ | medium |

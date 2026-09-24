@@ -18,10 +18,9 @@ interface NavbarProps {
 const NAV_LINKS = [
   { label: 'About', href: '/about', num: '01' },
   { label: 'Sermons', href: '/sermons', num: '02' },
-  { label: 'Gatherings', href: '/gatherings', num: '03' },
+  { label: 'Messages', href: '/messages', num: '03' },
   { label: 'Events', href: '/events', num: '04' },
-  { label: 'Visit', href: '/visit', num: '05' },
-  { label: 'Contact', href: '/contact', num: '06' },
+  { label: 'Contact', href: '/contact', num: '05' },
 ];
 
 export function Navbar({

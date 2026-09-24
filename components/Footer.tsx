@@ -16,7 +16,7 @@ type Frequency = Subscriber['frequency'];
 const NAVIGATE = [
   { label: 'About', href: '/about' },
   { label: 'Sermons', href: '/sermons' },
-  { label: 'Gatherings', href: '/gatherings' },
+  { label: 'Messages', href: '/messages' },
   { label: 'Events', href: '/events' },
   { label: 'Visit', href: '/visit' },
   { label: 'Contact', href: '/contact' },

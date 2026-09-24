@@ -73,3 +73,22 @@ export interface Subscriber {
   frequency: 'Weekly Devotional' | 'Event Announcements' | 'All Updates';
   subscribedAt: string;
 }
+
+/** A written piece in the journal: a pastoral letter, a reflection, a teaching note, or news from the community. */
+export interface Message {
+  id: string;
+  slug: string;
+  title: string;
+  category: 'Pastoral Letter' | 'Reflection' | 'Teaching' | 'Community';
+  excerpt: string;
+  date: string;
+  readTime: string;
+  author: string;
+  authorRole: string;
+  scripture?: string;
+  imageUrl: string;
+  imageAlt: string;
+  body: string[];
+  pullQuote?: string;
+  tags: string[];
+}

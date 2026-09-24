@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { GATHERING_PILLARS } from '@/lib/data';
 import { Reveal } from '@/components/ui/Reveal';
@@ -25,10 +24,7 @@ export function GatheringsGrid({ onPlanVisit }: { onPlanVisit: () => void }) {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-8">
           {GATHERING_PILLARS.map((pillar, idx) => (
             <Reveal key={pillar.number} delay={idx * 0.06}>
-              <Link
-                href="/gatherings"
-                className="group flex h-full min-h-[240px] flex-col justify-between rounded-xl border border-transparent bg-surface-tint p-6 transition-colors hover:border-ink-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink-strong sm:p-7"
-              >
+              <article className="flex h-full min-h-[240px] flex-col justify-between rounded-xl bg-surface-tint p-6 sm:p-7">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="eyebrow text-ink-muted">{pillar.subtitle}</p>
@@ -42,7 +38,7 @@ export function GatheringsGrid({ onPlanVisit }: { onPlanVisit: () => void }) {
                   <dt>Where</dt>
                   <dd className="text-ink">{pillar.location}</dd>
                 </dl>
-              </Link>
+              </article>
             </Reveal>
           ))}
         </div>

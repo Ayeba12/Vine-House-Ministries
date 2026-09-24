@@ -183,6 +183,10 @@ Arbitrary values are how the scale drifts.
   Nothing fully rounded except avatars and the audio scrubber thumb.
 - **Elevation:** shadows are near-invisible by design (`shadow-2xs`, `shadow-xs`).
   Depth comes from ground colour changes and hairline borders, not drop shadows.
+  **The one exception is a floating menu** — the `Select` list, and anything else that
+  opens over the page — which has to read as floating, and a hairline on sand cannot do
+  that alone. It takes `0 8px 24px rgba(30, 36, 43, 0.12)`, the only shadow of any weight
+  on the site. Nothing that sits *in* the page gets it.
 
 ---
 
