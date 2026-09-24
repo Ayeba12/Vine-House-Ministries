@@ -14,14 +14,11 @@ import {
   Compass, 
   Maximize2, 
   Minimize2, 
-  Layers, 
   Clock, 
-  Phone, 
-  Info,
   CheckCircle2,
   ShieldCheck
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 
 interface SanctuaryInteractiveMapProps {
   className?: string;
@@ -37,7 +34,6 @@ export function SanctuaryInteractiveMap({
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedOrigin, setSelectedOrigin] = useState<string>('stratford');
 
-  const sanctuaryAddress = "Sanctuary Hall, Greater London & Essex Corridor, United Kingdom";
   const sanctuaryFullLocation = "Vine House Ministries, Sanctuary Hall, Cranbrook & Eastern Gateway, Greater London & Essex, IG1 4TZ";
   const latitude = 51.5590;
   const longitude = 0.0740;
@@ -88,7 +84,6 @@ export function SanctuaryInteractiveMap({
   };
 
   // Construct Google Maps Search / Directions URLs
-  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Vine House Ministries, Greater London & Essex")}`;
   const googleDirectionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(sanctuaryFullLocation)}`;
   const appleMapsUrl = `https://maps.apple.com/?q=${encodeURIComponent("Vine House Ministries")}&ll=${latitude},${longitude}`;
   const citymapperUrl = `https://citymapper.com/directions?endcoord=${latitude}%2C${longitude}&endname=${encodeURIComponent("Vine House Ministries Sanctuary Hall")}`;

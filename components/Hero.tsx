@@ -5,29 +5,22 @@ import { motion } from 'motion/react';
 import { 
   ArrowUpRight, 
   Play, 
-  Clock, 
   BookOpen, 
   MapPin, 
-  Compass, 
   Radio, 
-  Church,
-  CheckCircle2,
   Flame,
-  ChevronRight
 } from 'lucide-react';
 import { Sermon } from '@/lib/types';
 
 interface HeroProps {
   onPlanVisit: () => void;
   onPlayFeaturedSermon?: () => void;
-  onExploreEvents?: () => void;
   featuredSermon?: Sermon;
 }
 
 export function Hero({ 
   onPlanVisit, 
   onPlayFeaturedSermon, 
-  onExploreEvents,
   featuredSermon 
 }: HeroProps) {
   const [copiedAddress, setCopiedAddress] = useState(false);
@@ -36,14 +29,6 @@ export function Hero({
     if (onPlayFeaturedSermon) onPlayFeaturedSermon();
     else {
       const el = document.getElementById('sermons');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleExploreEvents = () => {
-    if (onExploreEvents) onExploreEvents();
-    else {
-      const el = document.getElementById('events');
       if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
   };

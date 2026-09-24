@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { motion } from 'motion/react';
 import { 
   MapPin, 
   Clock, 
@@ -14,7 +13,6 @@ import {
   CheckCircle2, 
   Navigation, 
   Send,
-  ArrowUpRight
 } from 'lucide-react';
 import { SanctuaryInteractiveMap } from './SanctuaryInteractiveMap';
 

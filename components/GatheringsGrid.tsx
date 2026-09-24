@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUpRight, Clock, MapPin, X, Users, HeartHandshake, BookOpen, Compass } from 'lucide-react';
+import { ArrowUpRight, Clock, MapPin, X, Users, HeartHandshake, Compass } from 'lucide-react';
 import { GatheringPillar } from '@/lib/types';
 import { GATHERING_PILLARS } from '@/lib/data';
 

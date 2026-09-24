@@ -6,17 +6,10 @@ import Image from 'next/image';
 import { motion } from 'motion/react';
 import { 
   MapPin, 
-  Clock, 
   Car, 
   Train, 
-  Coffee, 
-  Users, 
-  Heart, 
-  CheckCircle2, 
   ChevronDown, 
   ChevronUp, 
-  QrCode, 
-  ShieldCheck, 
   ArrowUpRight,
   HelpCircle,
   Compass
@@ -30,11 +23,10 @@ export default function VisitPage() {
   // Custom Visitor Pass Generator State
   const [visitorName, setVisitorName] = useState('');
   const [visitorEmail, setVisitorEmail] = useState('');
-  const [visitorDate, setVisitorDate] = useState('Sunday, August 30, 2026');
+  const [visitorDate] = useState('Sunday, August 30, 2026');
   const [visitorService, setVisitorService] = useState('10:00 AM Sanctuary Liturgy');
   const [guestsCount, setGuestsCount] = useState('1');
   const [hasKids, setHasKids] = useState(false);
-  const [kidsAges, setKidsAges] = useState('');
   const [generatedPass, setGeneratedPass] = useState<{
     passId: string;
     name: string;

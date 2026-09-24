@@ -1,4 +1,4 @@
-import { Sermon, ChurchEvent, GatheringPillar, RSVPRecord, Subscriber } from './types';
+import { Sermon, ChurchEvent, GatheringPillar, Subscriber } from './types';
 
 export const INITIAL_SERMONS: Sermon[] = [
   {

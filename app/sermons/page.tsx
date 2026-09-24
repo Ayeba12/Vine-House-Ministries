@@ -11,18 +11,10 @@ import {
   BookOpen, 
   Radio, 
   Clock, 
-  Calendar, 
   User, 
   FileText, 
-  Tag, 
-  Volume2, 
-  VolumeX, 
   ArrowUpRight, 
-  ChevronRight,
-  Download,
-  Share2,
   CheckCircle2,
-  ListFilter
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -31,7 +23,7 @@ import { INITIAL_SERMONS } from '@/lib/data';
 import { Sermon } from '@/lib/types';
 
 export default function SermonsPage() {
-  const [sermons, setSermons] = useState<Sermon[]>(INITIAL_SERMONS);
+  const [sermons] = useState<Sermon[]>(INITIAL_SERMONS);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSeries, setSelectedSeries] = useState<string>('All');
   const [selectedTag, setSelectedTag] = useState<string>('All');

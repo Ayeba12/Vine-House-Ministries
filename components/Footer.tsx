@@ -10,14 +10,10 @@ import {
   ArrowUpRight, 
   ShieldCheck, 
   MapPin, 
-  Mail, 
-  Phone, 
   MessageSquare, 
   Compass, 
-  Radio, 
   Clock, 
   BookOpen, 
-  HeartHandshake, 
   Church
 } from 'lucide-react';
 import { Subscriber } from '@/lib/types';

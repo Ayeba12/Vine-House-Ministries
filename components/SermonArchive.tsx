@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'motion/react';
-import { Play, Volume2, Search, BookOpen, Share2, ArrowUpRight } from 'lucide-react';
+import { Play, Volume2, Search, BookOpen } from 'lucide-react';
 import { Sermon } from '@/lib/types';
 
 interface SermonArchiveProps {

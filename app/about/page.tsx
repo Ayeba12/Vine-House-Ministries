@@ -5,23 +5,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'motion/react';
 import { 
-  ArrowUpRight, 
   BookOpen, 
-  Heart, 
-  MapPin, 
   Clock, 
-  Compass, 
   CheckCircle2, 
   Church, 
   Bookmark,
   ChevronRight,
-  ShieldCheck,
-  Award,
-  Users
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
-import { Sermon, ChurchEvent, RSVPRecord, Subscriber } from '@/lib/types';
 
 export default function AboutPage() {
   const [activeTab, setActiveTab] = useState<'mission' | 'theology' | 'leadership' | 'architecture'>('mission');

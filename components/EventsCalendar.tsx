@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'motion/react';
-import { Calendar, Clock, MapPin, Users, ArrowUpRight, CheckCircle2, Ticket } from 'lucide-react';
+import { Clock, MapPin, Ticket } from 'lucide-react';
 import { ChurchEvent } from '@/lib/types';
 
 interface EventsCalendarProps {

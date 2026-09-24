@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { 
   X, 
   CheckCircle2, 
@@ -9,8 +9,6 @@ import {
   Clock, 
   MapPin, 
   QrCode, 
-  Download, 
-  Share2, 
   User, 
   Mail, 
   Phone, 

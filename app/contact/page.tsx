@@ -11,15 +11,9 @@ import {
   Clock, 
   Send, 
   CheckCircle2, 
-  Heart, 
   ShieldCheck, 
-  Building, 
-  FileText, 
-  HelpCircle,
-  MessageSquare,
   ArrowUpRight,
   Compass,
-  Users
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';

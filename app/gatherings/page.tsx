@@ -6,16 +6,9 @@ import Image from 'next/image';
 import { motion } from 'motion/react';
 import { 
   Users, 
-  MapPin, 
   Clock, 
-  Calendar, 
-  Heart, 
   CheckCircle2, 
-  ChevronRight, 
   Send, 
-  BookOpen, 
-  Church, 
-  Coffee, 
   ArrowUpRight 
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';

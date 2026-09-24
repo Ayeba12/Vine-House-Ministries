@@ -6,18 +6,10 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ArrowUpRight, 
-  Menu, 
   X, 
-  Volume2, 
-  VolumeX, 
-  Calendar, 
-  MapPin, 
-  Clock,
-  Compass,
   Radio,
   Church,
   ChevronRight,
-  Heart
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -32,9 +24,8 @@ interface NavbarProps {
 export function Navbar({ 
   onOpenPlanVisit, 
   onPlanVisit,
-  isPlayingAudio = false, 
-  onToggleAudio,
-  activeSermonTitle,
+  // TODO: the navbar does not yet reflect playback state; two pages pass this.
+  isPlayingAudio: _isPlayingAudio = false,
   noticeBanner
 }: NavbarProps) {
   const router = useRouter();

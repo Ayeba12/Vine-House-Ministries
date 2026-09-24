@@ -19,13 +19,13 @@ import { Sermon, ChurchEvent, RSVPRecord, Subscriber } from '@/lib/types';
 
 export default function HomePage() {
   // Global State
-  const [sermons, setSermons] = useState<Sermon[]>(INITIAL_SERMONS);
+  const [sermons] = useState<Sermon[]>(INITIAL_SERMONS);
   const [events, setEvents] = useState<ChurchEvent[]>(INITIAL_EVENTS);
   const [rsvps, setRsvps] = useState<RSVPRecord[]>(INITIAL_RSVPS);
   const [subscribers, setSubscribers] = useState<Subscriber[]>(INITIAL_SUBSCRIBERS);
   
   // Notice Banner Text
-  const [noticeBanner, setNoticeBanner] = useState<string>(
+  const [noticeBanner] = useState<string>(
     'Sunday Sanctuary Gathering: 10:00 AM & 12:00 PM • In-Person & Broadcast Live'
   );
 
@@ -96,10 +96,6 @@ export default function HomePage() {
           if (sermons.length > 0) {
             handlePlaySermon(sermons[0]);
           }
-        }}
-        onExploreEvents={() => {
-          const el = document.getElementById('events');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
         }}
         featuredSermon={sermons[0]}
       />

@@ -8,14 +8,9 @@ import {
   CalendarDays, 
   Clock, 
   MapPin, 
-  Users, 
   ArrowUpRight, 
-  CheckCircle2, 
   Search, 
-  Tag, 
   Calendar as CalendarIcon,
-  ChevronRight,
-  Share2
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';

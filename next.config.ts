@@ -1,24 +1,31 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  output: 'export',
   reactStrictMode: true,
   turbopack: {},
   typescript: {
     ignoreBuildErrors: false,
   },
   images: {
-    unoptimized: true,
     remotePatterns: [
+      // WordPress media. The LocalWP host in development; set the production
+      // host once the Bluehost domain is known.
+      {
+        protocol: 'http',
+        hostname: 'vine-house-ministries.local',
+        port: '',
+        pathname: '/wp-content/uploads/**',
+      },
+      // Placeholder imagery, to be replaced by WordPress media as content migrates.
       {
         protocol: 'https',
-        hostname: 'picsum.photos',
+        hostname: 'images.unsplash.com',
         port: '',
         pathname: '/**',
       },
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
+        hostname: 'picsum.photos',
         port: '',
         pathname: '/**',
       },

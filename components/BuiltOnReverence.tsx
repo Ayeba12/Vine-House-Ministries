@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sun, Moon, Leaf } from 'lucide-react';
 
-export function BuiltOnReverence({ onPlanVisit }: { onPlanVisit: () => void }) {
+export function BuiltOnReverence({  }: { onPlanVisit: () => void }) {
   const [lightingMode, setLightingMode] = useState<'daylight' | 'vigil'>('daylight');
   const [selectedHotspot, setSelectedHotspot] = useState<string | null>(null);
 

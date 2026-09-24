@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'motion/react';
-import { ShieldCheck, Heart, BookOpen, Compass, ChevronDown, ArrowUpRight } from 'lucide-react';
+import { ChevronDown, ArrowUpRight } from 'lucide-react';
 
 export function AboutLeadership({ onPlanVisit }: { onPlanVisit: () => void }) {
   const [activeDoctrine, setActiveDoctrine] = useState<number | null>(0);
