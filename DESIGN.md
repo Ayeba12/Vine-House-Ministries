@@ -220,6 +220,26 @@ content-blocking bug for anyone with the setting on.
 
 ---
 
+### 6.1 Primitives in code
+
+`app/globals.css` carries the recurring pieces so every section draws them the same way:
+
+| Class | What it is |
+|---|---|
+| `.eyebrow` | caption step, uppercase, 0.12em tracking, semibold - section labels |
+| `.meta` | caption step, sentence case - dates, places, counts |
+| `.col-rules` / `.col-rules-dark` | four faint vertical rules across the container |
+| `.btn` + `.btn-primary` / `.btn-outline` / `.btn-on-dark` / `.btn-outline-on-dark` | the two button weights, per ground |
+| `.link-arrow` | uppercase text link with a bottom rule, paired with an arrow glyph |
+
+Semantic colours are also Tailwind utilities (`bg-surface`, `text-ink-muted`, `border-hairline`,
+`text-accent-on-dark`...). A component that writes a hex value is a defect.
+
+`components/ui/Reveal.tsx` is the only scroll reveal. It renders a plain element under
+`prefers-reduced-motion`; anything else that animates calls `useReducedMotion()` itself.
+
+---
+
 ## 7. Accessibility floor
 
 Non-negotiable, and checkable:

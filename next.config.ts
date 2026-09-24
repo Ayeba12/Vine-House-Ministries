@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
   images: {
+    // Optimise in production (Vercel fetches and caches upstream quickly);
+    // skip it in development, where proxying 1800px placeholders from
+    // Unsplash through the dev server times out and 500s the srcset.
+    unoptimized: process.env.NODE_ENV === 'development',
     remotePatterns: [
       // WordPress media. The LocalWP host in development; set the production
       // host once the Bluehost domain is known.
