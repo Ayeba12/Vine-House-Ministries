@@ -10,6 +10,7 @@ import { Footer } from '@/components/Footer';
 import { AudioPlayerBar } from '@/components/AudioPlayerBar';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { SectionHeader } from '@/components/ui/SectionHeader';
+import { SearchField } from '@/components/ui/SearchField';
 import { Reveal } from '@/components/ui/Reveal';
 import { INITIAL_SERMONS } from '@/lib/data';
 import { Sermon } from '@/lib/types';
@@ -108,41 +109,61 @@ export default function SermonsPage() {
 
       {/* Archive */}
       <section className={`${CONTAINER} col-rules py-24 sm:py-32`}>
-        <SectionHeader
-          eyebrow="The archive"
-          title="Every message"
-          meta={
-            <span className="flex items-center gap-6">
-              <span>{visible.length} of {sermons.length}</span>
-              {filtering && (
-                <button onClick={() => { setQuery(''); setSeries('All'); setTopic('All'); }} className="link-arrow text-ink-strong">
-                  Reset
-                </button>
-              )}
-            </span>
-          }
-        />
+        <SectionHeader eyebrow="The archive" title="Every message" meta={`${visible.length} of ${sermons.length} messages`} />
 
-        <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <label htmlFor="sermon-search" className="field-label">Search</label>
-            <input id="sermon-search" type="search" placeholder="Title, scripture, speaker or keyword" value={query} onChange={(e) => setQuery(e.target.value)} className="field" />
-          </div>
-          <div className="flex flex-col gap-4 lg:col-span-8">
-            <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2" role="tablist" aria-label="Series">
-              <span className="meta w-14 text-ink-muted">Series</span>
+        {/* One row: search, then two dropdowns. Applied filters appear as chips beneath. */}
+        <div className="mt-8 grid grid-cols-1 gap-x-8 gap-y-6 lg:grid-cols-12 lg:items-end">
+          <SearchField
+            className="lg:col-span-6"
+            id="sermon-search"
+            label="Search"
+            placeholder="Title, scripture, speaker or keyword"
+            value={query}
+            onChange={setQuery}
+          />
+          <div className="lg:col-span-3">
+            <label htmlFor="sermon-series" className="field-label">Series</label>
+            <select id="sermon-series" value={series} onChange={(e) => setSeries(e.target.value)} className="field">
               {allSeries.map((s) => (
-                <button key={s} role="tab" aria-selected={series === s} onClick={() => setSeries(s)} className="tab">{s}</button>
+                <option key={s} value={s}>{s === 'All' ? 'All series' : s}</option>
               ))}
-            </div>
-            <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2" role="tablist" aria-label="Topic">
-              <span className="meta w-14 text-ink-muted">Topic</span>
+            </select>
+          </div>
+          <div className="lg:col-span-3">
+            <label htmlFor="sermon-topic" className="field-label">Topic</label>
+            <select id="sermon-topic" value={topic} onChange={(e) => setTopic(e.target.value)} className="field">
               {allTopics.map((t) => (
-                <button key={t} role="tab" aria-selected={topic === t} onClick={() => setTopic(t)} className="tab">{t}</button>
+                <option key={t} value={t}>{t === 'All' ? 'All topics' : t}</option>
               ))}
-            </div>
+            </select>
           </div>
         </div>
+
+        {filtering && (
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            {query && (
+              <button onClick={() => setQuery('')} className="chip" aria-label={`Remove search “${query}”`}>
+                <span>“{query}”</span>
+                <X className="h-3 w-3" />
+              </button>
+            )}
+            {series !== 'All' && (
+              <button onClick={() => setSeries('All')} className="chip" aria-label={`Remove series ${series}`}>
+                <span>{series}</span>
+                <X className="h-3 w-3" />
+              </button>
+            )}
+            {topic !== 'All' && (
+              <button onClick={() => setTopic('All')} className="chip" aria-label={`Remove topic ${topic}`}>
+                <span>{topic}</span>
+                <X className="h-3 w-3" />
+              </button>
+            )}
+            <button onClick={() => { setQuery(''); setSeries('All'); setTopic('All'); }} className="link-arrow ml-2 text-ink-muted">
+              Clear all
+            </button>
+          </div>
+        )}
 
         <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
           {visible.map((sermon, idx) => {

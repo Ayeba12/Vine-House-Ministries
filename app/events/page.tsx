@@ -9,6 +9,7 @@ import { Footer } from '@/components/Footer';
 import { RsvpModal } from '@/components/RsvpModal';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { SectionHeader } from '@/components/ui/SectionHeader';
+import { SearchField } from '@/components/ui/SearchField';
 import { Reveal } from '@/components/ui/Reveal';
 import { INITIAL_EVENTS, INITIAL_RSVPS } from '@/lib/data';
 import { ChurchEvent, RSVPRecord } from '@/lib/types';
@@ -72,10 +73,14 @@ export default function EventsPage() {
         <SectionHeader eyebrow="Calendar" title="What's coming" meta={`${visible.length} of ${events.length}`} />
 
         <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-4">
-            <label htmlFor="event-search" className="field-label">Search</label>
-            <input id="event-search" type="search" placeholder="Title, description or venue" value={query} onChange={(e) => setQuery(e.target.value)} className="field" />
-          </div>
+          <SearchField
+            className="lg:col-span-4"
+            id="event-search"
+            label="Search"
+            placeholder="Title, description or venue"
+            value={query}
+            onChange={setQuery}
+          />
           <div className="flex flex-wrap gap-x-7 gap-y-2 lg:col-span-8 lg:justify-end" role="tablist" aria-label="Category">
             {CATEGORIES.map((c) => (
               <button key={c} role="tab" aria-selected={category === c} onClick={() => setCategory(c)} className="tab">{c}</button>

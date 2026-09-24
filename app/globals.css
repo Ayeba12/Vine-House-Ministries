@@ -257,6 +257,34 @@
     min-height: 5.5rem;
   }
 
+  /* The search field draws its own clear control. */
+  input[type='search'].field::-webkit-search-cancel-button,
+  input[type='search'].field::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  /* A removable chip naming an applied filter. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.625rem;
+    border-radius: 8px;
+    background: var(--color-surface-tint);
+    font-family: var(--font-dm-sans);
+    font-size: var(--type-step-minus-1);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--color-ink-strong);
+    cursor: pointer;
+    transition: background-color var(--motion-duration-fast) var(--motion-ease);
+  }
+
+  .chip:hover {
+    background: var(--color-hairline);
+  }
+
   .field-on-dark {
     border-bottom-color: var(--color-hairline-dark);
     color: var(--color-ink-on-dark);
