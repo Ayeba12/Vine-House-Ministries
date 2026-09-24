@@ -1,0 +1,72 @@
+{
+  "key": "group_vh_gathering",
+  "title": "Gathering",
+  "fields": [
+    {
+      "key": "field_vh_gathering_number",
+      "label": "Pillar number",
+      "name": "pillar_number",
+      "type": "text",
+      "instructions": "Shown top-right of the card in the display face, e.g. 01. Set the Order attribute to match.",
+      "maxlength": 2,
+      "placeholder": "01"
+    },
+    {
+      "key": "field_vh_gathering_subtitle",
+      "label": "Subtitle",
+      "name": "subtitle",
+      "type": "text",
+      "instructions": "The eyebrow above the title, e.g. Reverence & Word."
+    },
+    {
+      "key": "field_vh_gathering_timing",
+      "label": "Timing",
+      "name": "timing",
+      "type": "text",
+      "placeholder": "10:00 AM & 12:00 PM"
+    },
+    {
+      "key": "field_vh_gathering_location",
+      "label": "Location",
+      "name": "location",
+      "type": "text",
+      "placeholder": "Main Sanctuary Hall"
+    },
+    {
+      "key": "field_vh_gathering_tags",
+      "label": "Tags",
+      "name": "tags",
+      "type": "repeater",
+      "layout": "table",
+      "button_label": "Add tag",
+      "sub_fields": [
+        {
+          "key": "field_vh_gathering_tag_text",
+          "label": "Tag",
+          "name": "text",
+          "type": "text",
+          "required": 1
+        }
+      ]
+    }
+  ],
+  "location": [
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "gathering"
+      }
+    ]
+  ],
+  "menu_order": 0,
+  "position": "normal",
+  "style": "default",
+  "label_placement": "top",
+  "instruction_placement": "label",
+  "active": true,
+  "show_in_graphql": 1,
+  "graphql_field_name": "gatheringFields",
+  "map_graphql_types_from_location_rules": 0,
+  "graphql_types": ["Gathering"]
+}

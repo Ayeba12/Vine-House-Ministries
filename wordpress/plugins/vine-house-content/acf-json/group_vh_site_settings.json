@@ -1,0 +1,64 @@
+{
+  "key": "group_vh_site_settings",
+  "title": "Site Settings",
+  "fields": [
+    {
+      "key": "field_vh_notice_enabled",
+      "label": "Show notice banner",
+      "name": "notice_banner_enabled",
+      "type": "true_false",
+      "ui": 1,
+      "default_value": 1
+    },
+    {
+      "key": "field_vh_notice_text",
+      "label": "Notice banner",
+      "name": "notice_banner",
+      "type": "text",
+      "instructions": "The strip above the navigation. Keep it to one line.",
+      "default_value": "Sunday Sanctuary Gathering: 10:00 AM & 12:00 PM • In-Person & Broadcast Live",
+      "conditional_logic": [
+        [
+          {
+            "field": "field_vh_notice_enabled",
+            "operator": "==",
+            "value": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "key": "field_vh_office_email",
+      "label": "Church office email",
+      "name": "office_email",
+      "type": "email",
+      "instructions": "Shown in the footer and the contact page.",
+      "default_value": "enquiries@vinehouseministries.org.uk"
+    },
+    {
+      "key": "field_vh_charity_number",
+      "label": "Registered charity number",
+      "name": "charity_number",
+      "type": "text",
+      "default_value": "1148977"
+    }
+  ],
+  "location": [
+    [
+      {
+        "param": "options_page",
+        "operator": "==",
+        "value": "vine-site-settings"
+      }
+    ]
+  ],
+  "menu_order": 0,
+  "position": "normal",
+  "style": "default",
+  "label_placement": "top",
+  "instruction_placement": "label",
+  "active": true,
+  "show_in_graphql": 1,
+  "graphql_field_name": "siteSettingsFields",
+  "map_graphql_types_from_location_rules": 1
+}

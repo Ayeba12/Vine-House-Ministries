@@ -1,0 +1,40 @@
+{
+  "key": "group_vh_testimonial",
+  "title": "Testimonial",
+  "fields": [
+    {
+      "key": "field_vh_testimonial_role",
+      "label": "Role",
+      "name": "role",
+      "type": "text",
+      "instructions": "The title is the person's name and the content is the quote; this is how they are described, e.g. Member since 2019.",
+      "required": 1
+    },
+    {
+      "key": "field_vh_testimonial_tag",
+      "label": "Tag",
+      "name": "tag",
+      "type": "text",
+      "instructions": "The short eyebrow shown on the card, e.g. Community."
+    }
+  ],
+  "location": [
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "testimonial"
+      }
+    ]
+  ],
+  "menu_order": 0,
+  "position": "normal",
+  "style": "default",
+  "label_placement": "top",
+  "instruction_placement": "label",
+  "active": true,
+  "show_in_graphql": 1,
+  "graphql_field_name": "testimonialFields",
+  "map_graphql_types_from_location_rules": 0,
+  "graphql_types": ["Testimonial"]
+}
