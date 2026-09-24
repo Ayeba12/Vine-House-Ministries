@@ -3,14 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'motion/react';
-import { 
-  ArrowUpRight, 
-  X, 
-  Radio,
-  Church,
-  ChevronRight,
-} from 'lucide-react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { ArrowUpRight, X } from 'lucide-react';
 
 interface NavbarProps {
   onOpenPlanVisit?: () => void;
@@ -21,287 +15,194 @@ interface NavbarProps {
   noticeBanner?: string;
 }
 
-export function Navbar({ 
-  onOpenPlanVisit, 
+const NAV_LINKS = [
+  { label: 'About', href: '/about', num: '01' },
+  { label: 'Sermons', href: '/sermons', num: '02' },
+  { label: 'Gatherings', href: '/gatherings', num: '03' },
+  { label: 'Events', href: '/events', num: '04' },
+  { label: 'Visit', href: '/visit', num: '05' },
+  { label: 'Contact', href: '/contact', num: '06' },
+];
+
+export function Navbar({
+  onOpenPlanVisit,
   onPlanVisit,
   // TODO: the navbar does not yet reflect playback state; two pages pass this.
   isPlayingAudio: _isPlayingAudio = false,
-  noticeBanner
+  noticeBanner,
 }: NavbarProps) {
   const router = useRouter();
+  const reduceMotion = useReducedMotion();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [currentTime, setCurrentTime] = useState('');
   const [showNotice, setShowNotice] = useState(true);
 
   const handlePlanVisit = () => {
     if (onPlanVisit) onPlanVisit();
     else if (onOpenPlanVisit) onOpenPlanVisit();
-    else {
-      const el = document.getElementById('visit');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        router.push('/visit');
-      }
-    }
+    else router.push('/visit');
   };
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setIsScrolled(window.scrollY > 16);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setCurrentTime(now.toLocaleTimeString('en-US', { 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        second: '2-digit', 
-        hour12: true 
-      }));
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Lock body scroll when mobile menu is open
-  useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
     return () => {
       document.body.style.overflow = '';
     };
   }, [mobileMenuOpen]);
 
-  const navLinks = [
-    { label: 'About', href: '/about', num: '01' },
-    { label: 'Sermons', href: '/sermons', num: '02' },
-    { label: 'Gatherings', href: '/gatherings', num: '03' },
-    { label: 'Events', href: '/events', num: '04' },
-    { label: 'Visit', href: '/visit', num: '05' },
-    { label: 'Contact', href: '/contact', num: '06' },
-  ];
+  const noticeVisible = Boolean(noticeBanner && showNotice);
 
   return (
     <>
-      {/* Top Sanctuary Live Notice Ribbon */}
-      {noticeBanner && showNotice && (
-        <aside 
+      {noticeVisible && (
+        <aside
           id="top-sanctuary-notice-bar"
-          aria-label="Sanctuary Notice"
-          className="bg-[#2C3E2D] text-[#F9F7F2] text-xs font-sans py-2 px-4 border-b border-[#D4A373]/30 relative z-50 transition-all"
+          aria-label="Sanctuary notice"
+          className="relative z-50 bg-surface-dark text-ink-on-dark"
         >
-          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2.5 truncate">
-              <Radio className="w-3.5 h-3.5 text-[#D4A373] animate-pulse shrink-0" />
-              <span className="font-semibold uppercase tracking-wider text-[#D4A373] shrink-0 text-xs">
-                LIVE SANCTUARY
-              </span>
-              <span className="truncate text-[#F9F7F2]/90 font-sans text-xs">
-                {noticeBanner}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3 shrink-0">
-              <span className="hidden sm:inline font-sans text-xs text-[#F9F7F2]/60 border-l border-[#F9F7F2]/20 pl-3">
-                LONDON GMT/BST
-              </span>
-              <button 
-                id="btn-dismiss-notice-banner"
-                onClick={() => setShowNotice(false)} 
-                className="text-[#F9F7F2]/60 hover:text-[#D4A373] p-1 transition-colors"
-                aria-label="Dismiss banner"
-                title="Dismiss banner"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </div>
+          <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-5 py-2 sm:px-8 lg:px-12">
+            <p className="meta flex min-w-0 items-center gap-3">
+              <span className="eyebrow shrink-0 text-accent-on-dark">Live</span>
+              <span className="truncate text-ink-on-dark/90">{noticeBanner}</span>
+            </p>
+            <button
+              id="btn-dismiss-notice-banner"
+              onClick={() => setShowNotice(false)}
+              className="shrink-0 p-1 text-ink-on-dark-muted transition-colors hover:text-ink-on-dark"
+              aria-label="Dismiss notice"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
           </div>
         </aside>
       )}
 
-      {/* Main Sticky Header */}
-      <header 
+      <header
         id="main-navigation"
-        className={`fixed left-0 right-0 z-40 transition-all duration-300 ${
-          isScrolled 
-            ? 'bg-[#F9F7F2]/95 backdrop-blur-md shadow-xs border-b border-[#2C3E2D]/10 py-2.5 sm:py-3' 
-            : 'bg-transparent border-0 shadow-none py-3 sm:py-4'
+        className={`fixed inset-x-0 z-40 transition-[background-color,border-color,padding] duration-300 ${
+          noticeVisible ? 'top-[37px]' : 'top-0'
         } ${
-          noticeBanner && showNotice ? 'top-[37px]' : 'top-0'
+          isScrolled
+            ? 'border-b border-hairline bg-surface/95 py-3 backdrop-blur-md'
+            : 'border-b border-transparent bg-transparent py-5'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-3 sm:gap-6">
-            
-            {/* Brand Logo */}
-            <div className="flex items-center gap-3 shrink-0">
-              <Link 
-                id="nav-brand-logo"
-                href="/" 
-                className="group flex items-center gap-2.5 focus:outline-none"
+        <div className="mx-auto grid max-w-[1440px] grid-cols-[1fr_auto] items-center gap-6 px-5 sm:px-8 lg:grid-cols-[1fr_auto_1fr] lg:px-12">
+          <Link id="nav-brand-logo" href="/" className="group flex flex-col leading-none">
+            <span className="font-anton text-[1.35rem] uppercase text-ink-strong transition-colors group-hover:text-ink sm:text-2xl">
+              Vine House Ministries
+            </span>
+            <span className="eyebrow mt-1 text-ink-muted">Greater London &amp; Essex</span>
+          </Link>
+
+          <nav
+            id="desktop-nav-menu"
+            aria-label="Main navigation"
+            className="hidden items-center gap-7 lg:flex"
+          >
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                id={`nav-link-${link.label.toLowerCase()}`}
+                href={link.href}
+                className="group inline-flex items-center gap-1 font-sans text-sm font-medium text-ink transition-colors hover:text-ink-strong"
               >
-                <div className="w-8 h-8 rounded-md bg-[#2C3E2D] flex items-center justify-center text-[#D4A373] shadow-xs group-hover:bg-[#1E242B] transition-colors shrink-0">
-                  <span className="font-anton text-lg leading-none">V</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-anton text-lg sm:text-xl tracking-tight text-[#2C3E2D] uppercase leading-none group-hover:text-[#1E242B] transition-colors">
-                    VINE HOUSE MINISTRIES
-                  </span>
-                  <span className="font-sans text-xs uppercase tracking-widest text-[#8A9A86] font-semibold leading-tight">
-                    Greater London &amp; Essex
-                  </span>
-                </div>
+                <span>{link.label}</span>
+                <ArrowUpRight className="h-3 w-3 text-ink-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </Link>
-            </div>
+            ))}
+          </nav>
 
-            {/* Desktop Center Navigation Island (Hidden on Mobile & Tablet, visible on lg+) */}
-            <nav 
-              id="desktop-nav-menu" 
-              className="hidden lg:flex items-center gap-1 xl:gap-2 px-3.5 py-1.5 bg-[#F3EFE6]/90 backdrop-blur-md border border-[#2C3E2D]/10 rounded-xl shadow-2xs shrink min-w-0" 
-              aria-label="Main Navigation"
+          <div className="flex items-center justify-end gap-5">
+            <button
+              id="btn-navbar-plan-visit"
+              onClick={handlePlanVisit}
+              className="link-arrow hidden text-ink-strong sm:inline-flex"
             >
-              {navLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  id={`nav-link-${link.label.toLowerCase()}`}
-                  href={link.href}
-                  className="group relative px-3 py-1 text-xs lg:text-sm font-sans font-semibold text-[#1E242B]/85 hover:text-[#2C3E2D] rounded-lg hover:bg-white/80 transition-all whitespace-nowrap"
-                >
-                  <span>{link.label}</span>
-                </Link>
-              ))}
-            </nav>
+              <span>Plan a visit</span>
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </button>
 
-            {/* Action Suite (Right CTA Buttons) */}
-            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-              
-              {/* Plan a Visit CTA Button (Desktop & Tablet only, hidden on mobile) */}
-              <button
-                id="btn-navbar-plan-visit"
-                onClick={handlePlanVisit}
-                className="group hidden sm:inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2.5 bg-[#2C3E2D] text-[#F9F7F2] hover:bg-[#1E242B] text-xs font-sans font-bold tracking-wider uppercase rounded-xl transition-all duration-200 active:scale-[0.98] shadow-xs hover:shadow-md whitespace-nowrap shrink-0 cursor-pointer"
-              >
-                <span>Plan A Visit</span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-[#D4A373] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200 shrink-0" />
-              </button>
-
-              {/* Minimalist Animated Hamburger / Close Button (Mobile & Tablet) */}
-              <button
-                id="btn-navbar-mobile-toggle"
-                type="button"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="w-10 h-10 flex lg:hidden flex-col items-center justify-center gap-1.5 p-2 text-[#2C3E2D] hover:bg-[#2C3E2D]/5 rounded-xl transition-colors focus:outline-none"
-                aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-                aria-expanded={mobileMenuOpen}
-              >
-                <span 
-                  className={`w-5 h-[2px] bg-[#2C3E2D] rounded-full transition-all duration-300 ease-out origin-center ${
-                    mobileMenuOpen ? 'rotate-45 translate-y-[4px]' : ''
-                  }`} 
-                />
-                <span 
-                  className={`w-5 h-[2px] bg-[#2C3E2D] rounded-full transition-all duration-300 ease-out origin-center ${
-                    mobileMenuOpen ? '-rotate-45 -translate-y-[4px]' : ''
-                  }`} 
-                />
-              </button>
-            </div>
+            <button
+              id="btn-navbar-mobile-toggle"
+              type="button"
+              onClick={() => setMobileMenuOpen((open) => !open)}
+              className="flex h-10 w-10 flex-col items-center justify-center gap-1.5 text-ink-strong lg:hidden"
+              aria-label={mobileMenuOpen ? 'Close navigation' : 'Open navigation'}
+              aria-expanded={mobileMenuOpen}
+            >
+              <span
+                className={`h-px w-6 bg-current transition-transform duration-300 ${
+                  mobileMenuOpen ? 'translate-y-[3.5px] rotate-45' : ''
+                }`}
+              />
+              <span
+                className={`h-px w-6 bg-current transition-transform duration-300 ${
+                  mobileMenuOpen ? '-translate-y-[3.5px] -rotate-45' : ''
+                }`}
+              />
+            </button>
           </div>
         </div>
       </header>
 
-      {/* Minimalist Borderless Mobile & Tablet Navigation Drawer */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
             id="mobile-navigation-drawer"
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-            className={`fixed inset-x-0 bottom-0 ${
-              noticeBanner && showNotice ? 'top-[95px]' : 'top-[64px]'
-            } z-30 bg-[#F9F7F2]/98 backdrop-blur-2xl flex flex-col justify-between overflow-y-auto lg:hidden p-6 sm:p-10`}
+            initial={reduceMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className={`fixed inset-x-0 bottom-0 z-30 flex flex-col justify-between overflow-y-auto bg-surface px-5 pb-8 pt-10 sm:px-8 lg:hidden ${
+              noticeVisible ? 'top-[37px]' : 'top-0'
+            }`}
           >
-            {/* Top architectural links list */}
-            <div className="max-w-2xl mx-auto w-full space-y-6">
-              <div className="flex items-center justify-between pb-2">
-                <span className="font-sans text-xs uppercase tracking-widest text-[#8A9A86] font-bold">
-                  Sanctuary Navigation
-                </span>
-                <span className="font-sans text-xs text-[#2C3E2D] font-bold">
-                  {currentTime}
-                </span>
-              </div>
-
-              <nav className="flex flex-col space-y-1">
-                {navLinks.map((link, idx) => (
-                  <motion.div
-                    key={link.label}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.04 + 0.05, duration: 0.25 }}
-                  >
-                    <Link
-                      id={`mobile-nav-${link.label.toLowerCase()}`}
-                      href={link.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center justify-between py-3.5 px-3 -mx-3 rounded-xl hover:bg-white/70 active:bg-white transition-all group"
-                    >
-                      <div className="flex items-center gap-4">
-                        <span className="font-sans text-xs font-bold text-[#D4A373]">
-                          {link.num}
-                        </span>
-                        <span className="font-anton text-2xl sm:text-3xl uppercase tracking-tight text-[#2C3E2D] group-hover:text-[#D4A373] transition-colors">
-                          {link.label}
-                        </span>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-[#8A9A86]/60 group-hover:text-[#2C3E2D] group-hover:translate-x-1 transition-all" />
-                    </Link>
-                  </motion.div>
-                ))}
-              </nav>
-
-              {/* Quick Actions in Drawer */}
-              <div className="pt-4 space-y-3">
-                <button
-                  id="btn-mobile-plan-visit"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    handlePlanVisit();
-                  }}
-                  className="group w-full py-3.5 bg-[#D4A373] text-[#1E242B] text-center font-sans font-bold text-xs uppercase tracking-wider rounded-xl shadow-xs hover:shadow-md flex items-center justify-center gap-2 active:scale-[0.98] transition-all duration-200 hover:bg-[#c69464] cursor-pointer"
+            <nav className="mt-16 flex flex-col divide-y divide-hairline border-y border-hairline">
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  id={`mobile-nav-${link.label.toLowerCase()}`}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="group flex items-center justify-between py-4"
                 >
-                  <span>Plan A Sunday Visit</span>
-                  <ArrowUpRight className="w-4 h-4 text-[#1E242B] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200 shrink-0" />
-                </button>
+                  <span className="flex items-baseline gap-5">
+                    <span className="meta text-ink-muted">{link.num}</span>
+                    <span className="font-anton scale-step-h4 uppercase text-ink-strong transition-colors group-hover:text-accent">
+                      {link.label}
+                    </span>
+                  </span>
+                  <ArrowUpRight className="h-5 w-5 text-ink-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </Link>
+              ))}
+            </nav>
 
-              </div>
-            </div>
-
-            {/* Bottom Sanctuary Details */}
-            <div className="max-w-2xl mx-auto w-full mt-8 p-5 bg-white/80 backdrop-blur-md rounded-2xl font-sans space-y-2.5 shadow-2xs">
-              <div className="flex items-center gap-2 text-[#2C3E2D]">
-                <Church className="w-4 h-4 text-[#D4A373]" />
-                <span className="font-bold text-xs">Vine House Ministries</span>
-              </div>
-              <p className="text-xs text-[#1E242B]/75 leading-relaxed">
-                Greater London &amp; Essex • Registered Charity No: 1148977 (England &amp; Wales)
-              </p>
-              <div className="pt-2 flex items-center justify-between text-xs font-sans text-[#8A9A86]">
-                <span>Sundays 10:00 AM &amp; 12:00 PM</span>
-                <span className="text-[#2C3E2D] font-bold">In-Person &amp; Online</span>
-              </div>
+            <div className="mt-10 flex flex-col gap-6">
+              <button
+                id="btn-mobile-plan-visit"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handlePlanVisit();
+                }}
+                className="btn btn-primary w-full"
+              >
+                <span>Plan a Sunday visit</span>
+                <ArrowUpRight className="h-4 w-4" />
+              </button>
+              <dl className="meta grid grid-cols-2 gap-x-6 gap-y-2 text-ink-muted">
+                <dt>Sundays</dt>
+                <dd className="text-ink">10:00 &amp; 12:00</dd>
+                <dt>Charity No.</dt>
+                <dd className="text-ink">1148977</dd>
+              </dl>
             </div>
           </motion.div>
         )}

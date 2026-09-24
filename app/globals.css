@@ -28,6 +28,147 @@
   --color-sage-ink-large: #82937E;  /* 3.05:1 on warm sand - 24px+ only */
   --color-honey-ink: #9B6530;       /* 4.56:1 on warm sand - body text */
   --color-honey-ink-large: #C4803E; /* 3.02:1 on warm sand - 24px+ only */
+
+  /* ---- Semantic tokens as utilities --------------------------------------
+     These mirror the :root tokens below so components write bg-surface,
+     text-ink-muted, border-hairline and so on, never a hex. Named by the
+     ground they sit on; see DESIGN.md §2.3.                                */
+  --color-surface: #F9F7F2;
+  --color-surface-raised: #FFFFFF;
+  --color-surface-tint: #F3EFE6;
+  --color-surface-dark: #2C3E2D;
+  --color-surface-deep: #1E242B;
+  --color-ink: #1E242B;
+  --color-ink-strong: #2C3E2D;
+  --color-ink-muted: #667662;
+  --color-accent: #9B6530;
+  --color-accent-large: #C4803E;
+  --color-ink-on-dark: #F9F7F2;
+  --color-ink-on-dark-muted: #B2BDB0;
+  --color-accent-on-dark: #D4A373;
+  --color-hairline: rgba(138, 154, 134, 0.35);
+  --color-hairline-dark: rgba(212, 163, 115, 0.25);
+}
+
+/* ---------------------------------------------------------------------------
+   Shared component primitives
+   The few recurring pieces of the visual grammar, so every section draws
+   them the same way: eyebrow labels, metadata, the faint column rules
+   through light sections, buttons and arrow links.
+   --------------------------------------------------------------------------- */
+@layer components {
+  .eyebrow {
+    font-family: var(--font-dm-sans);
+    font-size: var(--type-step-minus-1);
+    line-height: 1.5;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .meta {
+    font-family: var(--font-dm-sans);
+    font-size: var(--type-step-minus-1);
+    line-height: 1.5;
+  }
+
+  /* Four faint vertical rules across the container, like a drafting sheet. */
+  .col-rules {
+    background-image: linear-gradient(to right, var(--color-hairline) 1px, transparent 1px);
+    background-size: 25% 100%;
+  }
+
+  .col-rules-dark {
+    background-image: linear-gradient(to right, var(--color-hairline-dark) 1px, transparent 1px);
+    background-size: 25% 100%;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.9rem 1.5rem;
+    font-family: var(--font-dm-sans);
+    font-size: var(--type-step-minus-1);
+    line-height: 1;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--motion-duration-base) var(--motion-ease),
+      color var(--motion-duration-base) var(--motion-ease),
+      border-color var(--motion-duration-base) var(--motion-ease);
+  }
+
+  .btn:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  .btn-primary {
+    background: var(--color-surface-dark);
+    color: var(--color-ink-on-dark);
+  }
+
+  .btn-primary:hover {
+    background: var(--color-surface-deep);
+  }
+
+  .btn-outline {
+    border-color: var(--color-ink-strong);
+    color: var(--color-ink-strong);
+  }
+
+  .btn-outline:hover {
+    background: var(--color-surface-dark);
+    color: var(--color-ink-on-dark);
+  }
+
+  .btn-on-dark {
+    background: var(--color-accent-on-dark);
+    color: var(--color-ink);
+  }
+
+  .btn-on-dark:hover {
+    background: #C69464;
+  }
+
+  .btn-outline-on-dark {
+    border-color: var(--color-hairline-dark);
+    color: var(--color-ink-on-dark);
+  }
+
+  .btn-outline-on-dark:hover {
+    border-color: var(--color-ink-on-dark);
+  }
+
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--font-dm-sans);
+    font-size: var(--type-step-minus-1);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding-bottom: 2px;
+    border-bottom: 1px solid currentColor;
+    transition: opacity var(--motion-duration-fast) var(--motion-ease);
+  }
+
+  .link-arrow:hover {
+    opacity: 0.7;
+  }
+
+  .link-arrow:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+  }
 }
 
 @layer base {
