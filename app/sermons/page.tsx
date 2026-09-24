@@ -177,10 +177,11 @@ export default function SermonsPage() {
                     {playing && <span className="eyebrow absolute right-4 top-4 rounded-md bg-accent-on-dark px-2.5 py-1 text-ink">Now playing</span>}
                   </div>
                   <div className="flex flex-1 flex-col gap-4 p-6 sm:p-7">
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+                    <div className="flex flex-col gap-2 xl:flex-row xl:items-start xl:justify-between xl:gap-6">
                       <h3 className="font-anton scale-step-h5 text-ink-strong">{sermon.title}</h3>
-                      <p className="meta shrink-0 text-ink-muted sm:text-right">
-                        <span className="block text-ink">{sermon.scripture}</span>
+                      <p className="meta text-ink-muted xl:shrink-0 xl:text-right">
+                        <span className="text-ink xl:block">{sermon.scripture}</span>
+                        <span className="xl:hidden"> · </span>
                         {sermon.duration} · {sermon.date}
                       </p>
                     </div>
