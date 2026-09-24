@@ -66,7 +66,7 @@ Re-tinted equivalents, derived to clear AA on their own ground:
 |---|---|---|---|
 | `--accent-on-light` | `#9B6530` | 4.56:1 on sand | any size |
 | `--accent-on-light-large` | `#C4803E` | 3.02:1 on sand | 24px+ only |
-| `--ink-on-light-muted` | `#667662` | 4.53:1 on sand | any size |
+| `--ink-on-light-muted` | `#5E6D5B` | 5.14:1 on sand, 4.80:1 on tint | any size |
 | `--ink-on-dark-muted` | `#B2BDB0` | 5.89:1 on olive | any size |
 
 ### 2.3 Semantic tokens
@@ -80,7 +80,7 @@ Re-tinted equivalents, derived to clear AA on their own ground:
 | `--surface-light-tint` | `#F3EFE6` | alternating bands |
 | `--ink-on-light` | `#1E242B` | body copy |
 | `--ink-on-light-strong` | `#2C3E2D` | headings |
-| `--ink-on-light-muted` | `#667662` | captions, metadata |
+| `--ink-on-light-muted` | `#5E6D5B` | captions, metadata |
 | `--accent-on-light` | `#9B6530` | links, eyebrows, small caps |
 | `--accent-on-light-large` | `#C4803E` | 24px+ accent text only |
 | `--border-on-light` | `rgba(138,154,134,.35)` | hairlines, card borders |

@@ -23,7 +23,7 @@
   /* Ground variants. Raw sage and honey fail WCAG AA as text: sage on both
      grounds (2.78:1 on sand, 3.84:1 on olive), honey on sand (2.11:1). These
      are the re-tinted equivalents that pass on each ground. */
-  --color-sage-ink: #667662;        /* 4.53:1 on warm sand - body text */
+  --color-sage-ink: #5E6D5B;        /* 5.14:1 on warm sand, 4.80:1 on tint - body text */
   --color-sage-ink-dark: #B2BDB0;   /* 5.89:1 on sanctuary olive - body text */
   --color-sage-ink-large: #82937E;  /* 3.05:1 on warm sand - 24px+ only */
   --color-honey-ink: #9B6530;       /* 4.56:1 on warm sand - body text */
@@ -40,7 +40,7 @@
   --color-surface-deep: #1E242B;
   --color-ink: #1E242B;
   --color-ink-strong: #2C3E2D;
-  --color-ink-muted: #667662;
+  --color-ink-muted: #5E6D5B;
   --color-accent: #9B6530;
   --color-accent-large: #C4803E;
   --color-ink-on-dark: #F9F7F2;
@@ -249,7 +249,7 @@
     appearance: none;
     padding-right: 1.5rem;
     cursor: pointer;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23667662' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235E6D5B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0 center;
   }
@@ -343,7 +343,7 @@
     --surface-light-tint: #F3EFE6;
     --ink-on-light: #1E242B;          /* 14.61:1 */
     --ink-on-light-strong: #2C3E2D;   /* 10.69:1 */
-    --ink-on-light-muted: #667662;    /*  4.53:1 */
+    --ink-on-light-muted: #5E6D5B;    /*  5.14:1, 4.80:1 on tint */
     --accent-on-light: #9B6530;       /*  4.56:1 */
     --accent-on-light-large: #C4803E; /*  3.02:1 - 24px and above only */
     --border-on-light: rgba(138, 154, 134, 0.35);
