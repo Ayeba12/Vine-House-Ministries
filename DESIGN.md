@@ -104,6 +104,28 @@ Re-tinted equivalents, derived to clear AA on their own ground:
 - Dark blocks are structural punctuation. Roughly one per two light sections;
   consecutive dark blocks flatten the rhythm.
 
+### 2.5 Logo marks
+
+Four single-colour PNG marks were supplied. Their fills, sampled from the files:
+
+| Token | Hex | on sand | on olive | Ground |
+|---|---|---|---|---|
+| `--color-logo-green` | `#0B420F` | 10.89:1 | 1.02:1 | light only |
+| `--color-logo-green-bright` | `#178C20` | 4.08:1 | 2.62:1 | light only |
+| `--color-logo-gold` | `#D1A259` | 2.17:1 | 4.92:1 | dark only |
+
+**Green on light, gold on dark, never crossed.** The deep green vanishes on olive and the
+gold vanishes on sand. Navigation on warm sand takes the deep green; the footer on slate
+takes the gold.
+
+The logo greens sit at hue 124° and Sanctuary Olive at 123°: the site palette is the
+brand desaturated (71% → 17%), which makes the mark the one vivid element on any page.
+That relationship is intentional — don't pull the UI palette toward the logo, and don't
+use these three tokens for anything but the mark itself. The gold is close enough to
+Soft Honey to be mistaken for it; it isn't the same colour.
+
+Vector originals have not been supplied. Request them before favicon or print use.
+
 ---
 
 ## 3. Typography

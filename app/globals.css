@@ -13,6 +13,13 @@
   --color-muted-sage: #8A9A86;
   --color-soft-honey: #D4A373;
 
+  /* Logo marks, sampled from the supplied PNGs. Asset colours only: they
+     paint the mark, never text, fills or accents. Green on light ground,
+     gold on dark, never crossed - each is invisible on the other's ground. */
+  --color-logo-green: #0B420F;        /* 10.89:1 on sand,  1.02:1 on olive */
+  --color-logo-green-bright: #178C20; /*  4.08:1 on sand,  2.62:1 on olive */
+  --color-logo-gold: #D1A259;         /*  2.17:1 on sand,  4.92:1 on olive */
+
   /* Ground variants. Raw sage and honey fail WCAG AA as text: sage on both
      grounds (2.78:1 on sand, 3.84:1 on olive), honey on sand (2.11:1). These
      are the re-tinted equivalents that pass on each ground. */
