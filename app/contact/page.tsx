@@ -9,6 +9,7 @@ import { Footer } from '@/components/Footer';
 import { SanctuaryInteractiveMap } from '@/components/SanctuaryInteractiveMap';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { SectionHeader } from '@/components/ui/SectionHeader';
+import { Select } from '@/components/ui/Select';
 import { Reveal } from '@/components/ui/Reveal';
 
 type Category = 'general' | 'prayer' | 'sacraments' | 'charity';
@@ -158,15 +159,18 @@ export default function ContactPage() {
                   <label htmlFor="c-phone" className="field-label">Telephone (optional)</label>
                   <input id="c-phone" type="tel" placeholder="020 8553 0000" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="field" />
                 </div>
-                <div>
-                  <label htmlFor="c-area" className="field-label">Region</label>
-                  <select id="c-area" value={form.area} onChange={(e) => setForm({ ...form, area: e.target.value })} className="field">
-                    <option value="Greater London">Greater London</option>
-                    <option value="Essex">Essex</option>
-                    <option value="Other UK">Elsewhere in England &amp; Wales</option>
-                    <option value="International">International</option>
-                  </select>
-                </div>
+                <Select
+                  id="c-area"
+                  label="Region"
+                  value={form.area}
+                  onChange={(v) => setForm({ ...form, area: v })}
+                  options={[
+                    { value: 'Greater London', label: 'Greater London' },
+                    { value: 'Essex', label: 'Essex' },
+                    { value: 'Other UK', label: 'Elsewhere in England & Wales' },
+                    { value: 'International', label: 'International' },
+                  ]}
+                />
                 <div className="sm:col-span-2">
                   <label htmlFor="c-subject" className="field-label">Subject</label>
                   <input id="c-subject" type="text" placeholder={current.placeholder} value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} className="field" />

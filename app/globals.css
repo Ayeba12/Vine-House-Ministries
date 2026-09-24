@@ -234,8 +234,10 @@
     transition: border-color var(--motion-duration-fast) var(--motion-ease);
   }
 
+  /* Placeholders are hints, not values: quieter than typed text. */
   .field::placeholder {
     color: var(--color-ink-muted);
+    opacity: 0.55;
   }
 
   .field:focus {
@@ -292,6 +294,7 @@
 
   .field-on-dark::placeholder {
     color: var(--color-ink-on-dark-muted);
+    opacity: 0.6;
   }
 
   .field-on-dark:focus {

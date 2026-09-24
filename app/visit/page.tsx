@@ -9,6 +9,7 @@ import { Footer } from '@/components/Footer';
 import { SanctuaryInteractiveMap } from '@/components/SanctuaryInteractiveMap';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { SectionHeader } from '@/components/ui/SectionHeader';
+import { Select } from '@/components/ui/Select';
 import { Reveal } from '@/components/ui/Reveal';
 
 const STEPS = [
@@ -213,22 +214,28 @@ export default function VisitPage() {
                     <label htmlFor="visit-email" className="field-label">Email address</label>
                     <input id="visit-email" type="email" required placeholder="jordan@example.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="field" />
                   </div>
-                  <div>
-                    <label htmlFor="visit-service" className="field-label">Sunday liturgy</label>
-                    <select id="visit-service" value={form.service} onChange={(e) => setForm({ ...form, service: e.target.value })} className="field">
-                      <option value="10:00 Sanctuary Liturgy">10:00 morning gathering</option>
-                      <option value="12:00 Sanctuary Liturgy">12:00 noon gathering</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label htmlFor="visit-guests" className="field-label">People in your group</label>
-                    <select id="visit-guests" value={form.guests} onChange={(e) => setForm({ ...form, guests: e.target.value })} className="field">
-                      <option value="1">1 — just me</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4+">4 or more</option>
-                    </select>
-                  </div>
+                  <Select
+                    id="visit-service"
+                    label="Sunday liturgy"
+                    value={form.service}
+                    onChange={(v) => setForm({ ...form, service: v })}
+                    options={[
+                      { value: '10:00 Sanctuary Liturgy', label: '10:00 morning gathering' },
+                      { value: '12:00 Sanctuary Liturgy', label: '12:00 noon gathering' },
+                    ]}
+                  />
+                  <Select
+                    id="visit-guests"
+                    label="People in your group"
+                    value={form.guests}
+                    onChange={(v) => setForm({ ...form, guests: v })}
+                    options={[
+                      { value: '1', label: '1 — just me' },
+                      { value: '2', label: '2' },
+                      { value: '3', label: '3' },
+                      { value: '4+', label: '4 or more' },
+                    ]}
+                  />
                   <label className="meta flex cursor-pointer items-center gap-3 text-ink sm:col-span-2">
                     <input type="checkbox" checked={form.children} onChange={(e) => setForm({ ...form, children: e.target.checked })} className="h-4 w-4 accent-[#2C3E2D]" />
                     I am bringing children who will need nursery or NextGen check-in

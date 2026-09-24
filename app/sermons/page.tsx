@@ -11,6 +11,7 @@ import { AudioPlayerBar } from '@/components/AudioPlayerBar';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { SearchField } from '@/components/ui/SearchField';
+import { Select } from '@/components/ui/Select';
 import { Reveal } from '@/components/ui/Reveal';
 import { INITIAL_SERMONS } from '@/lib/data';
 import { Sermon } from '@/lib/types';
@@ -121,22 +122,22 @@ export default function SermonsPage() {
             value={query}
             onChange={setQuery}
           />
-          <div className="lg:col-span-3">
-            <label htmlFor="sermon-series" className="field-label">Series</label>
-            <select id="sermon-series" value={series} onChange={(e) => setSeries(e.target.value)} className="field">
-              {allSeries.map((s) => (
-                <option key={s} value={s}>{s === 'All' ? 'All series' : s}</option>
-              ))}
-            </select>
-          </div>
-          <div className="lg:col-span-3">
-            <label htmlFor="sermon-topic" className="field-label">Topic</label>
-            <select id="sermon-topic" value={topic} onChange={(e) => setTopic(e.target.value)} className="field">
-              {allTopics.map((t) => (
-                <option key={t} value={t}>{t === 'All' ? 'All topics' : t}</option>
-              ))}
-            </select>
-          </div>
+          <Select
+            className="lg:col-span-3"
+            id="sermon-series"
+            label="Series"
+            value={series}
+            onChange={setSeries}
+            options={allSeries.map((s) => ({ value: s, label: s === 'All' ? 'All series' : s }))}
+          />
+          <Select
+            className="lg:col-span-3"
+            id="sermon-topic"
+            label="Topic"
+            value={topic}
+            onChange={setTopic}
+            options={allTopics.map((t) => ({ value: t, label: t === 'All' ? 'All topics' : t }))}
+          />
         </div>
 
         {filtering && (

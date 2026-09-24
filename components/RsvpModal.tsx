@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { ArrowUpRight, X } from 'lucide-react';
 import { ChurchEvent, RSVPRecord } from '@/lib/types';
+import { Select } from '@/components/ui/Select';
 
 interface RsvpModalProps {
   event: ChurchEvent | null;
@@ -86,9 +87,9 @@ export function RsvpModal({ event, onClose, onConfirmRsvp }: RsvpModalProps) {
         initial={reduceMotion ? false : { opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-        className="relative my-6 w-full max-w-2xl overflow-hidden rounded-xl bg-surface text-ink"
+        className="relative my-6 w-full max-w-2xl rounded-xl bg-surface text-ink"
       >
-        <div className="bg-surface-dark p-6 text-ink-on-dark sm:p-8">
+        <div className="rounded-t-xl bg-surface-dark p-6 text-ink-on-dark sm:p-8">
           <button
             onClick={onClose}
             className="absolute right-5 top-5 p-1 text-ink-on-dark-muted transition-colors hover:text-ink-on-dark"
@@ -161,16 +162,19 @@ export function RsvpModal({ event, onClose, onConfirmRsvp }: RsvpModalProps) {
                 <label htmlFor="rsvp-phone" className="field-label">Phone (optional)</label>
                 <input id="rsvp-phone" type="tel" placeholder="07700 900077" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="field" />
               </div>
-              <div>
-                <label htmlFor="rsvp-guests" className="field-label">Guests</label>
-                <select id="rsvp-guests" value={form.guestsCount} onChange={(e) => setForm({ ...form, guestsCount: Number(e.target.value) })} className="field">
-                  <option value={1}>1 — just me</option>
-                  <option value={2}>2</option>
-                  <option value={3}>3</option>
-                  <option value={4}>4</option>
-                  <option value={5}>5 or more</option>
-                </select>
-              </div>
+              <Select
+                id="rsvp-guests"
+                label="Guests"
+                value={String(form.guestsCount)}
+                onChange={(v) => setForm({ ...form, guestsCount: Number(v) })}
+                options={[
+                  { value: '1', label: '1 — just me' },
+                  { value: '2', label: '2' },
+                  { value: '3', label: '3' },
+                  { value: '4', label: '4' },
+                  { value: '5', label: '5 or more' },
+                ]}
+              />
               <label className="meta flex cursor-pointer items-center gap-3 self-end pb-3 text-ink">
                 <input type="checkbox" checked={form.isFirstTimeVisitor} onChange={(e) => setForm({ ...form, isFirstTimeVisitor: e.target.checked })} className="h-4 w-4 accent-[#2C3E2D]" />
                 This is my first visit
