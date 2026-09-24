@@ -1,6 +1,6 @@
 <?php
 /**
- * The four submission types.
+ * The three submission types.
  *
  * Every one is private in every sense WordPress offers: not public, not
  * queryable, not in the REST index, not in GraphQL, not searchable. They
@@ -13,7 +13,6 @@ defined( 'ABSPATH' ) || exit;
 
 final class Vine_Forms_CPT {
 
-	public const RSVP       = 'vh_rsvp';
 	public const SUBSCRIBER = 'vh_subscriber';
 	public const ENQUIRY    = 'vh_enquiry';
 	public const VISIT_PLAN = 'vh_visit_plan';
@@ -25,10 +24,6 @@ final class Vine_Forms_CPT {
 	/** @return array<string, array{singular: string, plural: string}> */
 	public static function types(): array {
 		return array(
-			self::RSVP       => array(
-				'singular' => __( 'RSVP', 'vine-house-forms' ),
-				'plural'   => __( 'RSVPs', 'vine-house-forms' ),
-			),
 			self::SUBSCRIBER => array(
 				'singular' => __( 'Subscriber', 'vine-house-forms' ),
 				'plural'   => __( 'Subscribers', 'vine-house-forms' ),

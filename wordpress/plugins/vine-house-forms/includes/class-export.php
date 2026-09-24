@@ -47,7 +47,7 @@ final class Vine_Forms_Export {
 			$row = array( get_the_date( 'Y-m-d H:i', $id ), get_the_title( $id ) );
 			foreach ( array_keys( $fields ) as $key ) {
 				$value = get_post_meta( $id, $key, true );
-				if ( in_array( $key, array( 'vh_first_time', 'vh_children', 'vh_welcome_host', 'vh_checked_in' ), true ) ) {
+				if ( in_array( $key, array( 'vh_children', 'vh_welcome_host' ), true ) ) {
 					$value = $value ? 'yes' : 'no';
 				}
 				// Neutralise spreadsheet formula injection from user-typed cells.
@@ -65,18 +65,6 @@ final class Vine_Forms_Export {
 	/** @return array<string, string> meta key => header */
 	private static function fields( string $type ): array {
 		switch ( $type ) {
-			case Vine_Forms_CPT::RSVP:
-				return array(
-					'vh_name'        => 'Name',
-					'vh_email'       => 'Email',
-					'vh_phone'       => 'Phone',
-					'vh_event_title' => 'Event',
-					'vh_guests'      => 'Guests',
-					'vh_first_time'  => 'First visit',
-					'vh_notes'       => 'Notes',
-					'vh_pass_code'   => 'Pass code',
-					'vh_checked_in'  => 'Checked in',
-				);
 			case Vine_Forms_CPT::SUBSCRIBER:
 				return array(
 					'vh_email'     => 'Email',

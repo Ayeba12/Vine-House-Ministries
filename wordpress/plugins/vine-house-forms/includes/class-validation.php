@@ -15,35 +15,6 @@ final class Vine_Forms_Validation {
 	public const CATEGORIES  = array( 'general', 'prayer', 'sacraments', 'charity', 'gathering' );
 
 	/** @return array<string, mixed>|WP_Error */
-	public static function rsvp( array $p ) {
-		$out = array();
-		foreach (
-			array(
-				'name'  => self::text( $p, 'name', 2, 120, true ),
-				'email' => self::email( $p, 'email', true ),
-				'phone' => self::phone( $p, 'phone', false ),
-				'notes' => self::text( $p, 'notes', 0, 1000, false ),
-			) as $key => $value
-		) {
-			if ( is_wp_error( $value ) ) {
-				return $value;
-			}
-			$out[ $key ] = $value;
-		}
-
-		$out['event_id']     = self::int( $p, 'eventId', 1, PHP_INT_MAX, true );
-		$out['guests_count'] = self::int( $p, 'guestsCount', 1, 10, true );
-		$out['first_time']   = self::bool( $p, 'isFirstTimeVisitor' );
-
-		foreach ( array( 'event_id', 'guests_count' ) as $key ) {
-			if ( is_wp_error( $out[ $key ] ) ) {
-				return $out[ $key ];
-			}
-		}
-		return $out;
-	}
-
-	/** @return array<string, mixed>|WP_Error */
 	public static function subscribe( array $p ) {
 		$email = self::email( $p, 'email', true );
 		if ( is_wp_error( $email ) ) {

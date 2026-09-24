@@ -1,10 +1,11 @@
 <?php
 /**
- * The endpoints: POST /wp-json/vine/v1/{rsvp|subscribe|enquiry|visit-plan}.
+ * The endpoints: POST /wp-json/vine/v1/{subscribe|enquiry|visit-plan}.
  *
  * Every route requires an authenticated user holding vine_submit_forms —
  * in practice the Next.js route handlers, signing in with an application
- * password. Nothing here is reachable anonymously.
+ * password. Nothing here is reachable anonymously. Event bookings are
+ * handled by Vine House Events under the same namespace.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -23,7 +24,6 @@ final class Vine_Forms_REST {
 	public static function routes(): void {
 		foreach (
 			array(
-				'rsvp'       => 'handle_rsvp',
 				'subscribe'  => 'handle_subscribe',
 				'enquiry'    => 'handle_enquiry',
 				'visit-plan' => 'handle_visit_plan',
@@ -46,71 +46,6 @@ final class Vine_Forms_REST {
 	}
 
 	// ---- handlers ----------------------------------------------------------
-
-	public static function handle_rsvp( WP_REST_Request $request ) {
-		$guard = self::guard( $request, 'rsvp' );
-		if ( null !== $guard ) {
-			return $guard;
-		}
-		$data = Vine_Forms_Validation::rsvp( $request->get_json_params() ?: array() );
-		if ( is_wp_error( $data ) ) {
-			return $data;
-		}
-
-		$event = get_post( $data['event_id'] );
-		if ( ! $event || 'church_event' !== $event->post_type || 'publish' !== $event->post_status ) {
-			return new WP_Error( 'vine_forms_no_event', __( 'That event is no longer available.', 'vine-house-forms' ), array( 'status' => 404 ) );
-		}
-
-		// Idempotent: the same person confirming the same event again gets
-		// their original pass back rather than a second record.
-		$existing = self::find_one(
-			Vine_Forms_CPT::RSVP,
-			array(
-				'vh_email'    => $data['email'],
-				'vh_event_id' => $data['event_id'],
-			)
-		);
-		if ( $existing ) {
-			return self::rsvp_response( $existing, $event, 200 );
-		}
-
-		$capacity = (int) get_post_meta( $event->ID, 'capacity', true );
-		$taken    = self::rsvp_total( $event->ID );
-		if ( $capacity > 0 && $taken + $data['guests_count'] > $capacity ) {
-			return new WP_Error(
-				'vine_forms_full',
-				__( 'There are not enough places left for that many guests.', 'vine-house-forms' ),
-				array(
-					'status'    => 409,
-					'remaining' => max( 0, $capacity - $taken ),
-				)
-			);
-		}
-
-		$post_id = self::store(
-			Vine_Forms_CPT::RSVP,
-			sprintf( '%s — %s (%d)', $data['name'], $event->post_title, $data['guests_count'] ),
-			array(
-				'vh_name'        => $data['name'],
-				'vh_email'       => $data['email'],
-				'vh_phone'       => $data['phone'],
-				'vh_event_id'    => $data['event_id'],
-				'vh_event_title' => $event->post_title,
-				'vh_guests'      => $data['guests_count'],
-				'vh_first_time'  => $data['first_time'] ? 1 : 0,
-				'vh_notes'       => $data['notes'],
-				'vh_pass_code'   => self::pass_code(),
-				'vh_checked_in'  => 0,
-				'vh_client_ip'   => self::client_ip( $request ),
-			)
-		);
-		if ( is_wp_error( $post_id ) ) {
-			return $post_id;
-		}
-		Vine_Forms_Notify::send( Vine_Forms_CPT::RSVP, $post_id, $data + array( 'event' => $event->post_title ) );
-		return self::rsvp_response( $post_id, $event, 201 );
-	}
 
 	public static function handle_subscribe( WP_REST_Request $request ) {
 		$guard = self::guard( $request, 'subscribe' );
@@ -315,41 +250,6 @@ final class Vine_Forms_REST {
 			)
 		);
 		return $ids ? (int) $ids[0] : 0;
-	}
-
-	/** Guests confirmed against an event. Public: the GraphQL field uses it. */
-	public static function rsvp_total( int $event_id ): int {
-		$ids = get_posts(
-			array(
-				'post_type'      => Vine_Forms_CPT::RSVP,
-				'post_status'    => 'publish',
-				'posts_per_page' => -1,
-				'fields'         => 'ids',
-				'meta_key'       => 'vh_event_id', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-				'meta_value'     => $event_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
-				'no_found_rows'  => true,
-			)
-		);
-		$total = 0;
-		foreach ( $ids as $id ) {
-			$total += (int) get_post_meta( $id, 'vh_guests', true );
-		}
-		return $total;
-	}
-
-	private static function rsvp_response( int $post_id, WP_Post $event, int $status ): WP_REST_Response {
-		$capacity = (int) get_post_meta( $event->ID, 'capacity', true );
-		$taken    = self::rsvp_total( $event->ID );
-		return new WP_REST_Response(
-			array(
-				'id'         => $post_id,
-				'passCode'   => (string) get_post_meta( $post_id, 'vh_pass_code', true ),
-				'eventTitle' => $event->post_title,
-				'guests'     => (int) get_post_meta( $post_id, 'vh_guests', true ),
-				'remaining'  => $capacity > 0 ? max( 0, $capacity - $taken ) : null,
-			),
-			$status
-		);
 	}
 
 	/** Six characters from an alphabet with no 0/O or 1/I confusion. */

@@ -1,8 +1,7 @@
 <?php
 /**
- * The wp-admin side: one "Vine Forms" menu holding the four record types,
- * useful list columns, a check-in toggle for RSVPs, and the notification
- * address setting.
+ * The wp-admin side: one "Vine Forms" menu holding the three record types,
+ * useful list columns, CSV export, and the notification address setting.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -14,13 +13,11 @@ final class Vine_Forms_Admin {
 	public static function init(): void {
 		add_action( 'admin_menu', array( __CLASS__, 'menu' ) );
 		add_action( 'admin_init', array( __CLASS__, 'settings' ) );
-		add_action( 'admin_post_vine_forms_checkin', array( __CLASS__, 'toggle_checkin' ) );
 
 		foreach ( array_keys( Vine_Forms_CPT::types() ) as $type ) {
 			add_filter( "manage_{$type}_posts_columns", array( __CLASS__, 'columns' ) );
 			add_action( "manage_{$type}_posts_custom_column", array( __CLASS__, 'column' ), 10, 2 );
 		}
-		add_filter( 'post_row_actions', array( __CLASS__, 'row_actions' ), 10, 2 );
 		add_action( 'manage_posts_extra_tablenav', array( __CLASS__, 'export_button' ) );
 	}
 
@@ -52,6 +49,7 @@ final class Vine_Forms_Admin {
 			);
 		}
 		echo '</tbody></table>';
+		echo '<p>' . esc_html__( 'Event bookings are under Events → Bookings.', 'vine-house-forms' ) . '</p>';
 
 		echo '<form method="post" action="options.php">';
 		settings_fields( 'vine_forms' );
@@ -104,11 +102,7 @@ final class Vine_Forms_Admin {
 	}
 
 	public static function column( string $column, int $post_id ): void {
-		if ( 'vh_checked_in' === $column ) {
-			echo get_post_meta( $post_id, 'vh_checked_in', true ) ? '&#10003; ' . esc_html__( 'In', 'vine-house-forms' ) : '&mdash;';
-			return;
-		}
-		if ( in_array( $column, array( 'vh_first_time', 'vh_children', 'vh_welcome_host' ), true ) ) {
+		if ( in_array( $column, array( 'vh_children', 'vh_welcome_host' ), true ) ) {
 			echo get_post_meta( $post_id, $column, true ) ? esc_html__( 'Yes', 'vine-house-forms' ) : '&mdash;';
 			return;
 		}
@@ -124,35 +118,6 @@ final class Vine_Forms_Admin {
 		if ( 0 === strpos( $column, 'vh_' ) ) {
 			echo esc_html( (string) get_post_meta( $post_id, $column, true ) );
 		}
-	}
-
-	/** @param array<string, string> $actions */
-	public static function row_actions( array $actions, WP_Post $post ): array {
-		if ( Vine_Forms_CPT::RSVP !== $post->post_type ) {
-			return $actions;
-		}
-		$checked = (bool) get_post_meta( $post->ID, 'vh_checked_in', true );
-		$url     = wp_nonce_url(
-			admin_url( 'admin-post.php?action=vine_forms_checkin&post=' . $post->ID ),
-			'vine_forms_checkin_' . $post->ID
-		);
-		$actions['vine_checkin'] = sprintf(
-			'<a href="%s">%s</a>',
-			esc_url( $url ),
-			$checked ? esc_html__( 'Undo check-in', 'vine-house-forms' ) : esc_html__( 'Check in', 'vine-house-forms' )
-		);
-		return $actions;
-	}
-
-	public static function toggle_checkin(): void {
-		$post_id = isset( $_GET['post'] ) ? (int) $_GET['post'] : 0;
-		check_admin_referer( 'vine_forms_checkin_' . $post_id );
-		if ( ! current_user_can( VINE_FORMS_CAP_MANAGE ) || Vine_Forms_CPT::RSVP !== get_post_type( $post_id ) ) {
-			wp_die( esc_html__( 'You do not have permission to do that.', 'vine-house-forms' ) );
-		}
-		update_post_meta( $post_id, 'vh_checked_in', get_post_meta( $post_id, 'vh_checked_in', true ) ? 0 : 1 );
-		wp_safe_redirect( wp_get_referer() ?: admin_url( 'edit.php?post_type=' . Vine_Forms_CPT::RSVP ) );
-		exit;
 	}
 
 	public static function export_button( string $which ): void {
@@ -174,24 +139,15 @@ final class Vine_Forms_Admin {
 	/** @return array<string, string> meta key => column label */
 	public static function column_map( string $type ): array {
 		switch ( $type ) {
-			case Vine_Forms_CPT::RSVP:
-				return array(
-					'vh_event_title' => __( 'Event', 'vine-house-forms' ),
-					'vh_email'       => __( 'Email', 'vine-house-forms' ),
-					'vh_guests'      => __( 'Guests', 'vine-house-forms' ),
-					'vh_first_time'  => __( 'First visit', 'vine-house-forms' ),
-					'vh_pass_code'   => __( 'Pass', 'vine-house-forms' ),
-					'vh_checked_in'  => __( 'Checked in', 'vine-house-forms' ),
-				);
 			case Vine_Forms_CPT::SUBSCRIBER:
 				return array(
 					'vh_frequency' => __( 'Frequency', 'vine-house-forms' ),
 				);
 			case Vine_Forms_CPT::ENQUIRY:
 				return array(
-					'vh_category' => __( 'Category', 'vine-house-forms' ),
-					'vh_email'    => __( 'Email', 'vine-house-forms' ),
-					'vh_message'  => __( 'Message', 'vine-house-forms' ),
+					'vh_category'        => __( 'Category', 'vine-house-forms' ),
+					'vh_email'           => __( 'Email', 'vine-house-forms' ),
+					'vh_message'         => __( 'Message', 'vine-house-forms' ),
 					'vh_gathering_title' => __( 'Gathering', 'vine-house-forms' ),
 				);
 			case Vine_Forms_CPT::VISIT_PLAN:

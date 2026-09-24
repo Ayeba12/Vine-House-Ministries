@@ -63,7 +63,7 @@ directly.
 | Entity | WP type | Source | Count |
 | --- | --- | --- | --- |
 | Sermon | CPT `sermon` | `INITIAL_SERMONS` | 4 |
-| Event | CPT `church_event` | `INITIAL_EVENTS` | 4 |
+| Event | CPT `church_event` — the events plugin, native meta | `INITIAL_EVENTS` | 4 |
 | Gathering pillar | CPT `gathering` | `GATHERING_PILLARS` | 4 |
 | Testimonial | CPT `testimonial` | `TESTIMONIALS` | 3 |
 | Notice banner | ACF options page | hardcoded in `app/page.tsx` | 1 |
@@ -72,9 +72,11 @@ directly.
 `audio_duration_seconds`, `scripture`, `summary`, `key_takeaways` (repeater),
 `audio_url` (or media), `transcript_snippet`, `tags` (taxonomy), featured image.
 
-**Event** fields: `category` (taxonomy: Worship/Fellowship/Outreach/Study/Youth), `date`,
-`time`, `location`, `room`, `capacity`, `host`, `highlights` (repeater), featured image.
-`rsvpd_count` is **derived** from RSVP records, never authored.
+**Event** fields live in the events plugin's own meta box, not ACF: `category` (taxonomy:
+Worship/Fellowship/Outreach/Study/Youth), date, start and end time, location, room, host,
+online link, highlights, and the booking rules — enabled, capacity, max guests per
+booking, waitlist, opens/closes. `bookedCount` and `remaining` are **derived** from
+bookings, never authored.
 
 **Gathering** fields: `number`, `subtitle`, `timing`, `location`, `tags`.
 
@@ -93,7 +95,20 @@ Decisions worth making deliberately:
 
 ---
 
-## Phase 2 — The `vine-house-forms` plugin
+## Phase 2 — The WordPress plugins
+
+Three plugins, versioned under `wordpress/plugins/` and linked into LocalWP:
+
+| Plugin | Owns |
+| --- | --- |
+| `vine-house-content` | sermons, gatherings, testimonials, site settings — ACF field groups |
+| `vine-house-events` | events and bookings: capacity, waitlist, booking window, pass codes, check-in, attendee emails with `.ics`, day-before reminders, office bookings, CSV export |
+| `vine-house-forms` | newsletter, enquiries, visit plans |
+
+Events are native meta with their own edit-screen box rather than ACF, so the booking
+rules can't be edited away by someone changing a field group. `ChurchEvent` in GraphQL
+carries `eventDate`, `capacity`, `bookedCount`, `remaining` and `bookingStatus`; the
+frontend renders the booking button from that one status field.
 
 Six forms currently submit into React state and vanish on refresh:
 
@@ -106,32 +121,20 @@ Six forms currently submit into React state and vanish on refresh:
 | Contact | `app/contact/page.tsx:298` | category (general/prayer/sacraments/charity), name, email, message |
 | Gathering interest | `app/gatherings/page.tsx:400` | gathering, name, email |
 
-A single plugin owns all of it — one place for capabilities, validation and export, and it
-travels to Bluehost with the site.
+The RSVP form becomes a booking; the other five go to Forms. Both plugins share one
+API-only role, so a single application password serves every endpoint.
 
-**Structure**
+**Endpoints, all under `/wp-json/vine/v1/`**
 
-```
-vine-house-forms/
-├── vine-house-forms.php        bootstrap, activation, capabilities
-├── includes/
-│   ├── class-cpt.php           vh_rsvp, vh_subscriber, vh_enquiry, vh_visit_plan
-│   ├── class-rest.php          POST endpoints under /wp-json/vine/v1/
-│   ├── class-validation.php    sanitisation, required fields, email validation
-│   ├── class-admin.php         list columns, filters, capacity display
-│   ├── class-export.php        CSV export per type
-│   └── class-notify.php        email to the church office on submission
-└── readme.txt
-```
-
-**Endpoints**
-
-| Route | Writes | Notes |
+| Route | Plugin | Notes |
 | --- | --- | --- |
-| `POST /vine/v1/rsvp` | `vh_rsvp` | checks event capacity, generates pass code |
-| `POST /vine/v1/subscribe` | `vh_subscriber` | idempotent on email |
-| `POST /vine/v1/enquiry` | `vh_enquiry` | carries the category |
-| `POST /vine/v1/visit-plan` | `vh_visit_plan` | |
+| `POST /events/{id}/bookings` | events | confirmed or waitlisted by capacity; idempotent per email; returns pass code and cancel token |
+| `GET /events/{id}/availability` | events | status, remaining, max guests |
+| `GET /bookings/{token}` | events | for the "manage my booking" page |
+| `POST /bookings/{token}/cancel` | events | promotes the waitlist |
+| `POST /subscribe` | forms | idempotent on email |
+| `POST /enquiry` | forms | contact and gathering interest, with a category |
+| `POST /visit-plan` | forms | plan-a-visit and visitor pass, returns a pass code |
 
 **Rules that matter**
 
