@@ -235,9 +235,18 @@ content-blocking bug for anyone with the setting on.
 | `.col-rules` / `.col-rules-dark` | four faint vertical rules across the container |
 | `.btn` + `.btn-primary` / `.btn-outline` / `.btn-on-dark` / `.btn-outline-on-dark` | the two button weights, per ground |
 | `.link-arrow` | uppercase text link with a bottom rule, paired with an arrow glyph |
+| `.tab` / `.tab-on-dark` | text tabs: an eyebrow with a rule beneath the selected one |
+| `.field-label` + `.field` / `.field-on-dark` | the underline field: caption label above, hairline beneath, no box |
+| `.chip` | a tinted pill naming an applied filter, or a static tag |
+| `.tile` | a quiet block on the tint ground, hairline on hover |
 
 Semantic colours are also Tailwind utilities (`bg-surface`, `text-ink-muted`, `border-hairline`,
 `text-accent-on-dark`...). A component that writes a hex value is a defect.
+
+The design system artifact carries these same primitives as live React components
+(`window.VineHouse`: Button, LinkArrow, Eyebrow, SectionHeader, Facts, Tabs, Chip, Input,
+SearchField, Select, Tile, Card), hand-written from this file and `components/ui/`, each with
+a preview and a usage note. A change here is a change there, and the other way round.
 
 `components/ui/Reveal.tsx` is the only scroll reveal. It renders a plain element under
 `prefers-reduced-motion`; anything else that animates calls `useReducedMotion()` itself.
