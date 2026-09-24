@@ -1,28 +1,72 @@
 @import "tailwindcss";
 
 @theme {
-  --font-anton: 'Anton', Impact, sans-serif;
-  --font-dm-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Type faces are loaded by next/font in app/layout.tsx, which sets
+     --font-anton-src / --font-dm-sans-src on <html>. */
+  --font-anton: var(--font-anton-src), Impact, 'Haettenschweiler', sans-serif;
+  --font-dm-sans: var(--font-dm-sans-src), -apple-system, BlinkMacSystemFont, sans-serif;
 
-  /* Brand Color Palette */
+  /* ---- Colour primitives (raw brand values, never used directly in components) ---- */
   --color-sanctuary-olive: #2C3E2D;
   --color-warm-sand: #F9F7F2;
   --color-deep-slate: #1E242B;
   --color-muted-sage: #8A9A86;
   --color-soft-honey: #D4A373;
+
+  /* Light-ground variants. The raw sage and honey fail WCAG AA on warm sand
+     (2.78:1 and 2.11:1); these are the darkened equivalents that pass. */
+  --color-sage-ink: #667662;        /* 4.53:1 on warm sand - body text */
+  --color-sage-ink-large: #82937E;  /* 3.05:1 on warm sand - 24px+ only */
+  --color-honey-ink: #9B6530;       /* 4.56:1 on warm sand - body text */
+  --color-honey-ink-large: #C4803E; /* 3.02:1 on warm sand - 24px+ only */
 }
 
 @layer base {
   :root {
-    --font-anton: 'Anton', Impact, sans-serif;
-    --font-dm-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    
-    /* Brand Color Palette */
-    --color-sanctuary-olive: #2C3E2D;
-    --color-warm-sand: #F9F7F2;
-    --color-deep-slate: #1E242B;
-    --color-muted-sage: #8A9A86;
-    --color-soft-honey: #D4A373;
+    /* ---- Fluid type scale ----------------------------------------------
+       Minor third (1.2) at 320px growing to a perfect fourth (1.333) at
+       1280px, so mobile stays readable while display sizes stay dramatic.
+       Consumed by the .scale-step-* utilities below.                      */
+    --type-step-minus-1: clamp(0.8333rem, 0.8299rem + 0.0174vw, 0.8438rem); /* 13.3 -> 13.5px */
+    --type-step-0:       clamp(1.0000rem, 0.9583rem + 0.2083vw, 1.1250rem); /* 16.0 -> 18.0px */
+    --type-step-1:       clamp(1.2000rem, 1.1000rem + 0.4999vw, 1.5000rem); /* 19.2 -> 24.0px */
+    --type-step-2:       clamp(1.4400rem, 1.2534rem + 0.9332vw, 2.0000rem); /* 23.0 -> 32.0px */
+    --type-step-3:       clamp(1.7280rem, 1.4152rem + 1.5641vw, 2.6665rem); /* 27.6 -> 42.7px */
+    --type-step-4:       clamp(2.0736rem, 1.5797rem + 2.4693vw, 3.5552rem); /* 33.2 -> 56.9px */
+    --type-step-5:       clamp(2.4883rem, 1.7377rem + 3.7530vw, 4.7401rem); /* 39.8 -> 75.8px */
+    --type-step-6:       clamp(2.9860rem, 1.8746rem + 5.5568vw, 6.3200rem); /* 47.8 -> 101.1px */
+    --type-step-7:       clamp(3.5832rem, 1.9687rem + 8.0722vw, 8.4265rem); /* 57.3 -> 134.8px */
+
+    /* ---- Semantic colour tokens ----------------------------------------
+       Named by the ground they sit on. Accents are split because soft honey
+       and muted sage only reach AA contrast against the dark grounds.      */
+
+    /* Light ground (warm sand / white surfaces) */
+    --surface-light: #F9F7F2;
+    --surface-light-raised: #FFFFFF;
+    --surface-light-tint: #F3EFE6;
+    --ink-on-light: #1E242B;          /* 14.61:1 */
+    --ink-on-light-strong: #2C3E2D;   /* 10.69:1 */
+    --ink-on-light-muted: #667662;    /*  4.53:1 */
+    --accent-on-light: #9B6530;       /*  4.56:1 */
+    --accent-on-light-large: #C4803E; /*  3.02:1 - 24px and above only */
+    --border-on-light: rgba(138, 154, 134, 0.35);
+
+    /* Dark ground (olive / slate monoliths) */
+    --surface-dark: #2C3E2D;
+    --surface-dark-deep: #1E242B;
+    --ink-on-dark: #F9F7F2;           /* 14.61:1 on slate, 10.69:1 on olive */
+    --ink-on-dark-muted: #8A9A86;     /*  3.84:1 on olive - large text only */
+    --accent-on-dark: #D4A373;        /*  5.06:1 on olive, 6.92:1 on slate */
+    --border-on-dark: rgba(212, 163, 115, 0.25);
+
+    /* ---- Motion --------------------------------------------------------
+       Components read --motion-duration-* so a single media query below can
+       neutralise every transition at once.                                 */
+    --motion-duration-fast: 150ms;
+    --motion-duration-base: 250ms;
+    --motion-duration-slow: 600ms;
+    --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   html {
@@ -152,4 +196,30 @@ input[type="range"]::-webkit-slider-thumb {
 .dark input[type="range"]::-webkit-slider-thumb {
   background: #D4A373;
   border: 2px solid #F9F7F2;
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion
+   Honours the OS setting for every CSS transition, animation and smooth
+   scroll. JS-driven reveals additionally read useReducedMotion() from motion.
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-fast: 0.01ms;
+    --motion-duration-base: 0.01ms;
+    --motion-duration-slow: 0.01ms;
+  }
+
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
