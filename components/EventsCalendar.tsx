@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { ChurchEvent } from '@/lib/types';
 import { Reveal } from '@/components/ui/Reveal';
@@ -41,7 +42,13 @@ export function EventsCalendar({ events, onOpenRsvp }: EventsCalendarProps) {
           </p>
           <h2 className="font-anton scale-step-h2 mt-4 uppercase text-ink-strong">Sacred gatherings</h2>
         </div>
-        <p className="meta text-ink-muted">Book a place / Sanctuary seating / 2026</p>
+        <div className="flex flex-col items-start gap-3 md:items-end">
+          <p className="meta text-ink-muted">Book a place / Sanctuary seating / 2026</p>
+          <Link href="/events" className="link-arrow text-ink-strong">
+            <span>All events</span>
+            <ArrowUpRight className="size-3.5" />
+          </Link>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-x-7 gap-y-2 py-6" role="tablist" aria-label="Event category">
