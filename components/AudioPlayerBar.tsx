@@ -2,18 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Play, 
-  Pause, 
-  RotateCcw, 
-  RotateCw, 
-  FileText, 
-  Download, 
-  Share2, 
-  X,
-  ListOrdered
-} from 'lucide-react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { Play, Pause, RotateCcw, RotateCw, Share2, X } from 'lucide-react';
 import { Sermon } from '@/lib/types';
 
 interface AudioPlayerBarProps {
@@ -25,348 +15,177 @@ interface AudioPlayerBarProps {
   allSermons: Sermon[];
 }
 
-export function AudioPlayerBar({
-  sermon,
-  isPlaying,
-  onTogglePlay,
-  onClose,
-  onSelectSermon,
-  allSermons
-}: AudioPlayerBarProps) {
+const RATES = [1, 1.25, 1.5, 2];
+
+/**
+ * The docked player: a full-width slate bar with a hairline above it.
+ * Playback position is simulated with a timer until sermon audio is served
+ * from WordPress; the controls, notes and episode list are real.
+ */
+export function AudioPlayerBar({ sermon, isPlaying, onTogglePlay, onClose, onSelectSermon, allSermons }: AudioPlayerBarProps) {
+  const reduceMotion = useReducedMotion();
   const [currentTime, setCurrentTime] = useState(145);
-  const [playbackRate, setPlaybackRate] = useState<number>(1.0);
-  const [showTranscript, setShowTranscript] = useState<boolean>(false);
-  const [showPlaylist, setShowPlaylist] = useState<boolean>(false);
-  const [copiedLink, setCopiedLink] = useState<boolean>(false);
-  const [downloadedNote, setDownloadedNote] = useState<boolean>(false);
+  const [rate, setRate] = useState(1);
+  const [panel, setPanel] = useState<'notes' | 'episodes' | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    let interval: any;
-    if (isPlaying && sermon) {
-      interval = setInterval(() => {
-        setCurrentTime((prev) => {
-          if (prev >= sermon.audioDurationSeconds) {
-            return 0;
-          }
-          return prev + 1;
-        });
-      }, 1000 / playbackRate);
-    }
-    return () => clearInterval(interval);
-  }, [isPlaying, sermon, playbackRate]);
+    if (!isPlaying || !sermon) return;
+    const id = setInterval(() => {
+      setCurrentTime((t) => (t >= sermon.audioDurationSeconds ? 0 : t + 1));
+    }, 1000 / rate);
+    return () => clearInterval(id);
+  }, [isPlaying, sermon, rate]);
 
   if (!sermon) return null;
 
-  const formatSeconds = (sec: number) => {
-    const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 60);
-    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  const fmt = (sec: number) => `${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).padStart(2, '0')}`;
+  const cycleRate = () => setRate(RATES[(RATES.indexOf(rate) + 1) % RATES.length]);
+  const share = () => {
+    navigator.clipboard?.writeText(`${window.location.origin}/sermons#${sermon.id}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentTime(Number(e.target.value));
-  };
-
-  const togglePlaybackRate = () => {
-    const rates = [1.0, 1.25, 1.5, 2.0];
-    const nextIdx = (rates.indexOf(playbackRate) + 1) % rates.length;
-    setPlaybackRate(rates[nextIdx]);
-  };
-
-  const handleShare = () => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(`${window.location.origin}#sermons-${sermon.id}`);
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 2500);
-    }
-  };
-
-  const handleDownloadNotes = () => {
-    setDownloadedNote(true);
-    setTimeout(() => setDownloadedNote(false), 3000);
-  };
+  const panelMotion = reduceMotion
+    ? {}
+    : { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 12 }, transition: { duration: 0.25 } };
 
   return (
     <>
-      {/* Persistent Docked Audio Player */}
       <motion.div
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 100, opacity: 0 }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
         id="docked-sermon-player"
-        className="fixed bottom-3 sm:bottom-6 left-3 right-3 sm:left-6 sm:right-6 max-w-7xl mx-auto z-50 bg-[#1E242B] text-[#F9F7F2] rounded-xl border border-[#8A9A86]/30 p-3.5 sm:p-4 shadow-2xl backdrop-blur-xl font-sans"
+        initial={reduceMotion ? false : { y: 80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-hairline-dark bg-surface-deep text-ink-on-dark"
       >
-        <div className="flex flex-col gap-2">
-          
-          {/* Top Row: Sermon info & Main controls */}
-          <div className="flex items-center justify-between gap-3">
-            
-            {/* Left: Thumbnail & Info */}
-            <div className="flex items-center gap-3 min-w-0 flex-1">
-              <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden bg-[#2C3E2D] shrink-0 border border-white/10">
-                <Image 
-                  src={sermon.imageUrl} 
-                  alt={sermon.title}
-                  fill
-                  className="object-cover"
-                  referrerPolicy="no-referrer"
-                />
-                {isPlaying && (
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-0.5">
-                    <span className="w-1 h-3 bg-[#D4A373] animate-pulse" />
-                    <span className="w-1 h-5 bg-[#D4A373] animate-pulse delay-75" />
-                    <span className="w-1 h-2 bg-[#D4A373] animate-pulse delay-150" />
-                  </div>
-                )}
-              </div>
-
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-sans uppercase tracking-wider text-[#D4A373] bg-[#D4A373]/15 px-2 py-0.5 rounded-md border border-[#D4A373]/30 font-bold">
-                    {sermon.scripture}
-                  </span>
-                  <span className="text-xs font-sans text-[#F9F7F2]/60 hidden md:inline">
-                    {sermon.series}
-                  </span>
-                </div>
-                <h4 className="font-anton text-base sm:text-lg uppercase text-[#F9F7F2] truncate tracking-wide mt-0.5">
-                  {sermon.title}
-                </h4>
-                <p className="text-xs font-sans text-[#F9F7F2]/75 truncate hidden sm:block">
-                  {sermon.speaker} • {sermon.date}
-                </p>
-              </div>
+        <div className="mx-auto flex max-w-[1440px] flex-col gap-3 px-5 py-3 sm:px-8 lg:px-12">
+          <div className="flex items-center gap-4">
+            <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-md bg-surface-dark sm:h-12 sm:w-12">
+              <Image src={sermon.imageUrl} alt="" fill sizes="48px" className="object-cover" referrerPolicy="no-referrer" />
             </div>
 
-            {/* Center: Playback buttons (No pill shapes) */}
-            <div className="flex items-center gap-2 sm:gap-3">
-              {/* Skip -15s */}
-              <button
-                onClick={() => setCurrentTime(Math.max(0, currentTime - 15))}
-                className="p-2 text-[#F9F7F2]/70 hover:text-[#F9F7F2] hover:bg-white/10 rounded-lg transition-colors hidden sm:block cursor-pointer"
-                title="Rewind 15 seconds"
-              >
-                <RotateCcw className="w-4 h-4" />
-              </button>
+            <div className="min-w-0 flex-1">
+              <p className="eyebrow truncate text-accent-on-dark">
+                {sermon.scripture} <span className="hidden text-ink-on-dark-muted sm:inline">· {sermon.series}</span>
+              </p>
+              <p className="font-anton scale-step-lead truncate text-ink-on-dark">{sermon.title}</p>
+              <p className="meta hidden truncate text-ink-on-dark-muted sm:block">
+                {sermon.speaker} · {sermon.date}
+              </p>
+            </div>
 
-              {/* Main Play/Pause */}
+            <div className="flex items-center gap-1 sm:gap-2">
+              <button onClick={() => setCurrentTime((t) => Math.max(0, t - 15))} className="hidden p-2 text-ink-on-dark-muted transition-colors hover:text-ink-on-dark sm:block" aria-label="Back 15 seconds">
+                <RotateCcw className="h-4 w-4" />
+              </button>
               <button
                 id="btn-player-play-pause"
                 onClick={onTogglePlay}
-                className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#D4A373] text-[#1E242B] flex items-center justify-center hover:bg-[#c69464] active:scale-95 transition-all shadow-md cursor-pointer"
-                aria-label={isPlaying ? 'Pause sermon' : 'Play sermon'}
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-accent-on-dark text-ink transition-transform hover:scale-105"
+                aria-label={isPlaying ? 'Pause' : 'Play'}
               >
-                {isPlaying ? (
-                  <Pause className="w-5 h-5 fill-[#1E242B]" />
-                ) : (
-                  <Play className="w-5 h-5 fill-[#1E242B] ml-0.5" />
-                )}
+                {isPlaying ? <Pause className="h-4 w-4 fill-current" /> : <Play className="ml-0.5 h-4 w-4 fill-current" />}
               </button>
-
-              {/* Skip +15s */}
-              <button
-                onClick={() => setCurrentTime(Math.min(sermon.audioDurationSeconds, currentTime + 15))}
-                className="p-2 text-[#F9F7F2]/70 hover:text-[#F9F7F2] hover:bg-white/10 rounded-lg transition-colors hidden sm:block cursor-pointer"
-                title="Forward 15 seconds"
-              >
-                <RotateCw className="w-4 h-4" />
+              <button onClick={() => setCurrentTime((t) => Math.min(sermon.audioDurationSeconds, t + 15))} className="hidden p-2 text-ink-on-dark-muted transition-colors hover:text-ink-on-dark sm:block" aria-label="Forward 15 seconds">
+                <RotateCw className="h-4 w-4" />
               </button>
             </div>
 
-            {/* Right: Auxiliary tools */}
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              
-              {/* Playback speed toggle */}
-              <button
-                onClick={togglePlaybackRate}
-                className="px-2.5 py-1.5 bg-white/10 hover:bg-white/20 text-[#F9F7F2] rounded-lg text-xs font-sans font-medium transition-colors cursor-pointer"
-                title="Toggle playback speed"
-              >
-                {playbackRate}x
+            <div className="flex items-center gap-4 sm:gap-6">
+              <button onClick={cycleRate} className="tab tab-on-dark" aria-label={`Playback speed ${rate}x`}>
+                {rate}×
               </button>
-
-              {/* Transcript Drawer Button */}
-              <button
-                onClick={() => setShowTranscript(!showTranscript)}
-                className={`p-2 rounded-lg transition-colors hidden md:flex items-center gap-1 text-xs font-sans cursor-pointer ${
-                  showTranscript ? 'bg-[#D4A373] text-[#1E242B] font-bold' : 'bg-white/10 hover:bg-white/20 text-[#F9F7F2]'
-                }`}
-                title="View Scripture Notes & Transcript"
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>Notes</span>
+              <button onClick={() => setPanel(panel === 'notes' ? null : 'notes')} className="tab tab-on-dark hidden md:block" aria-selected={panel === 'notes'} role="tab">
+                Notes
               </button>
-
-              {/* Playlist drawer toggle */}
-              <button
-                onClick={() => setShowPlaylist(!showPlaylist)}
-                className={`p-2 rounded-lg transition-colors hidden lg:flex items-center gap-1 text-xs font-sans cursor-pointer ${
-                  showPlaylist ? 'bg-[#D4A373] text-[#1E242B] font-bold' : 'bg-white/10 hover:bg-white/20 text-[#F9F7F2]'
-                }`}
-                title="More Sermon Episodes"
-              >
-                <ListOrdered className="w-3.5 h-3.5" />
-                <span>Episodes</span>
+              <button onClick={() => setPanel(panel === 'episodes' ? null : 'episodes')} className="tab tab-on-dark hidden lg:block" aria-selected={panel === 'episodes'} role="tab">
+                Episodes
               </button>
-
-              {/* Share Sermon */}
-              <button
-                onClick={handleShare}
-                className="p-2 text-[#F9F7F2]/70 hover:text-[#F9F7F2] hover:bg-white/10 rounded-lg transition-colors relative cursor-pointer"
-                title="Share this sermon"
-              >
-                <Share2 className="w-4 h-4" />
-                {copiedLink && (
-                  <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#D4A373] text-[#1E242B] font-bold text-xs px-2 py-0.5 rounded shadow whitespace-nowrap font-sans">
-                    Link Copied!
-                  </span>
-                )}
+              <button onClick={share} className="relative p-1 text-ink-on-dark-muted transition-colors hover:text-ink-on-dark" aria-label="Copy link">
+                <Share2 className="h-4 w-4" />
+                {copied && <span className="eyebrow absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap text-accent-on-dark">Copied</span>}
               </button>
-
-              {/* Close Bar */}
-              <button
-                onClick={onClose}
-                className="p-2 text-[#F9F7F2]/50 hover:text-[#F9F7F2] hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
-                title="Close player"
-              >
-                <X className="w-4 h-4" />
+              <button onClick={onClose} className="p-1 text-ink-on-dark-muted transition-colors hover:text-ink-on-dark" aria-label="Close player">
+                <X className="h-4 w-4" />
               </button>
             </div>
           </div>
 
-          {/* Bottom Row: Scrubber Timeline */}
-          <div className="flex items-center gap-3 px-1">
-            <span className="text-xs font-sans text-[#F9F7F2]/60 w-10 text-right">
-              {formatSeconds(currentTime)}
-            </span>
-
-            {/* Custom Range Scrubber */}
-            <div className="relative flex-1 flex items-center group">
-              <input
-                type="range"
-                min={0}
-                max={sermon.audioDurationSeconds}
-                value={currentTime}
-                onChange={handleSeek}
-                className="w-full h-1.5 bg-[#8A9A86]/30 rounded-lg appearance-none cursor-pointer accent-[#D4A373] hover:h-2 transition-all"
-              />
-            </div>
-
-            <span className="text-xs font-sans text-[#F9F7F2]/60 w-10">
-              {formatSeconds(sermon.audioDurationSeconds)}
-            </span>
+          <div className="flex items-center gap-3">
+            <span className="meta w-10 text-right text-ink-on-dark-muted">{fmt(currentTime)}</span>
+            <input
+              type="range"
+              min={0}
+              max={sermon.audioDurationSeconds}
+              value={currentTime}
+              onChange={(e) => setCurrentTime(Number(e.target.value))}
+              className="h-1 w-full cursor-pointer appearance-none rounded-full bg-hairline-dark accent-[#D4A373]"
+              aria-label="Seek"
+            />
+            <span className="meta w-10 text-ink-on-dark-muted">{fmt(sermon.audioDurationSeconds)}</span>
           </div>
         </div>
       </motion.div>
 
-      {/* Transcript & Scripture Notes Slide-Over Drawer */}
       <AnimatePresence>
-        {showTranscript && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 50, scale: 0.95 }}
-            className="fixed bottom-24 sm:bottom-28 right-4 sm:right-8 max-w-lg w-full max-h-[70vh] bg-[#1E242B] text-[#F9F7F2] rounded-xl border border-[#8A9A86]/30 p-6 shadow-2xl z-50 overflow-y-auto font-sans"
-          >
-            <div className="flex items-center justify-between pb-4 border-b border-[#8A9A86]/20 mb-4">
+        {panel === 'notes' && (
+          <motion.aside {...panelMotion} className="fixed bottom-28 right-5 z-50 max-h-[65vh] w-full max-w-md overflow-y-auto rounded-xl bg-surface-dark p-6 text-ink-on-dark ring-1 ring-hairline-dark sm:right-8">
+            <div className="flex items-start justify-between gap-4 border-b border-hairline-dark pb-4">
               <div>
-                <span className="text-xs font-sans text-[#D4A373] uppercase tracking-widest block font-bold">
-                  Scripture &amp; Study Notes
-                </span>
-                <h3 className="font-anton text-xl uppercase tracking-wide text-[#F9F7F2]">{sermon.title}</h3>
+                <p className="eyebrow text-accent-on-dark">Scripture &amp; study notes</p>
+                <p className="font-anton scale-step-h5 mt-1 text-ink-on-dark">{sermon.title}</p>
               </div>
-              <button 
-                onClick={() => setShowTranscript(false)}
-                className="p-1.5 text-[#F9F7F2]/60 hover:text-[#F9F7F2] rounded-lg cursor-pointer"
-              >
-                <X className="w-5 h-5" />
+              <button onClick={() => setPanel(null)} className="p-1 text-ink-on-dark-muted hover:text-ink-on-dark" aria-label="Close notes">
+                <X className="h-4 w-4" />
               </button>
             </div>
-
-            <div className="space-y-4 text-sm text-[#F9F7F2]/85 font-sans">
-              <div className="p-4 rounded-lg bg-[#2C3E2D]/60 border border-[#8A9A86]/30">
-                <span className="font-sans text-xs text-[#D4A373] uppercase block mb-1 font-bold">Key Biblical Anchor</span>
-                <p className="text-[#F9F7F2] font-medium italic">{sermon.scripture}</p>
-                <p className="mt-2 text-xs sm:text-sm text-[#F9F7F2]/80 leading-relaxed">{sermon.summary}</p>
-              </div>
-
-              <div>
-                <h4 className="text-xs font-sans uppercase tracking-wider text-[#D4A373] font-bold mb-2">Key Pastoral Takeaways:</h4>
-                <ul className="space-y-2 text-xs sm:text-sm">
-                  {sermon.keyTakeaways.map((point, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <span className="text-[#D4A373] font-sans font-bold">0{idx + 1}.</span>
-                      <span>{point}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="text-xs font-sans uppercase tracking-wider text-[#D4A373] font-bold mb-1">Message Transcript Snippet:</h4>
-                <p className="text-xs sm:text-sm text-[#F9F7F2]/85 italic bg-black/25 p-3.5 rounded-lg border border-white/10 leading-relaxed">
-                  &ldquo;{sermon.transcriptSnippet}&rdquo;
-                </p>
-              </div>
-
-              <div className="pt-2 flex items-center justify-between">
-                <button
-                  onClick={handleDownloadNotes}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-[#D4A373] text-[#1E242B] rounded-lg text-xs font-bold hover:bg-[#c69464] transition-colors active:scale-95 cursor-pointer"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>{downloadedNote ? 'Study Guide Downloaded!' : 'Download Study Guide PDF'}</span>
-                </button>
-                <span className="text-xs font-sans text-[#8A9A86]">Vine House Media</span>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Playlist Drawer */}
-      <AnimatePresence>
-        {showPlaylist && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 50, scale: 0.95 }}
-            className="fixed bottom-24 sm:bottom-28 left-4 sm:left-8 max-w-md w-full max-h-[60vh] bg-[#1E242B] text-[#F9F7F2] rounded-xl border border-[#8A9A86]/30 p-5 shadow-2xl z-50 overflow-y-auto font-sans"
-          >
-            <div className="flex items-center justify-between pb-3 border-b border-[#8A9A86]/20 mb-3">
-              <span className="font-anton text-lg uppercase tracking-wide text-[#F9F7F2]">Sermon Episodes</span>
-              <button 
-                onClick={() => setShowPlaylist(false)}
-                className="p-1 text-[#F9F7F2]/60 hover:text-[#F9F7F2] rounded-lg cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="space-y-2">
-              {allSermons.map((s) => (
-                <div
-                  key={s.id}
-                  onClick={() => {
-                    onSelectSermon(s);
-                    setShowPlaylist(false);
-                  }}
-                  className={`p-2.5 rounded-lg cursor-pointer transition-all flex items-center gap-3 ${
-                    s.id === sermon.id ? 'bg-[#2C3E2D] border border-[#D4A373]/40' : 'hover:bg-white/5 border border-transparent'
-                  }`}
-                >
-                  <div className="w-8 h-8 rounded-md bg-[#2C3E2D] flex items-center justify-center text-xs font-sans font-bold shrink-0 text-[#D4A373]">
-                    {s.id === sermon.id ? <Play className="w-3.5 h-3.5 fill-[#D4A373] text-[#D4A373]" /> : 'EP'}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs font-anton uppercase text-[#F9F7F2] truncate">{s.title}</p>
-                    <p className="text-xs text-[#F9F7F2]/60 font-sans">{s.speaker} • {s.duration}</p>
-                  </div>
-                </div>
+            <p className="meta mt-4 text-accent-on-dark">{sermon.scripture}</p>
+            <p className="scale-step-body mt-2 text-ink-on-dark/85">{sermon.summary}</p>
+            <ol className="mt-5 divide-y divide-hairline-dark border-y border-hairline-dark">
+              {sermon.keyTakeaways.map((point, idx) => (
+                <li key={idx} className="meta grid grid-cols-[2rem_1fr] gap-x-3 py-3 text-ink-on-dark/90">
+                  <span className="text-ink-on-dark-muted">0{idx + 1}</span>
+                  <span>{point}</span>
+                </li>
               ))}
+            </ol>
+            <blockquote className="meta mt-5 text-ink-on-dark-muted">&ldquo;{sermon.transcriptSnippet}&rdquo;</blockquote>
+          </motion.aside>
+        )}
+
+        {panel === 'episodes' && (
+          <motion.aside {...panelMotion} className="fixed bottom-28 left-5 z-50 max-h-[60vh] w-full max-w-md overflow-y-auto rounded-xl bg-surface-dark p-6 text-ink-on-dark ring-1 ring-hairline-dark sm:left-8">
+            <div className="flex items-center justify-between border-b border-hairline-dark pb-4">
+              <p className="eyebrow text-accent-on-dark">Episodes</p>
+              <button onClick={() => setPanel(null)} className="p-1 text-ink-on-dark-muted hover:text-ink-on-dark" aria-label="Close episodes">
+                <X className="h-4 w-4" />
+              </button>
             </div>
-          </motion.div>
+            <ol className="divide-y divide-hairline-dark">
+              {allSermons.map((s, idx) => {
+                const current = s.id === sermon.id;
+                return (
+                  <li key={s.id}>
+                    <button
+                      onClick={() => {
+                        onSelectSermon(s);
+                        setPanel(null);
+                      }}
+                      className="grid w-full grid-cols-[2rem_1fr] gap-x-3 py-3 text-left transition-opacity hover:opacity-80"
+                    >
+                      <span className="meta pt-0.5 text-ink-on-dark-muted">{current ? <Play className="h-3 w-3 fill-current text-accent-on-dark" /> : `0${idx + 1}`}</span>
+                      <span>
+                        <span className={`block font-sans text-sm font-semibold ${current ? 'text-accent-on-dark' : 'text-ink-on-dark'}`}>{s.title}</span>
+                        <span className="meta block text-ink-on-dark-muted">{s.speaker} · {s.duration}</span>
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+          </motion.aside>
         )}
       </AnimatePresence>
     </>

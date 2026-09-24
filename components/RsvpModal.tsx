@@ -1,19 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { 
-  X, 
-  CheckCircle2, 
-  Calendar, 
-  Clock, 
-  MapPin, 
-  QrCode, 
-  User, 
-  Mail, 
-  Phone, 
-  Users
-} from 'lucide-react';
+import { motion, useReducedMotion } from 'motion/react';
+import { ArrowUpRight, X } from 'lucide-react';
 import { ChurchEvent, RSVPRecord } from '@/lib/types';
 
 interface RsvpModalProps {
@@ -22,303 +11,186 @@ interface RsvpModalProps {
   onConfirmRsvp: (rsvp: RSVPRecord) => void;
 }
 
+/**
+ * Booking a place: a dark header carrying the event, an underline form, and
+ * on confirmation the pass itself, set large enough to read at the door.
+ * Submission is simulated until the events plugin endpoint is wired in.
+ */
 export function RsvpModal({ event, onClose, onConfirmRsvp }: RsvpModalProps) {
-  const [formData, setFormData] = useState({
+  const reduceMotion = useReducedMotion();
+  const [form, setForm] = useState({
     name: '',
     email: '',
     phone: '',
     guestsCount: 1,
     isFirstTimeVisitor: false,
-    notes: ''
+    notes: '',
   });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [confirmedPass, setConfirmedPass] = useState<RSVPRecord | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [confirmed, setConfirmed] = useState<RSVPRecord | null>(null);
 
   if (!event) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email) return;
-
-    setIsSubmitting(true);
+    if (!form.name || !form.email) return;
+    setSubmitting(true);
     setTimeout(() => {
-      const passId = `VH-${Math.floor(1000 + Math.random() * 9000)}-${event.category.toUpperCase().slice(0, 3)}`;
-      const newRsvp: RSVPRecord = {
+      const record: RSVPRecord = {
         id: `rsvp-${Date.now()}`,
         eventId: event.id,
         eventTitle: event.title,
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone || 'N/A',
-        guestsCount: Number(formData.guestsCount),
-        isFirstTimeVisitor: formData.isFirstTimeVisitor,
-        notes: formData.notes,
+        name: form.name,
+        email: form.email,
+        phone: form.phone || 'N/A',
+        guestsCount: Number(form.guestsCount),
+        isFirstTimeVisitor: form.isFirstTimeVisitor,
+        notes: form.notes,
         createdAt: new Date().toLocaleString(),
-        qrPassCode: passId,
-        checkedIn: false
+        qrPassCode: `VH-${Math.floor(1000 + Math.random() * 9000)}-${event.category.toUpperCase().slice(0, 3)}`,
+        checkedIn: false,
       };
-
-      onConfirmRsvp(newRsvp);
-      setConfirmedPass(newRsvp);
-      setIsSubmitting(false);
+      onConfirmRsvp(record);
+      setConfirmed(record);
+      setSubmitting(false);
     }, 600);
   };
 
-  const handleDownloadCalendar = () => {
-    const icsContent = `BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Vine House Ministries//Contemporary Sanctuary//EN
-BEGIN:VEVENT
-SUMMARY:${event.title}
-DESCRIPTION:${event.description}\\nHost: ${event.host}
-LOCATION:${event.location} - ${event.room}
-STATUS:CONFIRMED
-END:VEVENT
-END:VCALENDAR`;
-
-    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8;' });
+  const downloadCalendar = () => {
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Vine House Ministries//Events//EN',
+      'BEGIN:VEVENT',
+      `SUMMARY:${event.title}`,
+      `DESCRIPTION:${event.description}\\nHost: ${event.host}`,
+      `LOCATION:${event.location} - ${event.room}`,
+      'STATUS:CONFIRMED',
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\n');
     const link = document.createElement('a');
-    link.href = window.URL.createObjectURL(blob);
-    link.setAttribute('download', `${event.title.replace(/[^a-zA-Z0-9]/g, '_')}.ics`);
+    link.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8;' }));
+    link.download = `${event.title.replace(/[^a-zA-Z0-9]/g, '_')}.ics`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md overflow-y-auto font-sans">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-surface-deep/80 p-4 backdrop-blur-sm sm:items-center sm:p-6">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="bg-[#F9F7F2] text-[#1E242B] max-w-xl w-full rounded-2xl border border-[#8A9A86]/30 p-6 sm:p-8 shadow-2xl relative my-8"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="rsvp-title"
+        initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        className="relative my-6 w-full max-w-2xl overflow-hidden rounded-xl bg-surface text-ink"
       >
-        <button
-          onClick={onClose}
-          className="absolute top-5 right-5 p-2 text-[#1E242B]/60 hover:text-[#1E242B] rounded-lg hover:bg-black/5 transition-colors cursor-pointer"
-          aria-label="Close modal"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        <div className="bg-surface-dark p-6 text-ink-on-dark sm:p-8">
+          <button
+            onClick={onClose}
+            className="absolute right-5 top-5 p-1 text-ink-on-dark-muted transition-colors hover:text-ink-on-dark"
+            aria-label="Close"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <p className="eyebrow text-accent-on-dark">{confirmed ? 'Confirmed' : 'Book a place'}</p>
+          <h2 id="rsvp-title" className="font-anton scale-step-h4 mt-2 pr-10 text-ink-on-dark">
+            {event.title}
+          </h2>
+          <dl className="meta mt-4 flex flex-wrap gap-x-6 gap-y-1 text-ink-on-dark-muted">
+            <div className="flex gap-2"><dt className="sr-only">Date</dt><dd className="text-ink-on-dark">{event.date}</dd></div>
+            <div className="flex gap-2"><dt className="sr-only">Time</dt><dd>{event.time}</dd></div>
+            <div className="flex gap-2"><dt className="sr-only">Place</dt><dd>{event.location} · {event.room}</dd></div>
+            <div className="flex gap-2"><dt className="sr-only">Host</dt><dd>Hosted by {event.host}</dd></div>
+          </dl>
+        </div>
 
-        {!confirmedPass ? (
-          <div>
-            {/* Header & Event Overview */}
-            <div className="mb-6">
-              <span className="font-sans text-xs uppercase tracking-widest text-[#F9F7F2] font-bold bg-[#2C3E2D] px-3 py-1 rounded-md inline-block">
-                Event RSVP Registration
-              </span>
-              <h3 className="font-anton text-2xl sm:text-3xl uppercase tracking-tight text-[#2C3E2D] mt-2.5 leading-tight">
-                {event.title}
-              </h3>
-              <p className="font-sans text-xs sm:text-sm text-[#1E242B]/75 mt-1">
-                Hosted by {event.host}
-              </p>
-            </div>
-
-            {/* Event Time & Room Box */}
-            <div className="p-4 bg-white rounded-xl border border-[#8A9A86]/20 mb-6 grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs sm:text-sm font-sans">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-[#D4A373] shrink-0" />
-                <span className="text-[#1E242B] font-medium">{event.date}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-[#D4A373] shrink-0" />
-                <span className="text-[#1E242B] font-medium">{event.time}</span>
-              </div>
-              <div className="flex items-center gap-2 sm:col-span-2 text-[#1E242B]/85">
-                <MapPin className="w-4 h-4 text-[#2C3E2D] shrink-0" />
-                <span>{event.location} • {event.room}</span>
-              </div>
-            </div>
-
-            {/* RSVP Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="p-6 sm:p-8">
+          {confirmed ? (
+            <div className="flex flex-col gap-6">
               <div>
-                <label className="block text-xs font-sans uppercase tracking-wider text-[#1E242B]/80 font-semibold mb-1">
-                  Full Name *
-                </label>
-                <div className="relative">
-                  <User className="w-4 h-4 text-[#8A9A86] absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Samuel Adebayo"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#8A9A86]/30 rounded-lg text-sm text-[#1E242B] focus:outline-none focus:border-[#2C3E2D]"
-                  />
-                </div>
+                <h3 className="font-anton scale-step-h5 text-ink-strong">We look forward to welcoming you.</h3>
+                <p className="scale-step-body mt-2 text-ink/85">
+                  A confirmation is on its way to <strong>{confirmed.email}</strong>.
+                </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-sans uppercase tracking-wider text-[#1E242B]/80 font-semibold mb-1">
-                    Email Address *
-                  </label>
-                  <div className="relative">
-                    <Mail className="w-4 h-4 text-[#8A9A86] absolute left-3.5 top-1/2 -translate-y-1/2" />
-                    <input
-                      type="email"
-                      required
-                      placeholder="you@domain.com"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full pl-10 pr-3 py-2.5 bg-white border border-[#8A9A86]/30 rounded-lg text-sm text-[#1E242B] focus:outline-none focus:border-[#2C3E2D]"
-                    />
+              <div className="rounded-xl bg-surface-dark p-6 text-ink-on-dark">
+                <div className="flex items-start justify-between gap-4 border-b border-hairline-dark pb-4">
+                  <div>
+                    <p className="font-anton scale-step-lead text-ink-on-dark">Vine House Ministries</p>
+                    <p className="meta text-ink-on-dark-muted">Sanctuary pass</p>
                   </div>
+                  <p className="meta text-ink-on-dark-muted">{confirmed.guestsCount} guest{confirmed.guestsCount === 1 ? '' : 's'}</p>
                 </div>
-
-                <div>
-                  <label className="block text-xs font-sans uppercase tracking-wider text-[#1E242B]/80 font-semibold mb-1">
-                    Phone Number
-                  </label>
-                  <div className="relative">
-                    <Phone className="w-4 h-4 text-[#8A9A86] absolute left-3.5 top-1/2 -translate-y-1/2" />
-                    <input
-                      type="tel"
-                      placeholder="+44 7700 900077"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full pl-10 pr-3 py-2.5 bg-white border border-[#8A9A86]/30 rounded-lg text-sm text-[#1E242B] focus:outline-none focus:border-[#2C3E2D]"
-                    />
-                  </div>
-                </div>
+                <p className="font-anton scale-step-h3 mt-5 text-accent-on-dark">{confirmed.qrPassCode}</p>
+                <dl className="meta mt-5 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-ink-on-dark-muted">
+                  <dt>Event</dt><dd className="text-ink-on-dark">{event.title}</dd>
+                  <dt>When</dt><dd className="text-ink-on-dark">{event.date} · {event.time}</dd>
+                  <dt>Attendee</dt><dd className="text-ink-on-dark">{confirmed.name}</dd>
+                </dl>
+                <p className="meta mt-5 border-t border-hairline-dark pt-4 text-ink-on-dark-muted">
+                  Show this at the sanctuary entrance. On your phone or written down — either is fine.
+                </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-sans uppercase tracking-wider text-[#1E242B]/80 font-semibold mb-1">
-                    Number of Attendees
-                  </label>
-                  <div className="relative">
-                    <Users className="w-4 h-4 text-[#8A9A86] absolute left-3.5 top-1/2 -translate-y-1/2" />
-                    <select
-                      value={formData.guestsCount}
-                      onChange={(e) => setFormData({ ...formData, guestsCount: Number(e.target.value) })}
-                      className="w-full pl-10 pr-3 py-2.5 bg-white border border-[#8A9A86]/30 rounded-lg text-xs sm:text-sm text-[#1E242B] focus:outline-none focus:border-[#2C3E2D]"
-                    >
-                      <option value={1}>1 Person (Just Me)</option>
-                      <option value={2}>2 People</option>
-                      <option value={3}>3 People (Small Family)</option>
-                      <option value={4}>4 People</option>
-                      <option value={5}>5+ People</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="flex items-center pt-5 sm:pt-6">
-                  <label className="flex items-center gap-2 cursor-pointer text-xs sm:text-sm font-sans text-[#1E242B]">
-                    <input
-                      type="checkbox"
-                      checked={formData.isFirstTimeVisitor}
-                      onChange={(e) => setFormData({ ...formData, isFirstTimeVisitor: e.target.checked })}
-                      className="w-4 h-4 rounded-md border-gray-300 text-[#2C3E2D] focus:ring-[#2C3E2D]"
-                    />
-                    <span>This is my first time visiting</span>
-                  </label>
-                </div>
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <button onClick={downloadCalendar} className="link-arrow text-ink-strong">
+                  <span>Add to calendar</span>
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </button>
+                <button onClick={onClose} className="btn btn-primary">
+                  Done
+                </button>
               </div>
-
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <label htmlFor="rsvp-name" className="field-label">Full name</label>
+                <input id="rsvp-name" type="text" required placeholder="Samuel Adebayo" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="field" />
+              </div>
               <div>
-                <label className="block text-xs font-sans uppercase tracking-wider text-[#1E242B]/80 font-semibold mb-1">
-                  Special Notes or Prayer Request (Optional)
-                </label>
-                <textarea
-                  rows={2}
-                  placeholder="Need wheelchair access, bringing children, or prayer..."
-                  value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-white border border-[#8A9A86]/30 rounded-lg text-xs sm:text-sm text-[#1E242B] focus:outline-none focus:border-[#2C3E2D]"
-                />
+                <label htmlFor="rsvp-email" className="field-label">Email address</label>
+                <input id="rsvp-email" type="email" required placeholder="you@example.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="field" />
               </div>
-
-              <div className="pt-4 flex items-center justify-between gap-3">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-4 py-2.5 text-xs font-sans font-bold text-[#1E242B]/70 hover:text-[#1E242B] cursor-pointer"
-                >
+              <div>
+                <label htmlFor="rsvp-phone" className="field-label">Phone (optional)</label>
+                <input id="rsvp-phone" type="tel" placeholder="07700 900077" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="field" />
+              </div>
+              <div>
+                <label htmlFor="rsvp-guests" className="field-label">Guests</label>
+                <select id="rsvp-guests" value={form.guestsCount} onChange={(e) => setForm({ ...form, guestsCount: Number(e.target.value) })} className="field">
+                  <option value={1}>1 — just me</option>
+                  <option value={2}>2</option>
+                  <option value={3}>3</option>
+                  <option value={4}>4</option>
+                  <option value={5}>5 or more</option>
+                </select>
+              </div>
+              <label className="meta flex cursor-pointer items-center gap-3 self-end pb-3 text-ink">
+                <input type="checkbox" checked={form.isFirstTimeVisitor} onChange={(e) => setForm({ ...form, isFirstTimeVisitor: e.target.checked })} className="h-4 w-4 accent-[#2C3E2D]" />
+                This is my first visit
+              </label>
+              <div className="sm:col-span-2">
+                <label htmlFor="rsvp-notes" className="field-label">Notes or prayer request (optional)</label>
+                <textarea id="rsvp-notes" rows={2} placeholder="Wheelchair access, bringing children, or anything we should know" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} className="field" />
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-4 sm:col-span-2">
+                <button type="button" onClick={onClose} className="link-arrow text-ink-muted">
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-6 py-3 bg-[#D4A373] text-[#1E242B] font-sans font-bold text-xs uppercase tracking-wider rounded-lg hover:bg-[#c69464] transition-all disabled:opacity-50 flex items-center gap-2 shadow-xs active:scale-95 cursor-pointer"
-                >
-                  {isSubmitting ? 'Confirming RSVP...' : 'COMPLETE RSVP REGISTRATION'}
+                <button type="submit" disabled={submitting} className="btn btn-primary disabled:opacity-60">
+                  <span>{submitting ? 'Confirming…' : 'Confirm my place'}</span>
+                  <ArrowUpRight className="h-4 w-4" />
                 </button>
               </div>
             </form>
-          </div>
-        ) : (
-          /* Confirmation & Digital Sanctuary Pass */
-          <div className="text-center py-2">
-            <div className="w-12 h-12 rounded-xl bg-[#8A9A86]/20 text-[#2C3E2D] flex items-center justify-center mx-auto mb-3">
-              <CheckCircle2 className="w-6 h-6" />
-            </div>
-
-            <span className="text-xs font-sans uppercase tracking-widest text-[#D4A373] font-bold block mb-1">
-              RSVP Confirmed &amp; Reserved
-            </span>
-            <h3 className="font-anton text-2xl sm:text-3xl uppercase tracking-tight text-[#2C3E2D]">
-              We Look Forward To Welcoming You
-            </h3>
-            <p className="font-sans text-sm text-[#1E242B]/80 mt-1 max-w-md mx-auto">
-              A confirmation email has been dispatched to <strong className="text-[#2C3E2D]">{confirmedPass.email}</strong>.
-            </p>
-
-            {/* Digital Pass Card */}
-            <div className="my-6 p-6 bg-white rounded-xl border-2 border-dashed border-[#2C3E2D]/30 text-left relative overflow-hidden shadow-xs">
-              <div className="flex justify-between items-start border-b border-[#2C3E2D]/10 pb-3 mb-3">
-                <div>
-                  <span className="font-anton text-lg uppercase text-[#2C3E2D]">Vine House Ministries</span>
-                  <span className="block font-sans text-xs text-[#8A9A86]">Contemporary Sanctuary Pass</span>
-                </div>
-                <div className="text-right">
-                  <span className="font-sans text-xs font-bold text-[#D4A373]">{confirmedPass.qrPassCode}</span>
-                  <span className="block font-sans text-xs text-[#1E242B]/60">{confirmedPass.guestsCount} Guest(s)</span>
-                </div>
-              </div>
-
-              <div className="space-y-1 font-sans text-xs sm:text-sm text-[#1E242B]/85">
-                <p><strong className="font-sans text-xs text-[#8A9A86] uppercase block font-bold">Event:</strong> {event.title}</p>
-                <p><strong className="font-sans text-xs text-[#8A9A86] uppercase block font-bold">Date &amp; Time:</strong> {event.date} • {event.time}</p>
-                <p><strong className="font-sans text-xs text-[#8A9A86] uppercase block font-bold">Attendee:</strong> {confirmedPass.name}</p>
-              </div>
-
-              {/* QR Code Graphic */}
-              <div className="mt-4 pt-3 border-t border-[#2C3E2D]/10 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 bg-[#2C3E2D] text-[#F9F7F2] rounded-lg flex items-center justify-center p-1">
-                    <QrCode className="w-full h-full" />
-                  </div>
-                  <span className="text-xs font-sans text-[#8A9A86]">Scan at Sanctuary Entrance</span>
-                </div>
-                <span className="text-xs font-sans text-[#2C3E2D] font-bold uppercase">Ready for Check-in</span>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <button
-                onClick={handleDownloadCalendar}
-                className="px-4 py-2.5 bg-[#F3EFE6] hover:bg-[#8A9A86]/20 text-[#2C3E2D] font-sans text-xs rounded-lg flex items-center gap-2 transition-colors font-bold active:scale-95 cursor-pointer"
-              >
-                <Calendar className="w-4 h-4 text-[#D4A373]" />
-                <span>Add to Calendar (.ics)</span>
-              </button>
-
-              <button
-                onClick={onClose}
-                className="px-6 py-2.5 bg-[#2C3E2D] text-[#F9F7F2] font-sans font-bold text-xs uppercase tracking-wider rounded-lg hover:bg-[#1E242B] transition-colors active:scale-95 cursor-pointer"
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </motion.div>
     </div>
   );

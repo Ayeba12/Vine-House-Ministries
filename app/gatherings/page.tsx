@@ -3,499 +3,322 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'motion/react';
-import { 
-  Users, 
-  Clock, 
-  CheckCircle2, 
-  Send, 
-  ArrowUpRight 
-} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { ArrowUpRight } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { Reveal } from '@/components/ui/Reveal';
+
+const PILLARS = [
+  {
+    number: '01',
+    subtitle: 'Sanctuary central',
+    title: 'Sunday Liturgy & Eucharist',
+    desc: 'Our central weekly corporate gathering at Sanctuary Hall. Acoustic choral worship, deep biblical exegesis, moments of silent prayer, and open table communion.',
+    when: '10:00 & 12:00',
+    link: { label: 'Plan a visit', href: '/visit' },
+    image: 'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    number: '02',
+    subtitle: 'Neighbourhoods',
+    title: 'The Contemplative Table',
+    desc: 'Intimate midweek house fellowships of 8–14 people meeting in homes across Greater London & Essex for shared home-cooked meals, lectio divina, and deep mutual care.',
+    when: 'Midweek evenings',
+    link: { label: 'Find a group', href: '#neighbourhood-groups' },
+    image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    number: '03',
+    subtitle: 'Ages 0–18',
+    title: 'Vine NextGen & Kids Sanctuary',
+    desc: 'A safe, joyful space for children and youth to explore scripture through Montessori-inspired Godly Play, creative art, and loving pastoral mentorship.',
+    when: 'Sundays, during services',
+    link: { label: 'Kids check-in', href: '/visit' },
+    image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1000&q=80',
+  },
+  {
+    number: '04',
+    subtitle: 'London & Essex',
+    title: 'Community Mercy & Food Solidarity',
+    desc: 'Every Saturday morning our charity outreach teams prepare and distribute warm meals and care packages for families and vulnerable neighbours across Greater London and Essex.',
+    when: 'Saturdays, 09:00',
+    link: { label: 'Volunteer roster', href: '/events' },
+    image: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=1000&q=80',
+  },
+];
+
+type Borough = 'All' | 'Greater London' | 'Essex' | 'East London';
+
+const HOUSE_GROUPS = [
+  {
+    id: 'hg-01',
+    name: 'Ilford & Redbridge Contemplative Table',
+    borough: 'Essex',
+    neighbourhood: 'Ilford / Redbridge',
+    day: 'Every Tuesday',
+    time: '19:00 – 20:30',
+    hosts: 'Marcus & Rachel Vance',
+    description: 'A quiet gathering around a shared meal, contemplative silent prayer of examen, and lectionary discussion.',
+    spotsOpen: 4,
+  },
+  {
+    id: 'hg-02',
+    name: 'Stratford & Newham Fellowship House',
+    borough: 'East London',
+    neighbourhood: 'Stratford / Olympic Park',
+    day: 'Every Wednesday',
+    time: '19:30 – 21:00',
+    hosts: 'Julian & Sarah Chen',
+    description: 'Focused on young creatives, professionals, and seekers exploring Christian theology and community vocation.',
+    spotsOpen: 6,
+  },
+  {
+    id: 'hg-03',
+    name: 'Central London Liturgy Circle',
+    borough: 'Greater London',
+    neighbourhood: 'City / Central London',
+    day: 'Every Thursday',
+    time: '18:30 – 20:00',
+    hosts: 'Dr Aaron & Hannah Miller',
+    description: 'Dinner with scripture reflections, shared prayer requests, and mutual support for city professionals.',
+    spotsOpen: 3,
+  },
+  {
+    id: 'hg-04',
+    name: 'Brentwood & Chelmsford Table of Peace',
+    borough: 'Essex',
+    neighbourhood: 'Brentwood & Mid-Essex',
+    day: 'Alternate Thursdays',
+    time: '19:00 – 20:45',
+    hosts: 'Elena & Mateo Rostova',
+    description: 'A warm hospitality table with acoustic worship, scripture lectio divina, and intercession.',
+    spotsOpen: 5,
+  },
+  {
+    id: 'hg-05',
+    name: 'Greenwich & South London Seekers',
+    borough: 'Greater London',
+    neighbourhood: 'Greenwich / Canary Wharf',
+    day: 'Every Monday',
+    time: '19:15 – 20:45',
+    hosts: 'Minister David K. Sterling',
+    description: 'An open dialogue space for questions, historical apologetics, and deep philosophical wrestling with faith.',
+    spotsOpen: 8,
+  },
+] as const;
+
+const BOROUGHS: Borough[] = ['All', 'Greater London', 'Essex', 'East London'];
+
+const CONTAINER = 'mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12';
 
 export default function GatheringsPage() {
-  const [selectedBorough, setSelectedBorough] = useState<'All' | 'Greater London' | 'Essex' | 'East London'>('All');
-  
-  // House group interest form state
-  const [interestSubmitted, setInterestSubmitted] = useState(false);
-  const [formData, setFormData] = useState({
+  const router = useRouter();
+  const [borough, setBorough] = useState<Borough>('All');
+  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState({
     name: '',
     email: '',
     phone: '',
-    neighborhood: 'Ilford / Redbridge & Essex',
-    lifeStage: 'Young Adults & Professionals',
-    notes: ''
+    neighbourhood: 'Ilford / Redbridge & Essex',
+    notes: '',
   });
 
-  const houseGroups = [
-    {
-      id: 'hg-01',
-      name: 'Ilford & Redbridge Contemplative Table',
-      borough: 'Essex',
-      neighborhood: 'Ilford / Redbridge',
-      day: 'Every Tuesday Evening',
-      time: '7:00 PM – 8:30 PM GMT',
-      hosts: 'Marcus & Rachel Vance',
-      description: 'A quiet gathering around a shared meal, contemplative silent prayer of examen, and lectionary discussion.',
-      spotsOpen: 4
-    },
-    {
-      id: 'hg-02',
-      name: 'Stratford & Newham Fellowship House',
-      borough: 'East London',
-      neighborhood: 'Stratford / Olympic Park',
-      day: 'Every Wednesday Evening',
-      time: '7:30 PM – 9:00 PM GMT',
-      hosts: 'Julian & Sarah Chen',
-      description: 'Focused on young creatives, professionals, and seekers exploring Christian theology and community vocation.',
-      spotsOpen: 6
-    },
-    {
-      id: 'hg-03',
-      name: 'Central London Liturgy Circle',
-      borough: 'Greater London',
-      neighborhood: 'City / Central London',
-      day: 'Every Thursday Evening',
-      time: '6:30 PM – 8:00 PM GMT',
-      hosts: 'Dr. Aaron & Hannah Miller',
-      description: 'Dinner with scripture reflections, shared prayer requests, and mutual support for city professionals.',
-      spotsOpen: 3
-    },
-    {
-      id: 'hg-04',
-      name: 'Brentwood & Chelmsford Table of Peace',
-      borough: 'Essex',
-      neighborhood: 'Brentwood & Mid-Essex',
-      day: 'Alternate Thursday Evenings',
-      time: '7:00 PM – 8:45 PM GMT',
-      hosts: 'Elena & Mateo Rostova',
-      description: 'A warm hospitality table with acoustic worship, scripture lectio divina, and intercession.',
-      spotsOpen: 5
-    },
-    {
-      id: 'hg-05',
-      name: 'Greenwich & South London Seekers',
-      borough: 'Greater London',
-      neighborhood: 'Greenwich / Canary Wharf Area',
-      day: 'Every Monday Evening',
-      time: '7:15 PM – 8:45 PM GMT',
-      hosts: 'Minister David K. Sterling',
-      description: 'An open dialogue space for questions, historical apologetics, and deep philosophical wrestling with faith.',
-      spotsOpen: 8
-    }
-  ];
+  const groups = HOUSE_GROUPS.filter((g) => borough === 'All' || g.borough === borough);
 
-  const filteredGroups = houseGroups.filter((g) => 
-    selectedBorough === 'All' ? true : g.borough === selectedBorough
-  );
-
-  const handleSubmitInterest = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email) return;
-    setInterestSubmitted(true);
+    if (!form.name || !form.email) return;
+    setSubmitted(true);
   };
 
   return (
-    <main className="min-h-screen bg-[#F9F7F2] text-[#1E242B] selection:bg-[#2C3E2D] selection:text-[#F9F7F2] pb-16">
-      {/* Top Navigation */}
+    <main className="min-h-screen bg-surface text-ink selection:bg-surface-dark selection:text-ink-on-dark">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="pt-28 sm:pt-36 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto arch-grid border-x border-[#2C3E2D]/10">
-        
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-xs font-sans text-[#8A9A86] mb-6">
-          <Link href="/" className="hover:text-[#2C3E2D] transition-colors">Home</Link>
-          <span>/</span>
-          <span className="text-[#2C3E2D] font-semibold">Gatherings &amp; Community Pillars</span>
-        </div>
-
-        {/* Monumental Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex items-center gap-2.5 mb-3">
-            <Users className="w-4 h-4 text-[#D4A373]" />
-            <span className="font-sans text-xs uppercase tracking-widest text-[#8A9A86] font-bold">
-              The Body &amp; The Table
-            </span>
-          </div>
-
-          <h1 className="font-anton text-[3.25rem] xs:text-[3.65rem] sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-[0.92] uppercase tracking-tight text-[#2C3E2D] break-words">
-            Gatherings of Reverence <br />
-            <span className="text-[#1E242B]">&amp; Table Communion</span>
-          </h1>
-
-          <p className="mt-6 max-w-3xl font-sans text-base sm:text-lg text-[#1E242B]/85 leading-relaxed">
-            Vine House gathers not merely in a central sanctuary on Sundays, but across living rooms, kitchen tables, and community fellowship spaces throughout Greater London and Essex.
-          </p>
-        </motion.div>
-
-        {/* 4 Core Pillars Overview with Imagery */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-          
-          {/* Pillar 01: Sunday Liturgy */}
-          <div className="bg-white rounded-2xl border border-[#8A9A86]/25 shadow-2xs overflow-hidden flex flex-col justify-between group hover:border-[#2C3E2D] transition-all">
-            <div className="relative h-48 w-full bg-[#1E242B] overflow-hidden">
-              <Image
-                src="https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1000&q=80"
-                alt="Sunday Liturgy"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-700 brightness-95"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none z-10" />
-              <div className="absolute top-3 left-3 z-20 px-2.5 py-1 bg-[#2C3E2D] text-[#D4A373] text-[10px] font-sans font-bold uppercase rounded">
-                Pillar 01 • Sanctuary Central
-              </div>
-            </div>
-            
-            <div className="p-6 space-y-3">
-              <h3 className="font-anton text-2xl uppercase tracking-tight text-[#2C3E2D]">
-                Sunday Liturgy &amp; Eucharist
-              </h3>
-              <p className="font-sans text-xs text-[#1E242B]/80 leading-relaxed">
-                Our central weekly corporate gathering at Sanctuary Hall. Featuring acoustic choral worship, deep biblical exegesis, moments of silent prayer, and open table communion.
-              </p>
-              <div className="pt-3 border-t border-[#8A9A86]/15 flex items-center justify-between text-xs font-sans">
-                <span className="text-[#8A9A86] font-medium">10:00 AM &amp; 12:00 PM</span>
-                <Link 
-                  href="/visit" 
-                  className="group/link font-bold text-[#2C3E2D] hover:text-[#D4A373] flex items-center gap-1.5 transition-all duration-200 relative py-1 cursor-pointer after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-[#D4A373] after:transition-all after:duration-200"
-                >
-                  <span>Plan Visit</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-[#2C3E2D] group-hover/link:text-[#D4A373] group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform duration-200 shrink-0" />
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Pillar 02: The Contemplative Table */}
-          <div className="bg-white rounded-2xl border border-[#8A9A86]/25 shadow-2xs overflow-hidden flex flex-col justify-between group hover:border-[#2C3E2D] transition-all">
-            <div className="relative h-48 w-full bg-[#1E242B] overflow-hidden">
-              <Image
-                src="https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1000&q=80"
-                alt="The Contemplative Table"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-700 brightness-95"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none z-10" />
-              <div className="absolute top-3 left-3 z-20 px-2.5 py-1 bg-[#2C3E2D] text-[#D4A373] text-[10px] font-sans font-bold uppercase rounded">
-                Pillar 02 • Neighborhoods
-              </div>
-            </div>
-            
-            <div className="p-6 space-y-3">
-              <h3 className="font-anton text-2xl uppercase tracking-tight text-[#2C3E2D]">
-                The Contemplative Table
-              </h3>
-              <p className="font-sans text-xs text-[#1E242B]/80 leading-relaxed">
-                Intimate midweek house fellowships of 8–14 people meeting in homes across Greater London &amp; Essex for shared home-cooked meals, lectio divina, and deep mutual care.
-              </p>
-              <div className="pt-3 border-t border-[#8A9A86]/15 flex items-center justify-between text-xs font-sans">
-                <span className="text-[#8A9A86] font-medium">Midweek Evenings</span>
-                <a 
-                  href="#neighborhood-groups" 
-                  className="group/link font-bold text-[#2C3E2D] hover:text-[#D4A373] flex items-center gap-1.5 transition-all duration-200 relative py-1 cursor-pointer after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-[#D4A373] after:transition-all after:duration-200"
-                >
-                  <span>Find a Group</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-[#2C3E2D] group-hover/link:text-[#D4A373] group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform duration-200 shrink-0" />
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Pillar 03: NextGen & Youth */}
-          <div className="bg-white rounded-2xl border border-[#8A9A86]/25 shadow-2xs overflow-hidden flex flex-col justify-between group hover:border-[#2C3E2D] transition-all">
-            <div className="relative h-48 w-full bg-[#1E242B] overflow-hidden">
-              <Image
-                src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1000&q=80"
-                alt="Vine NextGen & Kids"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-700 brightness-95"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none z-10" />
-              <div className="absolute top-3 left-3 z-20 px-2.5 py-1 bg-[#2C3E2D] text-[#D4A373] text-[10px] font-sans font-bold uppercase rounded">
-                Pillar 03 • Ages 0–18
-              </div>
-            </div>
-            
-            <div className="p-6 space-y-3">
-              <h3 className="font-anton text-2xl uppercase tracking-tight text-[#2C3E2D]">
-                Vine NextGen &amp; Kids Sanctuary
-              </h3>
-              <p className="font-sans text-xs text-[#1E242B]/80 leading-relaxed">
-                A safe, joyful space for children and youth to explore scripture through Montessori-inspired Godly Play curriculum, creative art, and loving pastoral mentorship.
-              </p>
-              <div className="pt-3 border-t border-[#8A9A86]/15 flex items-center justify-between text-xs font-sans">
-                <span className="text-[#8A9A86] font-medium">Sundays during Services</span>
-                <Link 
-                  href="/visit" 
-                  className="group/link font-bold text-[#2C3E2D] hover:text-[#D4A373] flex items-center gap-1.5 transition-all duration-200 relative py-1 cursor-pointer after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-[#D4A373] after:transition-all after:duration-200"
-                >
-                  <span>Kids Check-in Info</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-[#2C3E2D] group-hover/link:text-[#D4A373] group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform duration-200 shrink-0" />
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Pillar 04: Regional Mercy */}
-          <div className="bg-white rounded-2xl border border-[#8A9A86]/25 shadow-2xs overflow-hidden flex flex-col justify-between group hover:border-[#2C3E2D] transition-all">
-            <div className="relative h-48 w-full bg-[#1E242B] overflow-hidden">
-              <Image
-                src="https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=1000&q=80"
-                alt="Community Mercy"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-700 brightness-95"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none z-10" />
-              <div className="absolute top-3 left-3 z-20 px-2.5 py-1 bg-[#2C3E2D] text-[#D4A373] text-[10px] font-sans font-bold uppercase rounded">
-                Pillar 04 • London &amp; Essex
-              </div>
-            </div>
-            
-            <div className="p-6 space-y-3">
-              <h3 className="font-anton text-2xl uppercase tracking-tight text-[#2C3E2D]">
-                Community Mercy &amp; Food Solidarity
-              </h3>
-              <p className="font-sans text-xs text-[#1E242B]/80 leading-relaxed">
-                Every Saturday morning, our registered charity outreach teams prepare and distribute warm meals and care packages for families and vulnerable neighbors across Greater London and Essex.
-              </p>
-              <div className="pt-3 border-t border-[#8A9A86]/15 flex items-center justify-between text-xs font-sans">
-                <span className="text-[#8A9A86] font-medium">Saturdays 9:00 AM GMT</span>
-                <Link 
-                  href="/events" 
-                  className="group/link font-bold text-[#2C3E2D] hover:text-[#D4A373] flex items-center gap-1.5 transition-all duration-200 relative py-1 cursor-pointer after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-0.5 after:bg-[#D4A373] after:transition-all after:duration-200"
-                >
-                  <span>Volunteer Roster</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-[#2C3E2D] group-hover/link:text-[#D4A373] group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform duration-200 shrink-0" />
-                </Link>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        {/* Midweek House Groups Directory */}
-        <div id="neighborhood-groups" className="mt-16 pt-12 border-t border-[#2C3E2D]/15">
-          <div className="mb-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white p-6 sm:p-8 rounded-2xl border border-[#8A9A86]/25 shadow-2xs">
-            <div className="lg:col-span-7 space-y-3">
-              <span className="px-2.5 py-0.5 bg-[#F3EFE6] text-[#2C3E2D] font-sans font-bold text-[10px] uppercase tracking-wider rounded inline-block">
-                Midweek Table Fellowship
-              </span>
-              <h3 className="font-anton text-3xl sm:text-4xl uppercase tracking-tight text-[#2C3E2D]">
-                Neighborhood House Groups
-              </h3>
-              <p className="font-sans text-xs sm:text-sm text-[#1E242B]/80 leading-relaxed">
-                Church is not confined to Sunday morning. Across Greater London and Essex, our members gather in living rooms for shared supper, scripture reflection, and mutual encouragement.
-              </p>
-              
-              {/* Borough Selector Pills */}
-              <div className="pt-2 flex flex-wrap items-center gap-2">
-                {(['All', 'Greater London', 'Essex', 'East London'] as const).map((b) => (
-                  <button
-                    key={b}
-                    onClick={() => setSelectedBorough(b)}
-                    className={`px-4 py-2 rounded-xl text-xs font-sans font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
-                      selectedBorough === b
-                        ? 'bg-[#2C3E2D] text-[#F9F7F2] shadow-xs'
-                        : 'bg-white/90 border border-[#8A9A86]/35 text-[#1E242B] hover:border-[#2C3E2D] hover:text-[#2C3E2D] hover:bg-white shadow-2xs'
-                    }`}
-                  >
-                    {b}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="lg:col-span-5 relative h-52 sm:h-60 w-full rounded-xl overflow-hidden border border-[#8A9A86]/20">
-              <Image
-                src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=800&q=80"
-                alt="House Group Dinner & Prayer"
-                fill
-                className="object-cover brightness-95 hover:scale-105 transition-transform duration-700"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-              <div className="absolute bottom-3 left-3 right-3 text-white font-sans text-xs">
-                <span className="font-bold text-[#D4A373] block">Intimate Hospitality</span>
-                <span className="text-[11px] text-white/85">Dinner, prayer, &amp; study in neighborhood homes</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Groups List */}
-          <div className="space-y-4">
-            {filteredGroups.map((group) => (
-              <div 
-                key={group.id}
-                className="p-5 bg-white rounded-xl border border-[#8A9A86]/25 shadow-2xs hover:border-[#2C3E2D] transition-colors flex flex-col sm:flex-row justify-between gap-4"
-              >
-                <div className="space-y-2 max-w-3xl">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 bg-[#F3EFE6] text-[#2C3E2D] font-sans font-bold text-[10px] uppercase rounded">
-                      {group.borough} • {group.neighborhood}
-                    </span>
-                    <span className="font-sans text-xs text-[#8A9A86]">
-                      Hosts: {group.hosts}
-                    </span>
-                  </div>
-
-                  <h4 className="font-anton text-xl uppercase tracking-tight text-[#2C3E2D]">
-                    {group.name}
-                  </h4>
-
-                  <p className="font-sans text-xs text-[#1E242B]/80 leading-relaxed">
-                    {group.description}
-                  </p>
-
-                  <div className="flex items-center gap-4 text-xs font-sans text-[#8A9A86] pt-1">
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-[#D4A373]" />
-                      {group.day} • {group.time}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex sm:flex-col items-center justify-between sm:justify-center gap-2 shrink-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-[#8A9A86]/15">
-                  <span className="text-[11px] font-sans text-[#8A9A86]">
-                    <strong>{group.spotsOpen}</strong> seats open
-                  </span>
-                  <a
-                    href="#interest-form"
-                    onClick={() => {
-                      setFormData((prev) => ({
-                        ...prev,
-                        neighborhood: `${group.borough} - ${group.neighborhood}`
-                      }));
-                    }}
-                    className="group px-4 py-2.5 bg-[#2C3E2D] hover:bg-[#1E242B] text-[#F9F7F2] font-sans font-bold text-xs uppercase tracking-wider rounded-xl transition-all duration-200 shadow-2xs hover:shadow-xs active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <span>Request to Join</span>
-                    <ArrowUpRight className="w-3.5 h-3.5 text-[#D4A373] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200 shrink-0" />
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Group Interest Connection Form */}
-        <div id="interest-form" className="mt-16 p-6 sm:p-8 bg-white rounded-2xl border border-[#8A9A86]/30 shadow-xs">
-          {!interestSubmitted ? (
-            <form onSubmit={handleSubmitInterest} className="space-y-4">
-              <div>
-                <span className="font-sans text-xs uppercase tracking-widest text-[#D4A373] font-bold block mb-1">
-                  Connect With A Shepherd
-                </span>
-                <h3 className="font-anton text-2xl sm:text-3xl uppercase tracking-tight text-[#2C3E2D]">
-                  Find Your Midweek Table
-                </h3>
-                <p className="font-sans text-xs sm:text-sm text-[#1E242B]/75 mt-1">
-                  Fill out this brief form and our community director will personally introduce you to host shepherds in your neighborhood.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div>
-                  <label className="block text-xs font-sans font-bold text-[#1E242B] mb-1">Your Full Name *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Rachel Adams"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-[#F9F7F2] border border-[#2C3E2D]/15 rounded-lg text-xs font-sans text-[#1E242B] focus:outline-none focus:border-[#2C3E2D]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-sans font-bold text-[#1E242B] mb-1">Email Address *</label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="rachel@example.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-[#F9F7F2] border border-[#2C3E2D]/15 rounded-lg text-xs font-sans text-[#1E242B] focus:outline-none focus:border-[#2C3E2D]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-sans font-bold text-[#1E242B] mb-1">Phone (Optional for SMS)</label>
-                  <input
-                    type="tel"
-                    placeholder="(555) 000-0000"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-[#F9F7F2] border border-[#2C3E2D]/15 rounded-lg text-xs font-sans text-[#1E242B] focus:outline-none focus:border-[#2C3E2D]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-sans font-bold text-[#1E242B] mb-1">Preferred Neighborhood</label>
-                  <input
-                    type="text"
-                    value={formData.neighborhood}
-                    onChange={(e) => setFormData({ ...formData, neighborhood: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-[#F9F7F2] border border-[#2C3E2D]/15 rounded-lg text-xs font-sans text-[#1E242B] focus:outline-none focus:border-[#2C3E2D]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-sans font-bold text-[#1E242B] mb-1">Questions or Dietary / Childcare Notes</label>
-                <textarea
-                  rows={2}
-                  placeholder="Share anything that will help us connect you to the right host..."
-                  value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-[#F9F7F2] border border-[#2C3E2D]/15 rounded-lg text-xs font-sans text-[#1E242B] focus:outline-none focus:border-[#2C3E2D]"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="group w-full sm:w-auto px-8 py-3.5 bg-[#D4A373] hover:bg-[#c69464] text-[#1E242B] font-sans font-bold text-xs uppercase tracking-wider rounded-xl transition-all duration-200 shadow-xs hover:shadow-md flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
-              >
-                <span>Submit Connection Request</span>
-                <Send className="w-3.5 h-3.5 text-[#1E242B] group-hover:translate-x-0.5 transition-transform" />
-              </button>
-            </form>
-          ) : (
-            <div className="py-8 text-center space-y-3">
-              <CheckCircle2 className="w-12 h-12 text-[#D4A373] mx-auto" />
-              <h4 className="font-anton text-2xl uppercase tracking-tight text-[#2C3E2D]">
-                Connection Request Received
-              </h4>
-              <p className="font-sans text-xs sm:text-sm text-[#1E242B]/80 max-w-md mx-auto leading-relaxed">
-                Thank you, <strong>{formData.name}</strong>. A host shepherd from {formData.neighborhood} will reach out to you at <strong>{formData.email}</strong> within 48 hours.
-              </p>
-              <button
-                onClick={() => setInterestSubmitted(false)}
-                className="mt-4 px-5 py-2.5 bg-white border border-[#2C3E2D]/30 hover:border-[#2C3E2D] hover:bg-[#2C3E2D] text-[#2C3E2D] hover:text-[#F9F7F2] font-sans font-bold text-xs uppercase tracking-wider rounded-xl transition-all duration-200 shadow-2xs active:scale-[0.98] cursor-pointer"
-              >
-                Submit Another Request
-              </button>
-            </div>
-          )}
-        </div>
-
-      </section>
-
-      {/* Footer */}
-      <Footer 
-        onSubscribe={() => {}}
-        onPlanVisit={() => {}}
+      <PageHeader
+        eyebrow="The body & the table"
+        crumb="Gatherings"
+        title="Gatherings of Reverence"
+        titleSecond="& Table Communion"
+        lead="Vine House gathers not merely in a central sanctuary on Sundays, but across living rooms, kitchen tables, and community fellowship spaces throughout Greater London and Essex."
+        aside={
+          <dl className="meta grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-ink-muted">
+            <dt>Sundays</dt>
+            <dd className="text-ink">10:00 &amp; 12:00, Sanctuary Hall</dd>
+            <dt>Midweek</dt>
+            <dd className="text-ink">Five neighbourhood tables</dd>
+            <dt>Saturdays</dt>
+            <dd className="text-ink">09:00, community mercy</dd>
+          </dl>
+        }
       />
 
+      {/* Four rhythms */}
+      <section className={`${CONTAINER} col-rules py-16 sm:py-24`}>
+        <SectionHeader eyebrow="Four rhythms" title="From sanctuary to street" meta="01 — 04" />
+        <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
+          {PILLARS.map((p, idx) => (
+            <Reveal key={p.number} delay={(idx % 2) * 0.08}>
+              <article className="group flex h-full flex-col overflow-hidden rounded-xl bg-surface-raised ring-1 ring-hairline">
+                <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface-deep">
+                  <Image
+                    src={p.image}
+                    alt=""
+                    fill
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                    referrerPolicy="no-referrer"
+                  />
+                  <span className="font-anton scale-step-h4 absolute right-5 top-4 text-ink-on-dark drop-shadow-md">
+                    {p.number}
+                  </span>
+                </div>
+                <div className="flex flex-1 flex-col gap-4 p-6 sm:p-7">
+                  <div>
+                    <p className="eyebrow text-accent">{p.subtitle}</p>
+                    <h3 className="font-anton scale-step-h5 mt-1 text-ink-strong">{p.title}</h3>
+                  </div>
+                  <p className="scale-step-body max-w-[56ch] text-ink/85">{p.desc}</p>
+                  <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-hairline pt-4">
+                    <span className="meta text-ink-muted">{p.when}</span>
+                    <Link href={p.link.href} className="link-arrow text-ink-strong">
+                      <span>{p.link.label}</span>
+                      <ArrowUpRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* House groups: the dark ledger */}
+      <section id="neighbourhood-groups" className="bg-surface-dark text-ink-on-dark">
+        <div className={`${CONTAINER} col-rules-dark py-24 sm:py-32`}>
+          <SectionHeader
+            onDark
+            eyebrow="Midweek table fellowship"
+            title="Neighbourhood house groups"
+            meta={`${groups.length} of ${HOUSE_GROUPS.length} tables`}
+          />
+          <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-12">
+            <p className="scale-step-body max-w-[52ch] text-ink-on-dark/90 lg:col-span-7">
+              Church is not confined to Sunday morning. Across Greater London and Essex our members gather in living
+              rooms for shared supper, scripture reflection, and mutual encouragement.
+            </p>
+            <div className="flex flex-wrap gap-x-7 gap-y-2 lg:col-span-5 lg:justify-self-end" role="tablist" aria-label="Filter by area">
+              {BOROUGHS.map((b) => (
+                <button key={b} role="tab" aria-selected={borough === b} onClick={() => setBorough(b)} className="tab tab-on-dark">
+                  {b}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <ol className="mt-12 divide-y divide-hairline-dark border-y border-hairline-dark">
+            {groups.map((g, idx) => (
+              <Reveal key={g.id} delay={idx * 0.04}>
+                <li className="grid grid-cols-1 gap-x-10 gap-y-4 py-7 lg:grid-cols-[1fr_260px_auto] lg:items-center">
+                  <div className="min-w-0">
+                    <p className="eyebrow text-accent-on-dark">
+                      {g.borough} · {g.neighbourhood}
+                    </p>
+                    <h3 className="font-anton scale-step-h5 mt-1 text-ink-on-dark">{g.name}</h3>
+                    <p className="scale-step-body mt-2 max-w-[60ch] text-ink-on-dark/85">{g.description}</p>
+                  </div>
+                  <dl className="meta grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-ink-on-dark-muted">
+                    <dt>When</dt>
+                    <dd className="text-ink-on-dark">
+                      {g.day}, {g.time}
+                    </dd>
+                    <dt>Hosts</dt>
+                    <dd className="text-ink-on-dark">{g.hosts}</dd>
+                    <dt>Seats</dt>
+                    <dd className="text-ink-on-dark">{g.spotsOpen} open</dd>
+                  </dl>
+                  <a
+                    href="#interest-form"
+                    onClick={() => setForm((prev) => ({ ...prev, neighbourhood: `${g.borough} – ${g.neighbourhood}` }))}
+                    className="btn btn-outline-on-dark lg:justify-self-end"
+                  >
+                    <span>Request to join</span>
+                    <ArrowUpRight className="h-4 w-4" />
+                  </a>
+                </li>
+              </Reveal>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* Interest form */}
+      <section id="interest-form" className={`${CONTAINER} col-rules py-24 sm:py-32`}>
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <p className="eyebrow flex items-center gap-3 text-accent">
+              <span className="h-px w-8 bg-current" aria-hidden="true" />
+              Connect with a shepherd
+            </p>
+            <h2 className="font-anton scale-step-h2 mt-4 text-ink-strong">Find your midweek table</h2>
+            <p className="scale-step-body mt-6 max-w-[44ch] text-ink/85">
+              Fill out this brief form and our community director will personally introduce you to host shepherds in
+              your neighbourhood.
+            </p>
+          </div>
+
+          <div className="lg:col-span-6 lg:col-start-7">
+            {submitted ? (
+              <div className="rounded-xl bg-surface-tint p-8">
+                <p className="eyebrow text-accent">Request received</p>
+                <p className="font-anton scale-step-h4 mt-3 text-ink-strong">Thank you, {form.name.split(' ')[0]}.</p>
+                <p className="scale-step-body mt-4 max-w-[46ch] text-ink/85">
+                  A host shepherd from {form.neighbourhood} will reach out to you at <strong>{form.email}</strong> within
+                  48 hours.
+                </p>
+                <button onClick={() => setSubmitted(false)} className="link-arrow mt-8 text-ink-strong">
+                  <span>Submit another request</span>
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-7 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="hg-name" className="field-label">Full name</label>
+                  <input id="hg-name" type="text" required placeholder="Rachel Adams" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="field" />
+                </div>
+                <div>
+                  <label htmlFor="hg-email" className="field-label">Email address</label>
+                  <input id="hg-email" type="email" required placeholder="rachel@example.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="field" />
+                </div>
+                <div>
+                  <label htmlFor="hg-phone" className="field-label">Phone (optional)</label>
+                  <input id="hg-phone" type="tel" placeholder="07700 900000" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="field" />
+                </div>
+                <div>
+                  <label htmlFor="hg-neighbourhood" className="field-label">Preferred neighbourhood</label>
+                  <input id="hg-neighbourhood" type="text" value={form.neighbourhood} onChange={(e) => setForm({ ...form, neighbourhood: e.target.value })} className="field" />
+                </div>
+                <div className="sm:col-span-2">
+                  <label htmlFor="hg-notes" className="field-label">Questions, dietary or childcare notes</label>
+                  <textarea id="hg-notes" rows={3} placeholder="Anything that will help us connect you to the right host" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} className="field" />
+                </div>
+                <div className="sm:col-span-2">
+                  <button type="submit" className="btn btn-primary">
+                    <span>Submit request</span>
+                    <ArrowUpRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <Footer onSubscribe={() => {}} onPlanVisit={() => router.push('/visit')} />
     </main>
   );
 }
