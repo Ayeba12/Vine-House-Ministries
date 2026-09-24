@@ -20,8 +20,7 @@ import {
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { RsvpModal } from '@/components/RsvpModal';
-import { MinistryCmsDrawer } from '@/components/MinistryCmsDrawer';
-import { INITIAL_SERMONS, INITIAL_EVENTS, INITIAL_RSVPS, INITIAL_SUBSCRIBERS } from '@/lib/data';
+import { INITIAL_EVENTS, INITIAL_RSVPS } from '@/lib/data';
 import { ChurchEvent, RSVPRecord } from '@/lib/types';
 
 export default function EventsPage() {
@@ -33,8 +32,6 @@ export default function EventsPage() {
   // RSVP Modal State
   const [selectedEventForRsvp, setSelectedEventForRsvp] = useState<ChurchEvent | null>(null);
   
-  // CMS Drawer State
-  const [isCmsOpen, setIsCmsOpen] = useState(false);
 
   const categories = ['All', 'Worship', 'Fellowship', 'Formation', 'Outreach'];
 
@@ -61,9 +58,7 @@ export default function EventsPage() {
   return (
     <main className="min-h-screen bg-[#F9F7F2] text-[#1E242B] selection:bg-[#2C3E2D] selection:text-[#F9F7F2] pb-16">
       {/* Top Navigation */}
-      <Navbar 
-        onOpenCms={() => setIsCmsOpen(true)}
-      />
+      <Navbar />
 
       {/* Hero Header Section */}
       <section className="pt-28 sm:pt-36 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto arch-grid border-x border-[#2C3E2D]/10">
@@ -259,23 +254,9 @@ export default function EventsPage() {
       {/* Footer */}
       <Footer 
         onSubscribe={() => {}}
-        onOpenCms={() => setIsCmsOpen(true)}
         onPlanVisit={() => {}}
       />
 
-      {/* CMS Drawer */}
-      <MinistryCmsDrawer
-        isOpen={isCmsOpen}
-        onClose={() => setIsCmsOpen(false)}
-        sermons={INITIAL_SERMONS}
-        onAddSermon={() => {}}
-        onDeleteSermon={() => {}}
-        events={events}
-        onAddEvent={(newEv) => setEvents([newEv, ...events])}
-        rsvps={rsvps}
-        onToggleCheckIn={() => {}}
-        subscribers={INITIAL_SUBSCRIBERS}
-      />
     </main>
   );
 }

@@ -21,12 +21,9 @@ import {
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
-import { MinistryCmsDrawer } from '@/components/MinistryCmsDrawer';
-import { INITIAL_SERMONS, INITIAL_EVENTS, INITIAL_RSVPS, INITIAL_SUBSCRIBERS } from '@/lib/data';
 import { Sermon, ChurchEvent, RSVPRecord, Subscriber } from '@/lib/types';
 
 export default function AboutPage() {
-  const [isCmsOpen, setIsCmsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'mission' | 'theology' | 'leadership' | 'architecture'>('mission');
 
   const theologicalAnchors = [
@@ -127,9 +124,7 @@ export default function AboutPage() {
   return (
     <main className="min-h-screen bg-[#F9F7F2] text-[#1E242B] selection:bg-[#2C3E2D] selection:text-[#F9F7F2]">
       {/* Navigation Bar */}
-      <Navbar 
-        onOpenCms={() => setIsCmsOpen(true)}
-      />
+      <Navbar />
 
       {/* Hero Section */}
       <section className="pt-28 sm:pt-36 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto arch-grid border-x border-[#2C3E2D]/10">
@@ -573,23 +568,9 @@ export default function AboutPage() {
       {/* Footer */}
       <Footer 
         onSubscribe={() => {}}
-        onOpenCms={() => setIsCmsOpen(true)}
         onPlanVisit={() => {}}
       />
 
-      {/* CMS Drawer */}
-      <MinistryCmsDrawer
-        isOpen={isCmsOpen}
-        onClose={() => setIsCmsOpen(false)}
-        sermons={INITIAL_SERMONS}
-        onAddSermon={() => {}}
-        onDeleteSermon={() => {}}
-        events={INITIAL_EVENTS}
-        onAddEvent={() => {}}
-        rsvps={INITIAL_RSVPS}
-        onToggleCheckIn={() => {}}
-        subscribers={INITIAL_SUBSCRIBERS}
-      />
     </main>
   );
 }

@@ -23,12 +23,9 @@ import {
 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
-import { MinistryCmsDrawer } from '@/components/MinistryCmsDrawer';
 import { SanctuaryInteractiveMap } from '@/components/SanctuaryInteractiveMap';
-import { INITIAL_SERMONS, INITIAL_EVENTS, INITIAL_RSVPS, INITIAL_SUBSCRIBERS } from '@/lib/data';
 
 export default function VisitPage() {
-  const [isCmsOpen, setIsCmsOpen] = useState(false);
   
   // Custom Visitor Pass Generator State
   const [visitorName, setVisitorName] = useState('');
@@ -90,9 +87,7 @@ export default function VisitPage() {
   return (
     <main className="min-h-screen bg-[#F9F7F2] text-[#1E242B] selection:bg-[#2C3E2D] selection:text-[#F9F7F2] pb-16">
       {/* Top Navigation */}
-      <Navbar 
-        onOpenCms={() => setIsCmsOpen(true)}
-      />
+      <Navbar />
 
       {/* Hero Header Section */}
       <section className="pt-28 sm:pt-36 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto arch-grid border-x border-[#2C3E2D]/10">
@@ -502,23 +497,9 @@ export default function VisitPage() {
       {/* Footer */}
       <Footer 
         onSubscribe={() => {}}
-        onOpenCms={() => setIsCmsOpen(true)}
         onPlanVisit={() => {}}
       />
 
-      {/* CMS Drawer */}
-      <MinistryCmsDrawer
-        isOpen={isCmsOpen}
-        onClose={() => setIsCmsOpen(false)}
-        sermons={INITIAL_SERMONS}
-        onAddSermon={() => {}}
-        onDeleteSermon={() => {}}
-        events={INITIAL_EVENTS}
-        onAddEvent={() => {}}
-        rsvps={INITIAL_RSVPS}
-        onToggleCheckIn={() => {}}
-        subscribers={INITIAL_SUBSCRIBERS}
-      />
     </main>
   );
 }

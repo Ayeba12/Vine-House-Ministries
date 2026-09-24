@@ -13,7 +13,6 @@ import { PlanVisitGuide } from '@/components/PlanVisitGuide';
 import { Footer } from '@/components/Footer';
 import { AudioPlayerBar } from '@/components/AudioPlayerBar';
 import { RsvpModal } from '@/components/RsvpModal';
-import { MinistryCmsDrawer } from '@/components/MinistryCmsDrawer';
 
 import { INITIAL_SERMONS, INITIAL_EVENTS, INITIAL_RSVPS, INITIAL_SUBSCRIBERS } from '@/lib/data';
 import { Sermon, ChurchEvent, RSVPRecord, Subscriber } from '@/lib/types';
@@ -37,8 +36,6 @@ export default function HomePage() {
   // RSVP Modal State
   const [selectedEventForRsvp, setSelectedEventForRsvp] = useState<ChurchEvent | null>(null);
 
-  // Ministry CMS Drawer State
-  const [isCmsOpen, setIsCmsOpen] = useState<boolean>(false);
 
   // Handlers
   const handlePlaySermon = (sermon: Sermon) => {
@@ -69,28 +66,6 @@ export default function HomePage() {
     );
   };
 
-  const handleToggleCheckIn = (rsvpId: string) => {
-    setRsvps((prev) =>
-      prev.map((r) => (r.id === rsvpId ? { ...r, checkedIn: !r.checkedIn } : r))
-    );
-  };
-
-  const handleAddSermon = (newSermon: Sermon) => {
-    setSermons([newSermon, ...sermons]);
-  };
-
-  const handleDeleteSermon = (id: string) => {
-    setSermons((prev) => prev.filter((s) => s.id !== id));
-    if (activeSermon?.id === id) {
-      setActiveSermon(null);
-      setIsPlayingAudio(false);
-    }
-  };
-
-  const handleAddEvent = (newEvent: ChurchEvent) => {
-    setEvents([newEvent, ...events]);
-  };
-
   const handleSubscribe = (newSub: Subscriber) => {
     setSubscribers([newSub, ...subscribers]);
   };
@@ -107,7 +82,6 @@ export default function HomePage() {
       
       {/* Top Navigation */}
       <Navbar 
-        onOpenCms={() => setIsCmsOpen(true)} 
         noticeBanner={noticeBanner} 
         isPlayingAudio={isPlayingAudio}
         onToggleAudio={handleTogglePlay}
@@ -162,7 +136,6 @@ export default function HomePage() {
       {/* Monolithic Footer with Newsletter & Giving Modal */}
       <Footer
         onSubscribe={handleSubscribe}
-        onOpenCms={() => setIsCmsOpen(true)}
         onPlanVisit={scrollToPlanVisit}
       />
 
@@ -186,21 +159,6 @@ export default function HomePage() {
         onConfirmRsvp={handleConfirmRsvp}
       />
 
-      {/* Client Ministry CMS & Handover Portal */}
-      <MinistryCmsDrawer
-        isOpen={isCmsOpen}
-        onClose={() => setIsCmsOpen(false)}
-        sermons={sermons}
-        onAddSermon={handleAddSermon}
-        onDeleteSermon={handleDeleteSermon}
-        events={events}
-        onAddEvent={handleAddEvent}
-        rsvps={rsvps}
-        onToggleCheckIn={handleToggleCheckIn}
-        subscribers={subscribers}
-        noticeBanner={noticeBanner}
-        onUpdateNoticeBanner={setNoticeBanner}
-      />
 
     </main>
   );

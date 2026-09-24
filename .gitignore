@@ -1,8 +1,55 @@
+# ---- dependencies ----
 node_modules/
+.pnp
+.pnp.*
+
+# ---- next.js build output ----
 .next/
-coverage/
-.DS_Store
-*.log
+out/
+dist/
+next-env.d.ts
+*.tsbuildinfo
+
+# ---- environment ----
 .env*
 !.env.example
 
+# ---- vercel ----
+.vercel
+
+# ---- testing / coverage ----
+coverage/
+playwright-report/
+test-results/
+
+# ---- logs ----
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---- local agent + skill tooling (machine-local, not project source) ----
+.agents/
+.codex/
+.claude/
+.impeccable/
+skills-lock.json
+nextjs-react-expert/
+nodejs-best-practices/
+webapp-testing/
+
+# ---- wordpress (lives in its own LocalWP site, never in this repo) ----
+# NOTE: do NOT ignore app/ - that is the Next.js App Router in this repo.
+wp-content/
+wp-admin/
+wp-includes/
+*.sql
+*.wpress
+
+# ---- editor / os ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json

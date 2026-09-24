@@ -10,7 +10,6 @@ import {
   X, 
   Volume2, 
   VolumeX, 
-  SlidersHorizontal, 
   Calendar, 
   MapPin, 
   Clock,
@@ -22,7 +21,6 @@ import {
 } from 'lucide-react';
 
 interface NavbarProps {
-  onOpenCms: () => void;
   onOpenPlanVisit?: () => void;
   onPlanVisit?: () => void;
   isPlayingAudio?: boolean;
@@ -32,7 +30,6 @@ interface NavbarProps {
 }
 
 export function Navbar({ 
-  onOpenCms, 
   onOpenPlanVisit, 
   onPlanVisit,
   isPlayingAudio = false, 
@@ -197,17 +194,6 @@ export function Navbar({
             {/* Action Suite (Right CTA Buttons) */}
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               
-              {/* Ministry CMS Portal Button (Framed Border Button) */}
-              <button
-                id="btn-navbar-cms"
-                onClick={onOpenCms}
-                className="hidden xl:flex items-center gap-2 px-3.5 py-2 border border-[#8A9A86]/35 rounded-xl text-xs font-sans font-bold uppercase tracking-wider text-[#2C3E2D] bg-white/90 hover:border-[#2C3E2D] hover:bg-[#2C3E2D] hover:text-[#F9F7F2] transition-all duration-200 shadow-2xs active:scale-[0.98] group cursor-pointer"
-                title="Open Ministry Staff Portal"
-              >
-                <SlidersHorizontal className="w-3.5 h-3.5 text-[#8A9A86] group-hover:text-[#D4A373] transition-colors" />
-                <span>CMS</span>
-              </button>
-
               {/* Plan a Visit CTA Button (Desktop & Tablet only, hidden on mobile) */}
               <button
                 id="btn-navbar-plan-visit"
@@ -309,17 +295,6 @@ export function Navbar({
                   <ArrowUpRight className="w-4 h-4 text-[#1E242B] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200 shrink-0" />
                 </button>
 
-                <button
-                  id="btn-mobile-cms"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    onOpenCms();
-                  }}
-                  className="group w-full py-3 bg-white border border-[#8A9A86]/35 text-[#2C3E2D] hover:border-[#2C3E2D] hover:bg-[#2C3E2D] hover:text-[#F9F7F2] text-center font-sans font-bold text-xs uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 shadow-2xs transition-all duration-200 active:scale-[0.98] cursor-pointer"
-                >
-                  <SlidersHorizontal className="w-4 h-4 text-[#8A9A86] group-hover:text-[#D4A373] transition-colors" />
-                  <span>Ministry Staff CMS &amp; RSVPs</span>
-                </button>
               </div>
             </div>
 

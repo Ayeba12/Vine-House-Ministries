@@ -27,8 +27,7 @@ import {
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { AudioPlayerBar } from '@/components/AudioPlayerBar';
-import { MinistryCmsDrawer } from '@/components/MinistryCmsDrawer';
-import { INITIAL_SERMONS, INITIAL_EVENTS, INITIAL_RSVPS, INITIAL_SUBSCRIBERS } from '@/lib/data';
+import { INITIAL_SERMONS } from '@/lib/data';
 import { Sermon } from '@/lib/types';
 
 export default function SermonsPage() {
@@ -44,8 +43,6 @@ export default function SermonsPage() {
   // Expanded Transcript Modal / Drawer
   const [readingSermon, setReadingSermon] = useState<Sermon | null>(null);
   
-  // CMS Drawer State
-  const [isCmsOpen, setIsCmsOpen] = useState(false);
 
   // Extract unique series and tags
   const allSeries = ['All', ...Array.from(new Set(sermons.map((s) => s.series)))];
@@ -78,7 +75,6 @@ export default function SermonsPage() {
     <main className="min-h-screen bg-[#F9F7F2] text-[#1E242B] selection:bg-[#2C3E2D] selection:text-[#F9F7F2] pb-16">
       {/* Top Navigation */}
       <Navbar 
-        onOpenCms={() => setIsCmsOpen(true)}
         isPlayingAudio={isPlayingAudio}
         onToggleAudio={() => setIsPlayingAudio(!isPlayingAudio)}
         activeSermonTitle={activeSermon?.title}
@@ -487,23 +483,9 @@ export default function SermonsPage() {
       {/* Footer */}
       <Footer 
         onSubscribe={() => {}}
-        onOpenCms={() => setIsCmsOpen(true)}
         onPlanVisit={() => {}}
       />
 
-      {/* CMS Drawer */}
-      <MinistryCmsDrawer
-        isOpen={isCmsOpen}
-        onClose={() => setIsCmsOpen(false)}
-        sermons={sermons}
-        onAddSermon={(newS) => setSermons([newS, ...sermons])}
-        onDeleteSermon={(id) => setSermons(sermons.filter((s) => s.id !== id))}
-        events={INITIAL_EVENTS}
-        onAddEvent={() => {}}
-        rsvps={INITIAL_RSVPS}
-        onToggleCheckIn={() => {}}
-        subscribers={INITIAL_SUBSCRIBERS}
-      />
     </main>
   );
 }

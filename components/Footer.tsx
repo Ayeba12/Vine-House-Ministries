@@ -12,7 +12,6 @@ import {
   MapPin, 
   Mail, 
   Phone, 
-  Lock, 
   MessageSquare, 
   Compass, 
   Radio, 
@@ -25,11 +24,10 @@ import { Subscriber } from '@/lib/types';
 
 interface FooterProps {
   onSubscribe: (sub: Subscriber) => void;
-  onOpenCms: () => void;
   onPlanVisit: () => void;
 }
 
-export function Footer({ onSubscribe, onOpenCms, onPlanVisit }: FooterProps) {
+export function Footer({ onSubscribe, onPlanVisit }: FooterProps) {
   const [email, setEmail] = useState('');
   const [frequency, setFrequency] = useState<'Weekly Devotional' | 'Event Announcements' | 'All Updates'>('Weekly Devotional');
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -305,16 +303,6 @@ export function Footer({ onSubscribe, onOpenCms, onPlanVisit }: FooterProps) {
                   </li>
                 </ul>
 
-                {/* Staff CMS Trigger */}
-                <div className="pt-3">
-                  <button
-                    onClick={onOpenCms}
-                    className="w-full px-4 py-2.5 bg-[#2C3E2D] hover:bg-[#39503b] border border-[#8A9A86]/35 rounded-lg text-xs font-sans font-bold uppercase tracking-wider text-[#D4A373] hover:text-[#F9F7F2] flex items-center justify-center gap-2 transition-all duration-200 shadow-xs active:scale-[0.98] cursor-pointer"
-                  >
-                    <Lock className="w-3.5 h-3.5 text-[#D4A373]" />
-                    <span>Staff Portal &amp; RSVPs</span>
-                  </button>
-                </div>
               </div>
 
             </div>
