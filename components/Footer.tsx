@@ -18,7 +18,6 @@ const NAVIGATE = [
   { label: 'Sermons', href: '/sermons' },
   { label: 'Messages', href: '/messages' },
   { label: 'Events', href: '/events' },
-  { label: 'Visit', href: '/visit' },
   { label: 'Contact', href: '/contact' },
 ];
 

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
@@ -94,11 +95,22 @@ export function Navbar({
         }`}
       >
         <div className="mx-auto grid max-w-[1440px] grid-cols-[1fr_auto] items-center gap-6 px-5 sm:px-8 lg:grid-cols-[1fr_auto_1fr] lg:px-12">
-          <Link id="nav-brand-logo" href="/" className="group flex flex-col leading-none">
-            <span className="font-anton text-[1.35rem] uppercase text-ink-strong transition-colors group-hover:text-ink sm:text-2xl">
-              Vine House Ministries
+          <Link id="nav-brand-logo" href="/" className="group flex items-center gap-3">
+            {/* The emblem, green on the sand ground: see DESIGN.md §2.5. */}
+            <Image
+              src="/brand/vine-house-emblem-green.png"
+              alt=""
+              width={44}
+              height={44}
+              priority
+              className="h-10 w-10 shrink-0 sm:h-11 sm:w-11"
+            />
+            <span className="flex flex-col leading-none">
+              <span className="font-anton text-[1.35rem] uppercase text-ink-strong transition-colors group-hover:text-ink sm:text-2xl">
+                Vine House Ministries
+              </span>
+              <span className="eyebrow mt-1 text-ink-muted">Greater London &amp; Essex</span>
             </span>
-            <span className="eyebrow mt-1 text-ink-muted">Greater London &amp; Essex</span>
           </Link>
 
           <nav
