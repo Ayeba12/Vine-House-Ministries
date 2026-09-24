@@ -16,16 +16,17 @@ wordpress/
 ## Install into LocalWP
 
 The Local site is expected at `C:\Users\Ayeba\Local Sites\vine-house-ministries`. From
-this repository's root, link both plugins so edits here show up in WordPress immediately
-(run as Administrator — Windows symlinks need it):
+this repository's root, link both plugins so edits here show up in WordPress immediately.
+Directory junctions do this without administrator rights:
 
 ```powershell
 $wp = "C:\Users\Ayeba\Local Sites\vine-house-ministries\app\public\wp-content\plugins"
-New-Item -ItemType SymbolicLink -Path "$wp\vine-house-content" -Target "$PWD\wordpress\plugins\vine-house-content"
-New-Item -ItemType SymbolicLink -Path "$wp\vine-house-forms"   -Target "$PWD\wordpress\plugins\vine-house-forms"
+cmd /c mklink /J "$wp\vine-house-content" "$PWD\wordpress\plugins\vine-house-content"
+cmd /c mklink /J "$wp\vine-house-forms"   "$PWD\wordpress\plugins\vine-house-forms"
 ```
 
-Copying the folders works too; you just have to copy again after each change.
+Copying the folders works too; you just have to copy again after each change. On Bluehost
+the folders are copied, not linked.
 
 Then in wp-admin:
 
