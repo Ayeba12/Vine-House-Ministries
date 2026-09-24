@@ -8,7 +8,8 @@ carried to production like any other source.
 ```
 wordpress/
 ├── plugins/
-│   ├── vine-house-content/   sermons, gatherings, testimonials, site settings (ACF)
+│   ├── vine-house-content/   sermons, messages (the journal), gatherings, testimonials,
+│   │                         site settings (ACF), the publish webhook
 │   ├── vine-house-events/    events and bookings: capacity, waitlist, check-in, emails
 │   └── vine-house-forms/     newsletter, enquiries, visit plans
 └── README.md
@@ -16,12 +17,32 @@ wordpress/
 
 | Plugin | Needs | Owns in wp-admin |
 | --- | --- | --- |
-| Content | ACF Pro, WPGraphQL, WPGraphQL for ACF | Sermons, Gatherings, Testimonials, Site Settings |
+| Content | ACF Pro, WPGraphQL, WPGraphQL for ACF | Messages (posts), Sermons, Gatherings, Testimonials, Site Settings |
 | Events | WPGraphQL | Events, Bookings, Add Booking, Settings |
 | Forms | — | Vine Forms: Subscribers, Enquiries, Visit plans |
 
 Events and Forms share one API role, `vine_forms_client`, and one capability,
 `vine_submit_forms`. Whichever activates first creates the role; neither removes it.
+
+## What the site reads, and from where
+
+Every page reads through WPGraphQL and maps into the frontend's own types in
+`lib/wordpress.ts`. This is the contract; if a name here changes, that file changes.
+
+| On the site | In WordPress | GraphQL |
+| --- | --- | --- |
+| Messages, the journal (`/messages`) | standard **posts**, relabelled Messages. Category = kind (Pastoral Letter, Reflection, Teaching, Community; seeded on activation). Tags = themes. Featured image + its alt text. Excerpt. | `posts { … messageFields { authorRole scripture readTime pullQuote } }` |
+| Sermons (`/sermons`, home) | CPT `sermon`; Series and Topics taxonomies; ACF group Sermon | `sermons { … sermonFields { speaker speakerRole sermonDate durationSeconds scripture summary keyTakeaways { text } audioFile audioUrl transcriptSnippet } }` |
+| Events (`/events`, home) | CPT `church_event`, native meta from Vine House Events | `churchEvents { eventDate startTime endTime location room host highlights capacity bookedCount remaining bookingStatus }` |
+| Gathering tiles (home) | CPT `gathering`, ordered by menu order | `gatherings { … gatheringFields { pillarNumber subtitle timing location tags { text } } }` |
+| Voices (home) | CPT `testimonial`: title = author, content = quote, thumbnail = avatar | `testimonials { … testimonialFields { role tag } }` |
+| Notice banner, service times, office details | Site Settings options page | `siteSettings { siteSettingsFields { noticeBannerEnabled noticeBanner officeEmail charityNumber region addressLine accessNote serviceTimes { label value } } }` |
+
+Dates are stored as real dates (`Y-m-d`) and times as `HH:MM`; the frontend formats them.
+`bookedCount`, `remaining` and `bookingStatus` are computed from bookings, never authored.
+
+Without `WORDPRESS_GRAPHQL_ENDPOINT` set, the frontend runs on the seed content in
+`lib/data.ts`. With it set and WordPress unreachable, it renders empty lists and logs why.
 
 ## Install into LocalWP
 
@@ -44,11 +65,29 @@ Then in wp-admin:
 1. Install and activate **WPGraphQL**, **Advanced Custom Fields PRO** and **WPGraphQL for
    ACF**.
 2. Activate **Vine House Content**, **Vine House Events**, then **Vine House Forms**.
+   Content seeds the four message categories; Events seeds the five event categories.
 3. ACF picks the Content field groups up from `vine-house-content/acf-json/`. Open
-   *Custom Fields → Field Groups* once so it syncs them.
+   *Custom Fields → Field Groups* once so it syncs them. Five groups: Message, Sermon,
+   Gathering, Testimonial, Site Settings.
 4. Settings → Permalinks → Save (once) so the new post types get their rewrite rules.
 5. Events → Settings: set the website address (where "manage my booking" links point)
    and the office email.
+6. Site Settings: the notice banner, service times, region and office email.
+
+## The publish webhook
+
+The site caches every read for five minutes. To refresh it the moment something is
+published, add to the Local site's `wp-config.php` (and later Bluehost's):
+
+```php
+define( 'VINE_FRONTEND_URL', 'http://localhost:3000' );      // the Vercel URL in production
+define( 'VINE_REVALIDATE_SECRET', 'change-me' );             // must equal REVALIDATE_SECRET on the frontend
+```
+
+On publish, update or unpublish, Content posts `{"tags": ["sermons"]}` (or messages,
+events, gatherings, testimonials, settings) to `/api/revalidate` on the frontend with the
+secret in `X-Vine-Revalidate-Secret`. Left undefined, nothing is sent and the site waits
+out its window.
 
 ## The submissions user
 
@@ -68,6 +107,16 @@ so for development add this to the site's `wp-config.php`:
 // Development only. Never ship this to Bluehost.
 add_filter( 'wp_is_application_passwords_available', '__return_true' );
 ```
+
+Until the password is in `.env.local`, the frontend's route handlers answer every form
+as WordPress would but store nothing, and mark the reply `"simulated": true`.
+
+| Form on the site | Route handler | Plugin endpoint |
+| --- | --- | --- |
+| Footer newsletter | `POST /api/subscribe` | Forms `/subscribe` |
+| Contact | `POST /api/enquiry` | Forms `/enquiry` |
+| Sunday visitor pass (`/visit`) | `POST /api/visit-plan` | Forms `/visit-plan` |
+| Book a place (events, home) | `POST /api/events/{id}/bookings` | Events `/events/{id}/bookings` |
 
 ## Smoke test
 
@@ -100,13 +149,28 @@ curl -s -X POST http://vine-house-ministries.local/graphql \
 
 The first must print `0`; the second must return an error, not data.
 
-And the public read that the website will use:
+And the public reads the website uses, one per entity:
 
 ```bash
 curl -s -X POST http://vine-house-ministries.local/graphql \
   -H "Content-Type: application/json" \
   -d '{"query":"{ churchEvents { nodes { title eventDate startTime capacity bookedCount remaining bookingStatus } } }"}'
 ```
+
+```bash
+curl -s -X POST http://vine-house-ministries.local/graphql \
+  -H "Content-Type: application/json" \
+  -d '{"query":"{ sermons { nodes { title sermonFields { speaker sermonDate durationSeconds } sermonSeriesList { nodes { name } } } } }"}'
+```
+
+```bash
+curl -s -X POST http://vine-house-ministries.local/graphql \
+  -H "Content-Type: application/json" \
+  -d '{"query":"{ posts { nodes { slug title categories { nodes { name } } messageFields { authorRole readTime } } } }"}'
+```
+
+If WPGraphQL for ACF names a field differently from the table above (the `audioFile`
+media field is the likeliest), the fix is in the query strings in `lib/wordpress.ts`.
 
 ## Cron on Bluehost
 

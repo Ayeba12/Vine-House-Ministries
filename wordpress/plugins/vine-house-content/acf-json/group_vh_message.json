@@ -1,0 +1,92 @@
+{
+    "key": "group_vh_message",
+    "title": "Message",
+    "fields": [
+        {
+            "key": "field_vh_msg_author_role",
+            "label": "Author role",
+            "name": "author_role",
+            "type": "text",
+            "instructions": "How the writer is introduced under the title, for example \"Lead Pastor & Spiritual Director\".",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": { "width": "50", "class": "", "id": "" },
+            "default_value": "",
+            "placeholder": "Lead Pastor & Spiritual Director",
+            "prepend": "",
+            "append": "",
+            "maxlength": 120,
+            "show_in_graphql": 1
+        },
+        {
+            "key": "field_vh_msg_scripture",
+            "label": "Scripture",
+            "name": "scripture",
+            "type": "text",
+            "instructions": "The passage this message sits with, cited as John 15:1–8.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": { "width": "50", "class": "", "id": "" },
+            "default_value": "",
+            "placeholder": "John 15:1–8",
+            "prepend": "",
+            "append": "",
+            "maxlength": 80,
+            "show_in_graphql": 1
+        },
+        {
+            "key": "field_vh_msg_read_time",
+            "label": "Read time",
+            "name": "read_time",
+            "type": "text",
+            "instructions": "Leave blank and the website estimates it from the word count.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": { "width": "50", "class": "", "id": "" },
+            "default_value": "",
+            "placeholder": "6 min read",
+            "prepend": "",
+            "append": "",
+            "maxlength": 20,
+            "show_in_graphql": 1
+        },
+        {
+            "key": "field_vh_msg_pull_quote",
+            "label": "Pull quote",
+            "name": "pull_quote",
+            "type": "textarea",
+            "instructions": "One sentence from the message, set large after the second paragraph. Optional.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": { "width": "", "class": "", "id": "" },
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": 240,
+            "rows": 2,
+            "new_lines": "",
+            "show_in_graphql": 1
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "post"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "The journal. A message is a standard post: the title, the featured image (with its alt text), the excerpt, the body and one of the four categories are native; these fields carry the rest.",
+    "show_in_graphql": 1,
+    "graphql_field_name": "messageFields",
+    "map_graphql_types_from_location_rules": 0,
+    "graphql_types": "",
+    "modified": 1790280000
+}

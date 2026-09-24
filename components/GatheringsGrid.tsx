@@ -2,14 +2,14 @@
 
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { GATHERING_PILLARS } from '@/lib/data';
+import { GatheringPillar } from '@/lib/types';
 import { Reveal } from '@/components/ui/Reveal';
 
 /**
  * The four gathering rhythms as numbered tiles — the one place on the site
  * where the numbers carry real order, Sunday to Saturday.
  */
-export function GatheringsGrid({ onPlanVisit }: { onPlanVisit: () => void }) {
+export function GatheringsGrid({ pillars, onPlanVisit }: { pillars: GatheringPillar[]; onPlanVisit: () => void }) {
   return (
     <section id="gatherings" className="col-rules mx-auto max-w-[1440px] px-5 py-24 sm:px-8 sm:py-32 lg:px-12">
       <div className="border-b border-hairline pb-8">
@@ -22,7 +22,7 @@ export function GatheringsGrid({ onPlanVisit }: { onPlanVisit: () => void }) {
 
       <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-12">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-8">
-          {GATHERING_PILLARS.map((pillar, idx) => (
+          {pillars.map((pillar, idx) => (
             <Reveal key={pillar.number} delay={idx * 0.06}>
               <article className="flex h-full min-h-[240px] flex-col justify-between rounded-xl bg-surface-tint p-6 sm:p-7">
                 <div className="flex items-start justify-between gap-4">

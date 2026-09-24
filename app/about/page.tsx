@@ -347,7 +347,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <Footer onSubscribe={() => {}} onPlanVisit={() => router.push('/visit')} />
+      <Footer onPlanVisit={() => router.push('/visit')} />
     </main>
   );
 }

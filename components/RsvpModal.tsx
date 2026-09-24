@@ -12,10 +12,21 @@ interface RsvpModalProps {
   onConfirmRsvp: (rsvp: RSVPRecord) => void;
 }
 
+interface BookingReply {
+  id?: number;
+  status?: string;
+  passCode?: string;
+  guests?: number;
+  existing?: boolean;
+  message?: string;
+  field?: string;
+}
+
 /**
  * Booking a place: a dark header carrying the event, an underline form, and
  * on confirmation the pass itself, set large enough to read at the door.
- * Submission is simulated until the events plugin endpoint is wired in.
+ * The site's route handler passes the booking to Vine House Events, which
+ * holds the capacity line and issues the pass code shown here.
  */
 export function RsvpModal({ event, onClose, onConfirmRsvp }: RsvpModalProps) {
   const reduceMotion = useReducedMotion();
@@ -28,33 +39,57 @@ export function RsvpModal({ event, onClose, onConfirmRsvp }: RsvpModalProps) {
     notes: '',
   });
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState<RSVPRecord | null>(null);
+  const [waitlisted, setWaitlisted] = useState(false);
 
   if (!event) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.email) return;
+    if (!form.name || !form.email || submitting) return;
     setSubmitting(true);
-    setTimeout(() => {
+    setError(null);
+    try {
+      const res = await fetch(`/api/events/${encodeURIComponent(event.id)}/bookings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          guestsCount: Number(form.guestsCount),
+          isFirstTimeVisitor: form.isFirstTimeVisitor,
+          notes: form.notes,
+        }),
+      });
+      const reply = (await res.json().catch(() => ({}))) as BookingReply;
+      if (!res.ok) {
+        setError(reply.message ?? 'That did not go through. Please try again.');
+        return;
+      }
       const record: RSVPRecord = {
-        id: `rsvp-${Date.now()}`,
+        id: `rsvp-${reply.id ?? Date.now()}`,
         eventId: event.id,
         eventTitle: event.title,
         name: form.name,
         email: form.email,
         phone: form.phone || 'N/A',
-        guestsCount: Number(form.guestsCount),
+        guestsCount: reply.guests ?? Number(form.guestsCount),
         isFirstTimeVisitor: form.isFirstTimeVisitor,
         notes: form.notes,
         createdAt: new Date().toLocaleString(),
-        qrPassCode: `VH-${Math.floor(1000 + Math.random() * 9000)}-${event.category.toUpperCase().slice(0, 3)}`,
+        qrPassCode: reply.passCode ?? 'Pending',
         checkedIn: false,
       };
-      onConfirmRsvp(record);
+      setWaitlisted(reply.status === 'waitlisted');
+      if (!reply.existing && reply.status !== 'waitlisted') onConfirmRsvp(record);
       setConfirmed(record);
+    } catch {
+      setError('The church office could not be reached. Please try again in a moment.');
+    } finally {
       setSubmitting(false);
-    }, 600);
+    }
   };
 
   const downloadCalendar = () => {
@@ -97,7 +132,7 @@ export function RsvpModal({ event, onClose, onConfirmRsvp }: RsvpModalProps) {
           >
             <X className="h-5 w-5" />
           </button>
-          <p className="eyebrow text-accent-on-dark">{confirmed ? 'Confirmed' : 'Book a place'}</p>
+          <p className="eyebrow text-accent-on-dark">{confirmed ? (waitlisted ? 'On the waitlist' : 'Confirmed') : 'Book a place'}</p>
           <h2 id="rsvp-title" className="font-anton scale-step-h4 mt-2 pr-10 text-ink-on-dark">
             {event.title}
           </h2>
@@ -113,9 +148,15 @@ export function RsvpModal({ event, onClose, onConfirmRsvp }: RsvpModalProps) {
           {confirmed ? (
             <div className="flex flex-col gap-6">
               <div>
-                <h3 className="font-anton scale-step-h5 text-ink-strong">We look forward to welcoming you.</h3>
-                <p className="scale-step-body mt-2 text-ink/85">
-                  A confirmation is on its way to <strong>{confirmed.email}</strong>.
+                <h3 className="font-anton scale-step-h5 text-ink-strong">
+                  {waitlisted ? 'You are on the waitlist.' : 'We look forward to welcoming you.'}
+                </h3>
+                <p className="scale-step-body mt-2 text-ink">
+                  {waitlisted
+                    ? 'This gathering is full. If a place opens we will email you at once.'
+                    : 'A confirmation is on its way to '}
+                  {!waitlisted && <strong>{confirmed.email}</strong>}
+                  {!waitlisted && '.'}
                 </p>
               </div>
 
@@ -183,6 +224,11 @@ export function RsvpModal({ event, onClose, onConfirmRsvp }: RsvpModalProps) {
                 <label htmlFor="rsvp-notes" className="field-label">Notes or prayer request (optional)</label>
                 <textarea id="rsvp-notes" rows={2} placeholder="Wheelchair access, bringing children, or anything we should know" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} className="field" />
               </div>
+              {error && (
+                <p className="meta text-accent sm:col-span-2" role="alert">
+                  {error}
+                </p>
+              )}
               <div className="flex flex-wrap items-center justify-between gap-4 sm:col-span-2">
                 <button type="button" onClick={onClose} className="link-arrow text-ink-muted">
                   Cancel

@@ -54,18 +54,47 @@ export default function ContactPage() {
   const [category, setCategory] = useState<Category>('general');
   const [form, setForm] = useState(EMPTY);
   const [sent, setSent] = useState<null | { ref: string; name: string; email: string; title: string }>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const current = CATEGORIES.find((c) => c.id === category)!;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  /** Posts to the site's route handler, which passes the enquiry to Vine House Forms and the office inbox. */
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.email || !form.message) return;
-    setSent({
-      ref: `VHM-${Math.floor(100000 + Math.random() * 900000)}`,
-      name: form.name,
-      email: form.email,
-      title: current.title,
-    });
+    if (!form.name || !form.email || !form.message || submitting) return;
+    setSubmitting(true);
+    setError(null);
+    const header = [form.subject ? `Subject: ${form.subject}` : '', `Region: ${form.area}`].filter(Boolean).join('\n');
+    try {
+      const res = await fetch('/api/enquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          category,
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          message: `${header}\n\n${form.message}`,
+          source: 'contact',
+        }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { id?: number; message?: string };
+      if (!res.ok) {
+        setError(data.message ?? 'That did not go through. Please try again.');
+        return;
+      }
+      setSent({
+        ref: data.id ? `VHM-${String(data.id).padStart(6, '0')}` : `VHM-${Math.floor(100000 + Math.random() * 900000)}`,
+        name: form.name,
+        email: form.email,
+        title: current.title,
+      });
+    } catch {
+      setError('The church office could not be reached. Please try again in a moment.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -184,9 +213,14 @@ export default function ContactPage() {
                     Pastoral discretion is guaranteed. Prayer requests are held in strict pastoral confidence.
                   </p>
                 )}
+                {error && (
+                  <p className="meta text-accent sm:col-span-2" role="alert">
+                    {error}
+                  </p>
+                )}
                 <div className="sm:col-span-2">
-                  <button type="submit" className="btn btn-primary">
-                    <span>Send message</span>
+                  <button type="submit" disabled={submitting} className="btn btn-primary disabled:opacity-60">
+                    <span>{submitting ? 'Sending' : 'Send message'}</span>
                     <ArrowUpRight className="h-4 w-4" />
                   </button>
                 </div>
@@ -262,7 +296,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <Footer onSubscribe={() => {}} onPlanVisit={() => router.push('/visit')} />
+      <Footer onPlanVisit={() => router.push('/visit')} />
     </main>
   );
 }

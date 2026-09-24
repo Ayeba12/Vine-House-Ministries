@@ -8,8 +8,11 @@ import { Subscriber } from '@/lib/types';
 import { Reveal } from '@/components/ui/Reveal';
 
 interface FooterProps {
-  onSubscribe: (sub: Subscriber) => void;
+  /** Called once WordPress has accepted the sign-up. Optional. */
+  onSubscribe?: (sub: Subscriber) => void;
   onPlanVisit: () => void;
+  /** The Gather column: service times from Site Settings. The defaults below otherwise. */
+  gather?: { label: string; value: string }[];
 }
 
 type Frequency = Subscriber['frequency'];
@@ -29,22 +32,43 @@ const GATHER = [
   { label: 'Youth & young adults', value: 'Fri 19:30' },
 ];
 
-export function Footer({ onSubscribe, onPlanVisit }: FooterProps) {
+export function Footer({ onSubscribe, onPlanVisit, gather = GATHER }: FooterProps) {
   const [email, setEmail] = useState('');
   const [frequency, setFrequency] = useState<Frequency>('Weekly Devotional');
   const [subscribed, setSubscribed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  /** Posts to the site's own route handler, which signs in to Vine House Forms. */
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.includes('@')) return;
-    onSubscribe({
-      id: `sub-${Date.now()}`,
-      email,
-      subscribedAt: new Date().toLocaleDateString('en-GB'),
-      frequency,
-    });
-    setSubscribed(true);
-    setEmail('');
+    if (!email.includes('@') || submitting) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, frequency }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { id?: number; message?: string };
+      if (!res.ok) {
+        setError(data.message ?? 'That did not go through. Please try again.');
+        return;
+      }
+      onSubscribe?.({
+        id: `sub-${data.id ?? Date.now()}`,
+        email,
+        subscribedAt: new Date().toLocaleDateString('en-GB'),
+        frequency,
+      });
+      setSubscribed(true);
+      setEmail('');
+    } catch {
+      setError('The church office could not be reached. Please try again in a moment.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -81,11 +105,16 @@ export function Footer({ onSubscribe, onPlanVisit }: FooterProps) {
                     onChange={(e) => setEmail(e.target.value)}
                     className="min-w-0 flex-1 bg-transparent py-3 font-sans text-sm text-ink-on-dark placeholder:text-ink-on-dark-muted focus:outline-none"
                   />
-                  <button type="submit" className="link-arrow self-center border-b-0 text-ink-on-dark">
-                    <span>Join</span>
+                  <button type="submit" disabled={submitting} className="link-arrow self-center border-b-0 text-ink-on-dark disabled:opacity-60">
+                    <span>{submitting ? 'Joining' : 'Join'}</span>
                     <ArrowUpRight className="h-3.5 w-3.5" />
                   </button>
                 </div>
+                {error && (
+                  <p className="meta text-accent-on-dark" role="alert">
+                    {error}
+                  </p>
+                )}
                 <div className="meta flex flex-wrap gap-x-6 gap-y-2 text-ink-on-dark-muted">
                   {(['Weekly Devotional', 'Event Announcements'] as Frequency[]).map((option) => (
                     <label key={option} className="flex cursor-pointer items-center gap-2">
@@ -121,7 +150,7 @@ export function Footer({ onSubscribe, onPlanVisit }: FooterProps) {
             <div>
               <p className="eyebrow text-ink-on-dark-muted">Gather</p>
               <dl className="meta mt-5 flex flex-col gap-2.5">
-                {GATHER.map((item) => (
+                {gather.map((item) => (
                   <div key={item.label} className="flex flex-col">
                     <dt className="text-ink-on-dark">{item.label}</dt>
                     <dd className="text-ink-on-dark-muted">{item.value}</dd>

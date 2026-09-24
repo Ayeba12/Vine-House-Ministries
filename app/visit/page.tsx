@@ -65,17 +65,45 @@ export default function VisitPage() {
   const [form, setForm] = useState({ name: '', email: '', service: '10:00 Sanctuary Liturgy', guests: '1', children: false });
   const [pass, setPass] = useState<null | { id: string; name: string; service: string; guests: string; host: string }>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  /** Posts to the site's route handler, which passes the plan to Vine House Forms and shows the pass code it issued. */
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.email) return;
-    setPass({
-      id: `VH-VISIT-${Math.floor(1000 + Math.random() * 9000)}`,
-      name: form.name,
-      service: form.service,
-      guests: form.guests,
-      host: 'Elena Vance, Welcome Team Lead',
-    });
+    if (!form.name || !form.email || submitting) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/visit-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          service: form.service,
+          partySize: form.guests === '4+' ? 4 : Number(form.guests),
+          children: form.children,
+          welcomeHost: true,
+        }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { passCode?: string; message?: string };
+      if (!res.ok) {
+        setError(data.message ?? 'That did not go through. Please try again.');
+        return;
+      }
+      setPass({
+        id: data.passCode ?? `VH-VISIT-${Math.floor(1000 + Math.random() * 9000)}`,
+        name: form.name,
+        service: form.service,
+        guests: form.guests,
+        host: 'Elena Vance, Welcome Team Lead',
+      });
+    } catch {
+      setError('The church office could not be reached. Please try again in a moment.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -240,9 +268,14 @@ export default function VisitPage() {
                     <input type="checkbox" checked={form.children} onChange={(e) => setForm({ ...form, children: e.target.checked })} className="h-4 w-4 accent-[#2C3E2D]" />
                     I am bringing children who will need nursery or NextGen check-in
                   </label>
+                  {error && (
+                    <p className="meta text-accent sm:col-span-2" role="alert">
+                      {error}
+                    </p>
+                  )}
                   <div className="sm:col-span-2">
-                    <button type="submit" className="btn btn-primary">
-                      <span>Reserve my pass</span>
+                    <button type="submit" disabled={submitting} className="btn btn-primary disabled:opacity-60">
+                      <span>{submitting ? 'Reserving' : 'Reserve my pass'}</span>
                       <ArrowUpRight className="h-4 w-4" />
                     </button>
                   </div>
@@ -281,7 +314,7 @@ export default function VisitPage() {
         </dl>
       </section>
 
-      <Footer onSubscribe={() => {}} onPlanVisit={() => router.push('/visit')} />
+      <Footer onPlanVisit={() => router.push('/visit')} />
     </main>
   );
 }

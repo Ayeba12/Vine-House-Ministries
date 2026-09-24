@@ -1,5 +1,14 @@
 import type { NextConfig } from 'next';
 
+/** The WordPress host, so its media is allowed through next/image on every environment. */
+const wordpressUrl = (() => {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_WORDPRESS_URL ?? 'http://vine-house-ministries.local');
+  } catch {
+    return new URL('http://vine-house-ministries.local');
+  }
+})();
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   turbopack: {},
@@ -12,12 +21,12 @@ const nextConfig: NextConfig = {
     // Unsplash through the dev server times out and 500s the srcset.
     unoptimized: process.env.NODE_ENV === 'development',
     remotePatterns: [
-      // WordPress media. The LocalWP host in development; set the production
-      // host once the Bluehost domain is known.
+      // WordPress media: the LocalWP host in development, the Bluehost host
+      // in production, both read from NEXT_PUBLIC_WORDPRESS_URL.
       {
-        protocol: 'http',
-        hostname: 'vine-house-ministries.local',
-        port: '',
+        protocol: wordpressUrl.protocol.replace(':', '') as 'http' | 'https',
+        hostname: wordpressUrl.hostname,
+        port: wordpressUrl.port,
         pathname: '/wp-content/uploads/**',
       },
       // Placeholder imagery, to be replaced by WordPress media as content migrates.

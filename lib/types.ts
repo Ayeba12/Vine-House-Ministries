@@ -30,6 +30,8 @@ export interface ChurchEvent {
   host: string;
   imageUrl: string;
   highlights: string[];
+  /** From WordPress: open, waitlist, full, closed, not_yet_open or disabled. Absent in the seed data. */
+  bookingStatus?: string;
 }
 
 export interface RSVPRecord {
@@ -91,4 +93,16 @@ export interface Message {
   body: string[];
   pullQuote?: string;
   tags: string[];
+}
+
+/** The Site Settings options page in WordPress: the notice banner, service times and office details. */
+export interface SiteSettings {
+  /** Null when the banner is switched off. */
+  noticeBanner: string | null;
+  officeEmail: string;
+  charityNumber: string;
+  region: string;
+  addressLine: string;
+  accessNote: string;
+  serviceTimes: { label: string; value: string }[];
 }

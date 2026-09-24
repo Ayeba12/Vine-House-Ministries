@@ -2,14 +2,14 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { TESTIMONIALS } from '@/lib/data';
+import { Testimonial } from '@/lib/types';
 import { Reveal } from '@/components/ui/Reveal';
 
 /**
  * Testimonials laid out the way a reader's eye moves: the heading split to
  * the two margins, each quote a small card stepping across the page.
  */
-export function VoicesSection() {
+export function VoicesSection({ testimonials }: { testimonials: Testimonial[] }) {
   const offsets = ['lg:col-start-4', 'lg:col-start-6', 'lg:col-start-2'];
 
   return (
@@ -21,7 +21,7 @@ export function VoicesSection() {
       </div>
 
       <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-y-12">
-        {TESTIMONIALS.map((t, idx) => (
+        {testimonials.map((t, idx) => (
           <Reveal key={t.id} delay={idx * 0.08} className={`lg:col-span-6 ${offsets[idx % offsets.length]}`}>
             <figure className="flex h-full flex-col rounded-xl bg-surface-raised p-6 ring-1 ring-hairline sm:p-8">
               <blockquote className="scale-step-lead text-pretty text-ink">&ldquo;{t.quote}&rdquo;</blockquote>

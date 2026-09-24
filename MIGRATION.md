@@ -113,17 +113,16 @@ frontend renders the booking button from that one status field.
 
 Six forms currently submit into React state and vanish on refresh:
 
-| Form | Location | Shape |
-| --- | --- | --- |
-| Newsletter | `Footer.tsx:160` | email, frequency |
-| RSVP | `RsvpModal.tsx:139` | name, email, phone, guests, first-time flag, notes |
-| Plan a visit | `PlanVisitGuide.tsx:227` | name, email, service, party size, children, host request |
-| Visitor pass | `app/visit/page.tsx` | name, email, date, service, guests, children's ages |
-| Contact | `app/contact/page.tsx:298` | category (general/prayer/sacraments/charity), name, email, message |
-| Gathering interest | `app/gatherings/page.tsx:400` | gathering, name, email |
+| Form | Location | Route handler | Shape |
+| --- | --- | --- | --- |
+| Newsletter | `components/Footer.tsx` | `/api/subscribe` | email, frequency |
+| Book a place | `components/RsvpModal.tsx` | `/api/events/{id}/bookings` | name, email, phone, guests, first-time flag, notes |
+| Visitor pass | `app/visit/page.tsx` | `/api/visit-plan` | name, email, service, party size, children |
+| Contact | `app/contact/page.tsx` | `/api/enquiry` | category (general/prayer/sacraments/charity), name, email, phone, message |
 
-The RSVP form becomes a booking; the other five go to Forms. Both plugins share one
-API-only role, so a single application password serves every endpoint.
+The booking goes to Events; the other three go to Forms. Both plugins share one API-only
+role, so a single application password serves every endpoint. The plan-a-visit guide and
+the gatherings page, with their forms, were removed in the redesign.
 
 **Endpoints, all under `/wp-json/vine/v1/`**
 
@@ -158,22 +157,24 @@ records appear in wp-admin with working CSV export.
 
 ---
 
-## Phase 3 — Data layer
+## Phase 3 — Data layer — done
 
-`lib/wordpress.ts`, modelled on the pattern already proven in `thrivewell-care`:
+`lib/wordpress.ts`:
 
-- A typed `fetchAPI` with an abort timeout and a GraphQL error path.
-- One fetch function per entity, returning the **existing** `lib/types.ts` interfaces, so
-  components need no prop changes when the data source swaps.
-- `next: { revalidate: 300 }` in production, `no-store` in development.
-- A resilient fallback: if WordPress is unreachable at build time, the site builds with
-  empty collections rather than failing the deploy. A church site that renders without a
-  sermon list beats a site that 500s.
+- A typed `fetchGraphQL` with an eight-second abort and a GraphQL error path.
+- One fetch function per entity (`getSermons`, `getEvents`, `getMessages`, `getMessage`,
+  `getGatherings`, `getTestimonials`, `getSiteSettings`), each returning the **existing**
+  `lib/types.ts` interfaces, so no component changed when the source swapped.
+- `next: { revalidate: 300, tags }` in production, `no-store` in development.
+- Source policy: with no `WORDPRESS_GRAPHQL_ENDPOINT` the site runs on the seed content in
+  `lib/data.ts`; with one set and WordPress unreachable it renders empty collections and
+  logs why. A church site that renders without a sermon list beats a site that 500s.
 
-`app/api/revalidate/route.ts` — a secret-guarded endpoint WordPress calls on publish, so
-edits appear without waiting out the ISR window.
+`app/api/revalidate/route.ts` takes `{ tags: [...] }` behind `REVALIDATE_SECRET` and
+clears the tags and the pages they reach. Vine House Content sends it on publish when
+`VINE_FRONTEND_URL` and `VINE_REVALIDATE_SECRET` are defined in `wp-config.php`.
 
-**Done when:** `lib/data.ts` is unreferenced and can be deleted.
+`lib/data.ts` stays as the seed until the WordPress content exists; then it goes.
 
 ---
 
@@ -186,18 +187,18 @@ filters, modals and forms stay `'use client'` — they genuinely need it. Page-l
 
 Order, easiest first, so the pattern is proven on low-risk pages:
 
-| # | Route | Data | Client islands | Risk |
+| # | Route | Data | Client island | Status |
 | --- | --- | --- | --- | --- |
-| 1 | `/messages` and `/messages/[slug]` | posts | search, category filter | low |
-| 2 | `/about` | testimonials | none | low |
-| 3 | `/contact` | none | contact form | low |
-| 4 | `/visit` | none | pass generator, map, FAQ | medium |
-| 5 | `/events` | events | RSVP modal, calendar | medium |
-| 6 | `/sermons` | sermons | filters, search, audio | high |
-| 7 | `/` | all | everything | high |
+| 1 | `/messages` and `/messages/[slug]` | posts | `MessagesView`, `MessageView` | done |
+| 2 | `/events` | events | `EventsView` (search, tabs, booking modal) | done |
+| 3 | `/sermons` | sermons | `SermonsView` (filters, search, audio) | done |
+| 4 | `/` | sermons, events, gatherings, testimonials, settings | `HomeView` (player, booking modal) | done |
+| 5 | `/about`, `/contact`, `/visit` | none | the whole page | still client pages; no content to fetch |
 
-The homepage goes last: it composes every component and holds the audio player state that
-persists across the page.
+Each converted route is a server `page.tsx` that fetches, plus a `*View.tsx` client island
+that took the old page's body unchanged with the data as props. `GatheringsGrid` and
+`VoicesSection` take `pillars` and `testimonials` from the home page; the notice banner
+and the footer's service times come from Site Settings.
 
 **Fold into each page as it converts:** replace arbitrary Tailwind values with the
 `DESIGN.md` tokens, and add `useReducedMotion()` to that page's animated components. One
@@ -205,12 +206,14 @@ pass per file.
 
 ---
 
-## Phase 5 — Wire the forms
+## Phase 5 — Wire the forms — done
 
-Each form posts to a Next route handler, which calls the plugin with the application
-password. Per form: optimistic UI preserved, real error states, disabled submit while
-in flight, and a success state that reflects what WordPress actually stored — an RSVP
-confirmation should show the pass code the server generated, not one invented client-side.
+Each form posts to a Next route handler (`app/api/*`), which calls the plugin with the
+application password through `lib/wp-rest.ts`. Per form: disabled submit while in
+flight, the plugin's own error message shown beside the action, and a success state that
+reflects what WordPress stored — the booking shows the pass code and the confirmed or
+waitlisted status the server returned. Until `WORDPRESS_APP_PASSWORD` is set, the
+handlers answer as WordPress would and mark the reply `simulated: true`.
 
 ---
 
