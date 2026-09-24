@@ -23,18 +23,19 @@ export function VoicesSection() {
       <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-y-12">
         {TESTIMONIALS.map((t, idx) => (
           <Reveal key={t.id} delay={idx * 0.08} className={`lg:col-span-6 ${offsets[idx % offsets.length]}`}>
-            <figure className="flex h-full flex-col gap-6 rounded-xl border border-hairline bg-surface-raised p-6 sm:p-8">
-              <p className="eyebrow text-accent">{t.tag}</p>
-              <blockquote className="scale-step-lead text-ink">&ldquo;{t.quote}&rdquo;</blockquote>
-              <figcaption className="mt-auto flex items-center gap-4">
+            <figure className="flex h-full flex-col rounded-xl bg-surface-raised p-6 ring-1 ring-hairline sm:p-8">
+              <blockquote className="scale-step-lead text-pretty text-ink">&ldquo;{t.quote}&rdquo;</blockquote>
+              <figcaption className="mt-auto flex items-center gap-4 pt-8">
                 {t.avatarUrl && (
-                  <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full bg-surface-tint">
+                  <span className="relative size-11 shrink-0 overflow-hidden rounded-full bg-surface-tint outline-1 -outline-offset-1 outline-black/10">
                     <Image src={t.avatarUrl} alt="" fill sizes="44px" className="object-cover" referrerPolicy="no-referrer" />
                   </span>
                 )}
                 <span className="flex flex-col">
                   <span className="font-sans text-sm font-semibold text-ink-strong">{t.author}</span>
-                  <span className="meta text-ink-muted">{t.role}</span>
+                  <span className="meta text-ink-muted">
+                    {t.role} · {t.tag}
+                  </span>
                 </span>
               </figcaption>
             </figure>

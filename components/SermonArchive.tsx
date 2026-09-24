@@ -77,48 +77,46 @@ export function SermonArchive({ sermons, activeSermon, isPlaying, onPlaySermon }
                 className={wide ? 'lg:col-span-7' : 'lg:col-span-5'}
               >
                 <article
-                  className={`group relative flex h-full flex-col overflow-hidden rounded-xl bg-surface-dark ${
+                  className={`relative flex h-full flex-col overflow-hidden rounded-xl bg-surface-dark ${
                     isActive ? 'ring-1 ring-accent-on-dark' : ''
                   }`}
                 >
-                  <div className="relative aspect-[16/10] w-full overflow-hidden">
+                  <div className="relative aspect-[16/10] w-full outline-1 -outline-offset-1 outline-white/10">
                     <Image
                       src={sermon.imageUrl}
                       alt=""
                       fill
                       sizes="(min-width: 1024px) 50vw, 100vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                      className="object-cover"
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute left-4 top-4 flex items-center gap-2">
-                      <span className="eyebrow rounded-md bg-surface-deep/85 px-2.5 py-1 text-ink-on-dark backdrop-blur-sm">
-                        {sermon.series}
-                      </span>
+                      <span className="eyebrow rounded-md bg-surface-deep px-2.5 py-1 text-ink-on-dark">{sermon.series}</span>
                       {playing && (
                         <span className="eyebrow rounded-md bg-accent-on-dark px-2.5 py-1 text-ink">Now playing</span>
                       )}
                     </div>
                     <button
                       onClick={() => onPlaySermon(sermon)}
-                      className="absolute bottom-4 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent-on-dark text-ink transition-transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink-on-dark"
+                      className="absolute bottom-4 right-4 flex size-12 items-center justify-center rounded-full bg-accent-on-dark text-ink transition-transform duration-150 ease-out active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink-on-dark"
                       aria-label={playing ? `Pause ${sermon.title}` : `Play ${sermon.title}`}
                     >
-                      {playing ? <Pause className="h-4 w-4 fill-current" /> : <Play className="ml-0.5 h-4 w-4 fill-current" />}
+                      {playing ? <Pause className="size-4 fill-current" /> : <Play className="ml-0.5 size-4 fill-current" />}
                     </button>
                   </div>
 
-                  <div className="flex flex-1 flex-col gap-4 p-6 sm:p-7">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-                      <h3 className="font-anton scale-step-h5 text-ink-on-dark">{sermon.title}</h3>
-                      <dl className="meta grid shrink-0 grid-cols-[auto_1fr] gap-x-3 text-ink-on-dark-muted sm:text-right sm:grid-cols-1">
+                  <div className="flex flex-1 flex-col p-6 sm:p-7">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+                      <h3 className="font-anton scale-step-h5 text-balance text-ink-on-dark">{sermon.title}</h3>
+                      <dl className="meta grid shrink-0 grid-cols-[auto_1fr] gap-x-3 tabular-nums text-ink-on-dark-muted sm:text-right sm:grid-cols-1">
                         <dt className="sm:hidden">Passage</dt>
                         <dd className="text-ink-on-dark">{sermon.scripture}</dd>
                         <dt className="sm:hidden">Length</dt>
                         <dd>{sermon.duration}</dd>
                       </dl>
                     </div>
-                    <p className="scale-step-body line-clamp-2 max-w-[60ch] text-ink-on-dark/85">{sermon.summary}</p>
-                    <p className="meta mt-auto text-ink-on-dark-muted">
+                    <p className="scale-step-body mt-3 line-clamp-2 max-w-[60ch] text-pretty text-ink-on-dark">{sermon.summary}</p>
+                    <p className="meta mt-auto pt-6 tabular-nums text-ink-on-dark-muted">
                       {sermon.speaker} · {sermon.date}
                     </p>
                   </div>

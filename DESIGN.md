@@ -213,10 +213,19 @@ content-blocking bug for anyone with the setting on.
 ## 6. Components
 
 - **Buttons.** Primary: olive fill, sand text. Secondary: white fill, hairline border,
-  olive text. Accent: honey fill, slate text — dark ground only. All get
-  `active:scale-[0.98]` and a visible focus ring.
-- **Cards.** White surface, hairline border, `rounded-xl`, image at 16:9, eyebrow +
-  title + meta row. Numbered variants carry the index top-right in Anton.
+  olive text. Accent: honey fill, slate text — dark ground only. All get a press
+  scale of exactly 0.96 over 150ms (never a hover scale) and a visible focus ring.
+  An icon before the label takes 2px less padding on its side than the text side.
+- **Cards.** White surface, a 1px hairline ring, `rounded-xl`, the photograph at 4:3
+  (16:10 on the dark sermon card) with a 1px pure-black-at-10% inset outline (white at
+  10% on dark). **The title leads**: no eyebrow above it. Then the excerpt at body
+  size, then a foot on its own hairline: who in full ink, then what and when in muted
+  ink (`Reflection · 12 September 2026 · 6 min`, tabular numerals). Where the whole
+  card is the link it carries no control of its own and its hover is the ring turning
+  olive over 150ms; the photograph never zooms. Labels over a photograph are solid
+  slate, never blurred glass. Secondary text is a token from the ground, never the
+  ink at reduced opacity. Numbered tiles carry the index top-right in Anton only where
+  the order carries information.
 - **Forms.** Labels in caption step, uppercase, muted ink. Inputs `rounded-lg` with
   hairline borders. Never communicate errors by colour alone.
 - **Focus.** Every interactive element needs a visible focus-visible ring — honey on

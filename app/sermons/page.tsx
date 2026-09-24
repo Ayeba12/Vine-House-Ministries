@@ -171,36 +171,38 @@ export default function SermonsPage() {
             const playing = playingId === sermon.id;
             return (
               <Reveal key={sermon.id} delay={(idx % 2) * 0.08}>
-                <article id={sermon.id} className={`group flex h-full flex-col overflow-hidden rounded-xl bg-surface-raised ring-1 ${activeSermon?.id === sermon.id ? 'ring-ink-strong' : 'ring-hairline'}`}>
-                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface-deep">
-                    <Image src={sermon.imageUrl} alt="" fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.02]" referrerPolicy="no-referrer" />
-                    <span className="eyebrow absolute left-4 top-4 rounded-md bg-surface-deep/85 px-2.5 py-1 text-ink-on-dark backdrop-blur-sm">{sermon.series}</span>
+                <article id={sermon.id} className={`flex h-full flex-col overflow-hidden rounded-xl bg-surface-raised ring-1 ${activeSermon?.id === sermon.id ? 'ring-ink-strong' : 'ring-hairline'}`}>
+                  <div className="relative aspect-[16/10] w-full bg-surface-deep outline-1 -outline-offset-1 outline-black/10">
+                    <Image src={sermon.imageUrl} alt="" fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" referrerPolicy="no-referrer" />
+                    <span className="eyebrow absolute left-4 top-4 rounded-md bg-surface-deep px-2.5 py-1 text-ink-on-dark">{sermon.series}</span>
                     {playing && <span className="eyebrow absolute right-4 top-4 rounded-md bg-accent-on-dark px-2.5 py-1 text-ink">Now playing</span>}
                   </div>
-                  <div className="flex flex-1 flex-col gap-4 p-6 sm:p-7">
+                  <div className="flex flex-1 flex-col p-6 sm:p-7">
                     <div className="flex flex-col gap-2 xl:flex-row xl:items-start xl:justify-between xl:gap-6">
-                      <h3 className="font-anton scale-step-h5 text-ink-strong">{sermon.title}</h3>
-                      <p className="meta text-ink-muted xl:shrink-0 xl:text-right">
+                      <h3 className="font-anton scale-step-h5 text-balance text-ink-strong">{sermon.title}</h3>
+                      <p className="meta tabular-nums text-ink-muted xl:shrink-0 xl:text-right">
                         <span className="text-ink xl:block">{sermon.scripture}</span>
                         <span className="xl:hidden"> · </span>
                         {sermon.duration} · {sermon.date}
                       </p>
                     </div>
-                    <p className="scale-step-body max-w-[56ch] text-ink/85">{sermon.summary}</p>
-                    <ul className="meta flex flex-col gap-1 text-ink/80">
+                    <p className="scale-step-body mt-3 max-w-[56ch] text-pretty text-ink">{sermon.summary}</p>
+                    <ul className="meta mt-4 flex list-disc flex-col gap-1 ps-4 text-ink marker:text-ink-muted">
                       {sermon.keyTakeaways.slice(0, 2).map((t) => (
-                        <li key={t} className="flex gap-2"><span className="text-ink-muted">—</span><span>{t}</span></li>
+                        <li key={t} className="text-pretty">{t}</li>
                       ))}
                     </ul>
-                    <div className="mt-auto flex flex-wrap items-center justify-between gap-4 border-t border-hairline pt-4">
-                      <button onClick={() => play(sermon)} className="btn btn-outline px-4 py-2.5">
-                        {playing ? <Pause className="h-3 w-3 fill-current" /> : <Play className="h-3 w-3 fill-current" />}
-                        <span>{playing ? 'Pause' : 'Listen'}</span>
-                      </button>
-                      <button onClick={() => setReading(sermon)} className="link-arrow text-ink-strong">
-                        <span>Read transcript</span>
-                        <ArrowUpRight className="h-3.5 w-3.5" />
-                      </button>
+                    <div className="mt-auto pt-6">
+                      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-hairline pt-4">
+                        <button onClick={() => play(sermon)} className="btn btn-outline py-2.5 ps-3.5 pe-4">
+                          {playing ? <Pause className="size-3 fill-current" /> : <Play className="size-3 fill-current" />}
+                          <span>{playing ? 'Pause' : 'Listen'}</span>
+                        </button>
+                        <button onClick={() => setReading(sermon)} className="link-arrow text-ink-strong">
+                          <span>Read transcript</span>
+                          <ArrowUpRight className="size-3.5" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </article>
