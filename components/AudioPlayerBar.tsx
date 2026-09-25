@@ -78,6 +78,25 @@ export function AudioPlayerBar({ sermon, isPlaying, onTogglePlay, onClose, onSel
     if (audio) audio.playbackRate = rate;
   }, [rate, src]);
 
+  /* The file's own length. On a server-rendered page the browser can finish
+     reading the metadata before React attaches the event handlers, so the
+     element is read directly as well as listened to. */
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !src) return;
+    const sync = () => {
+      if (Number.isFinite(audio.duration) && audio.duration > 0) setDuration(audio.duration);
+      if (audio.readyState >= 1) setStatus((current) => (current === 'error' ? current : 'ready'));
+    };
+    audio.addEventListener('loadedmetadata', sync);
+    audio.addEventListener('durationchange', sync);
+    if (audio.readyState >= 1) queueMicrotask(sync);
+    return () => {
+      audio.removeEventListener('loadedmetadata', sync);
+      audio.removeEventListener('durationchange', sync);
+    };
+  }, [src]);
+
   /* Lock-screen and hardware controls. */
   useEffect(() => {
     if (!sermon || typeof navigator === 'undefined' || !('mediaSession' in navigator)) return;

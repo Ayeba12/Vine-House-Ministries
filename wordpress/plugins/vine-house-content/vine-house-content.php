@@ -238,6 +238,36 @@ add_action(
 );
 
 /**
+ * A sermon's length comes from its audio file. WordPress reads the duration
+ * of an uploaded audio file into the attachment's metadata; on every save
+ * of a sermon that has a file, that figure becomes duration_seconds, so the
+ * editor never types a length that the file contradicts. A sermon with only
+ * an external URL keeps whatever the editor entered.
+ */
+function vine_content_sync_sermon_duration( int $post_id ): void {
+	if ( 'sermon' !== get_post_type( $post_id ) || ! function_exists( 'get_field' ) ) {
+		return;
+	}
+	$keys = array();
+	foreach ( (array) acf_get_fields( 'group_vh_sermon' ) as $field ) {
+		$keys[ $field['name'] ] = $field['key'];
+	}
+	if ( empty( $keys['audio_file'] ) || empty( $keys['duration_seconds'] ) ) {
+		return;
+	}
+	$attachment_id = (int) get_field( $keys['audio_file'], $post_id, false );
+	if ( ! $attachment_id ) {
+		return;
+	}
+	$meta   = wp_get_attachment_metadata( $attachment_id );
+	$length = isset( $meta['length'] ) ? (int) round( (float) $meta['length'] ) : 0;
+	if ( $length > 0 && $length !== (int) get_field( $keys['duration_seconds'], $post_id, false ) ) {
+		update_field( $keys['duration_seconds'], $length, $post_id );
+	}
+}
+add_action( 'acf/save_post', 'vine_content_sync_sermon_duration', 30 );
+
+/**
  * The publish webhook.
  *
  * The Next.js site caches every read for five minutes. When something is
