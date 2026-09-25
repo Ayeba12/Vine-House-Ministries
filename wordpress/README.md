@@ -101,10 +101,12 @@ Give it a user that can do nothing else:
    are part of it).
 
 Application passwords are only offered over HTTPS by default. LocalWP sites are `http://`,
-so for development add this to the site's `wp-config.php`:
+so for development drop this file in the site's `wp-content/mu-plugins/` (not in
+`wp-config.php`: the plugin API is not loaded there yet, and the call would fatal):
 
 ```php
-// Development only. Never ship this to Bluehost.
+<?php
+// wp-content/mu-plugins/vine-local-dev.php. Development only. Never copy to Bluehost.
 add_filter( 'wp_is_application_passwords_available', '__return_true' );
 ```
 
