@@ -41,8 +41,18 @@ export function AudioPlayerBar({ sermon, isPlaying, onTogglePlay, onClose, onSel
   const [duration, setDuration] = useState(0);
   const [rate, setRate] = useState(1);
   const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
-  const [panel, setPanel] = useState<'notes' | 'episodes' | null>(null);
+  const [panel, setPanel] = useState<'notes' | 'episodes' | 'share' | null>(null);
   const [shared, setShared] = useState<'copied' | null>(null);
+
+  /* Escape closes whichever panel is open. */
+  useEffect(() => {
+    if (!panel) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPanel(null);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [panel]);
 
   const src = sermon?.audioUrl ?? '';
 
@@ -125,26 +135,40 @@ export function AudioPlayerBar({ sermon, isPlaying, onTogglePlay, onClose, onSel
 
   const cycleRate = () => setRate(RATES[(RATES.indexOf(rate) + 1) % RATES.length]);
 
-  /** The system share sheet where there is one; the clipboard where there is not. */
+  const shareUrl = typeof window === 'undefined' ? '' : `${window.location.origin}/sermons#${sermon.id}`;
+  const shareText = `${sermon.title} · ${sermon.speaker} · ${sermon.scripture}`;
+
+  /** The system share sheet where the browser has one; the site's own share panel where it does not. */
   const share = async () => {
-    const url = `${window.location.origin}/sermons#${sermon.id}`;
-    const data = { title: sermon.title, text: `${sermon.title} · ${sermon.speaker} · ${sermon.scripture}`, url };
+    const data = { title: sermon.title, text: shareText, url: shareUrl };
     if (typeof navigator.share === 'function' && (!navigator.canShare || navigator.canShare(data))) {
       try {
         await navigator.share(data);
         return;
-      } catch {
-        /* dismissed the sheet, or it failed: fall through to the clipboard */
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') return; // the sheet was dismissed
       }
     }
+    setPanel(panel === 'share' ? null : 'share');
+  };
+
+  const copyLink = async () => {
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(shareUrl);
       setShared('copied');
       setTimeout(() => setShared(null), 2500);
     } catch {
-      window.prompt('Copy this link', url);
+      window.prompt('Copy this link', shareUrl);
     }
+    setPanel(null);
   };
+
+  const shareTargets = [
+    { label: 'WhatsApp', href: `https://wa.me/?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}` },
+    { label: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}` },
+    { label: 'X', href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}` },
+    { label: 'Email', href: `mailto:?subject=${encodeURIComponent(sermon.title)}&body=${encodeURIComponent(`${shareText}\n\n${shareUrl}`)}` },
+  ];
 
   const onEnded = () => {
     if (next) {
@@ -265,8 +289,12 @@ export function AudioPlayerBar({ sermon, isPlaying, onTogglePlay, onClose, onSel
               <button
                 type="button"
                 onClick={share}
-                className="relative inline-flex size-9 items-center justify-center rounded-md text-ink-on-dark-muted transition-colors hover:text-ink-on-dark"
+                className={`relative inline-flex size-9 items-center justify-center rounded-md transition-colors hover:text-ink-on-dark ${
+                  panel === 'share' ? 'text-ink-on-dark' : 'text-ink-on-dark-muted'
+                }`}
                 aria-label="Share this sermon"
+                aria-expanded={panel === 'share'}
+                aria-controls="player-share"
               >
                 <Share2 className="size-4" />
                 {shared && (
@@ -306,6 +334,51 @@ export function AudioPlayerBar({ sermon, isPlaying, onTogglePlay, onClose, onSel
       </motion.div>
 
       <AnimatePresence>
+        {panel === 'share' && (
+          <motion.aside
+            id="player-share"
+            {...panelMotion}
+            aria-label="Share this sermon"
+            className="fixed bottom-32 right-5 z-50 w-[calc(100%-2.5rem)] max-w-xs rounded-xl bg-surface-dark p-5 text-ink-on-dark ring-1 ring-hairline-dark sm:right-8"
+          >
+            <div className="flex items-start justify-between gap-4 border-b border-hairline-dark pb-3">
+              <div className="min-w-0">
+                <p className="font-anton scale-step-lead text-ink-on-dark">Share</p>
+                <p className="meta truncate text-ink-on-dark-muted">{sermon.title}</p>
+              </div>
+              <button type="button" onClick={() => setPanel(null)} className="inline-flex size-9 shrink-0 items-center justify-center rounded-md text-ink-on-dark-muted hover:text-ink-on-dark" aria-label="Close share">
+                <X className="size-4" />
+              </button>
+            </div>
+            <ul className="divide-y divide-hairline-dark">
+              {shareTargets.map((target) => (
+                <li key={target.label}>
+                  <a
+                    href={target.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setPanel(null)}
+                    className="flex items-center justify-between gap-4 py-3 font-sans text-sm text-ink-on-dark transition-opacity hover:opacity-80"
+                  >
+                    <span>{target.label}</span>
+                    <span className="meta text-ink-on-dark-muted">Opens {target.label === 'Email' ? 'your mail app' : 'in a new tab'}</span>
+                  </a>
+                </li>
+              ))}
+              <li>
+                <button
+                  type="button"
+                  onClick={copyLink}
+                  className="flex w-full items-center justify-between gap-4 py-3 text-left font-sans text-sm text-ink-on-dark transition-opacity hover:opacity-80"
+                >
+                  <span>Copy link</span>
+                  <span className="meta truncate text-ink-on-dark-muted">{shareUrl.replace(/^https?:\/\//, '')}</span>
+                </button>
+              </li>
+            </ul>
+          </motion.aside>
+        )}
+
         {panel === 'notes' && (
           <motion.aside
             id="player-notes"
