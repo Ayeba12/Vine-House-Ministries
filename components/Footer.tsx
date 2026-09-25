@@ -10,7 +10,8 @@ import { Reveal } from '@/components/ui/Reveal';
 interface FooterProps {
   /** Called once WordPress has accepted the sign-up. Optional. */
   onSubscribe?: (sub: Subscriber) => void;
-  onPlanVisit: () => void;
+  /** Optional. Without it the plan-a-visit link is a plain link to /visit, so server pages can render the footer. */
+  onPlanVisit?: () => void;
   /** The Gather column: service times from Site Settings. The defaults below otherwise. */
   gather?: { label: string; value: string }[];
 }
@@ -168,10 +169,17 @@ export function Footer({ onSubscribe, onPlanVisit, gather = GATHER }: FooterProp
                 </a>
                 <span className="text-ink-on-dark-muted">Registered charity No. 1148977</span>
               </address>
-              <button onClick={onPlanVisit} className="link-arrow mt-6 text-ink-on-dark">
-                <span>Plan a visit</span>
-                <ArrowUpRight className="h-3.5 w-3.5" />
-              </button>
+              {onPlanVisit ? (
+                <button onClick={onPlanVisit} className="link-arrow mt-6 text-ink-on-dark">
+                  <span>Plan a visit</span>
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </button>
+              ) : (
+                <Link href="/visit" className="link-arrow mt-6 text-ink-on-dark">
+                  <span>Plan a visit</span>
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -194,6 +202,9 @@ export function Footer({ onSubscribe, onPlanVisit, gather = GATHER }: FooterProp
             <Link href="/contact" className="transition-colors hover:text-ink-on-dark">Safeguarding</Link>
             <Link href="/contact" className="transition-colors hover:text-ink-on-dark">Pastoral care</Link>
             <Link href="/visit" className="transition-colors hover:text-ink-on-dark">Directions</Link>
+            <Link href="/privacy" className="transition-colors hover:text-ink-on-dark">Privacy</Link>
+            <Link href="/cookies" className="transition-colors hover:text-ink-on-dark">Cookies</Link>
+            <Link href="/terms" className="transition-colors hover:text-ink-on-dark">Terms</Link>
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Anton, DM_Sans } from 'next/font/google';
 import './globals.css';
+import { CookieBanner } from '@/components/CookieBanner';
 
 // Display face: Anton, single weight. Body face: DM Sans, variable.
 // Exposed as --font-*-src and consumed through the theme tokens in globals.css.
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body className="font-sans antialiased bg-[#F9F7F2] text-[#1E242B] selection:bg-[#2C3E2D] selection:text-[#F9F7F2]" suppressHydrationWarning>
         {children}
+        <CookieBanner />
       </body>
     </html>
   );
