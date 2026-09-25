@@ -5,6 +5,10 @@ import Image from 'next/image';
 import { motion, AnimatePresence, useDragControls, useReducedMotion } from 'motion/react';
 import { ChevronDown, Play, Pause, RotateCcw, RotateCw, Share2, X } from 'lucide-react';
 import { Sermon } from '@/lib/types';
+import { Ticker } from '@/components/ui/Ticker';
+
+/** A long title starts to scroll this long after the player opens on it. */
+const TITLE_TICKER_AFTER_MS = 30000;
 
 interface AudioPlayerBarProps {
   sermon: Sermon | null;
@@ -56,6 +60,19 @@ export function AudioPlayerBar({ sermon, isPlaying, onTogglePlay, onClose, onSel
   const [shared, setShared] = useState<'copied' | null>(null);
 
   const src = sermon?.audioUrl ?? '';
+
+  /* Thirty seconds after the player opens on a sermon, a long title may
+     start to scroll, in whichever bar or drawer is showing. The flag names
+     the sermon it was armed for, so a new sermon starts the wait again
+     without any reset. */
+  const sermonId = sermon?.id;
+  const [tickerArmedFor, setTickerArmedFor] = useState<string | null>(null);
+  useEffect(() => {
+    if (!sermonId) return;
+    const id = window.setTimeout(() => setTickerArmedFor(sermonId), TITLE_TICKER_AFTER_MS);
+    return () => window.clearTimeout(id);
+  }, [sermonId]);
+  const titleTicker = tickerArmedFor === sermonId;
 
   /* Play and pause follow the page's state. A refused play (no file, a
      browser autoplay rule) hands the state back so the button never lies. */
@@ -402,7 +419,7 @@ export function AudioPlayerBar({ sermon, isPlaying, onTogglePlay, onClose, onSel
               <p className="eyebrow truncate text-accent-on-dark">
                 {sermon.scripture} <span className="text-ink-on-dark-muted">· {sermon.series}</span>
               </p>
-              <p className="font-anton scale-step-lead truncate text-ink-on-dark">{sermon.title}</p>
+              <Ticker key={`docked-${sermon.id}`} text={sermon.title} className="font-anton scale-step-lead text-ink-on-dark" active={titleTicker} />
               <p className="meta truncate text-ink-on-dark-muted" aria-live="polite">
                 {statusLine ?? `${sermon.speaker} · ${sermon.date}`}
               </p>
@@ -469,10 +486,15 @@ export function AudioPlayerBar({ sermon, isPlaying, onTogglePlay, onClose, onSel
           <div className="h-full bg-accent-on-dark" style={{ width: `${progress}%` }} />
         </div>
         <div className="flex items-center gap-3 px-5 py-3">
-          <button type="button" onClick={() => setDrawer(true)} className="min-w-0 flex-1 text-left" aria-label="Open the player" aria-expanded={drawer} aria-controls="sermon-drawer">
-            <span className="font-anton scale-step-lead block truncate text-ink-on-dark">{sermon.title}</span>
-            <span className="meta block truncate text-ink-on-dark-muted" aria-live="polite">
-              {statusLine ?? `${sermon.speaker} · ${sermon.series} · ${fmt(total)}`}
+          <button type="button" onClick={() => setDrawer(true)} className="flex min-w-0 flex-1 items-center gap-3 text-left" aria-label="Open the player" aria-expanded={drawer} aria-controls="sermon-drawer">
+            <span className="relative size-11 shrink-0 overflow-hidden rounded-md bg-surface-dark outline-1 -outline-offset-1 outline-white/10">
+              {sermon.imageUrl && <Image src={sermon.imageUrl} alt="" fill sizes="44px" className="object-cover" referrerPolicy="no-referrer" />}
+            </span>
+            <span className="min-w-0 flex-1">
+              <Ticker key={`compact-${sermon.id}`} text={sermon.title} className="font-anton scale-step-lead text-ink-on-dark" active={titleTicker} />
+              <span className="meta block truncate text-ink-on-dark-muted" aria-live="polite">
+                {statusLine ?? `${sermon.speaker} · ${sermon.series} · ${fmt(total)}`}
+              </span>
             </span>
           </button>
           <button id="btn-player-play-pause-compact" type="button" onClick={onTogglePlay} disabled={unavailable} className={`${playButton} size-11 shrink-0`} aria-label={isPlaying ? 'Pause' : 'Play'}>
@@ -526,7 +548,9 @@ export function AudioPlayerBar({ sermon, isPlaying, onTogglePlay, onClose, onSel
                   {sermon.imageUrl && <Image src={sermon.imageUrl} alt="" fill sizes="(max-width: 767px) 100vw, 384px" className="object-cover" referrerPolicy="no-referrer" />}
                 </div>
 
-                <h2 className="font-anton scale-step-h4 mt-6 text-balance text-ink-on-dark">{sermon.title}</h2>
+                <h2 className="mt-6">
+                  <Ticker key={`drawer-${sermon.id}`} text={sermon.title} className="font-anton scale-step-h4 text-ink-on-dark" active={titleTicker} />
+                </h2>
                 <p className="meta mt-2 text-ink-on-dark">
                   {sermon.speaker}
                   {sermon.speakerRole && <span className="text-ink-on-dark-muted"> · {sermon.speakerRole}</span>}
