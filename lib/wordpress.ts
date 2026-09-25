@@ -36,10 +36,12 @@ const IS_DEV = process.env.NODE_ENV === 'development';
  */
 const INTERNAL_URL = (process.env.WORDPRESS_INTERNAL_URL ?? '').trim().replace(/\/$/, '');
 const PUBLIC_URL = (process.env.NEXT_PUBLIC_WORDPRESS_URL ?? '').trim().replace(/\/$/, '');
+/** The internal host with either scheme: behind a TLS tunnel WordPress writes https:// for the same host. */
+const INTERNAL_ORIGIN = INTERNAL_URL ? new RegExp(`^https?://${INTERNAL_URL.replace(/^https?:\/\//, '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`) : null;
 
 function publicMediaUrl(url: string): string {
-  if (INTERNAL_URL && PUBLIC_URL && INTERNAL_URL !== PUBLIC_URL && url.startsWith(INTERNAL_URL)) {
-    return PUBLIC_URL + url.slice(INTERNAL_URL.length);
+  if (INTERNAL_ORIGIN && PUBLIC_URL && INTERNAL_URL !== PUBLIC_URL && INTERNAL_ORIGIN.test(url)) {
+    return url.replace(INTERNAL_ORIGIN, PUBLIC_URL);
   }
   return url;
 }
