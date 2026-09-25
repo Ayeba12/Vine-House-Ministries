@@ -72,7 +72,8 @@ function vine_content_register_post_types(): void {
 				'graphql_single_name' => 'gathering',
 				'graphql_plural_name' => 'gatherings',
 				// The four pillars have a fixed order (01–04); menu_order carries it.
-				'supports'            => array( 'title', 'editor', 'thumbnail', 'page-attributes', 'revisions' ),
+				// No editor: the tile is title, subtitle, when and where, nothing more.
+				'supports'            => array( 'title', 'thumbnail', 'page-attributes', 'revisions' ),
 			)
 		)
 	);

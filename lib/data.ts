@@ -157,8 +157,6 @@ export const GATHERING_PILLARS: GatheringPillar[] = [
     subtitle: 'Reverence & Word',
     timing: '10:00 AM & 12:00 PM',
     location: 'Main Sanctuary Hall',
-    description: 'Our weekly gathering centered around reverent modern liturgy, acoustic and choral praise, deep Christ-centered biblical exposition, and weekly communion.',
-    tags: ['Weekly Liturgy', 'All Generations', 'Communion', 'Kids Sanctuary'],
     imageUrl: 'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1000&q=80'
   },
   {
@@ -167,8 +165,6 @@ export const GATHERING_PILLARS: GatheringPillar[] = [
     subtitle: 'Theology & Dialogue',
     timing: 'Wednesdays at 7:00 PM',
     location: 'Library & Online Portal',
-    description: 'A thoughtful, conversational space to dissect Biblical texts, ask honest intellectual and theological questions, and engage in intentional prayer circles.',
-    tags: ['Deep Exegesis', 'Interactive Q&A', 'Contemplative Prayer'],
     imageUrl: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1000&q=80'
   },
   {
@@ -177,8 +173,6 @@ export const GATHERING_PILLARS: GatheringPillar[] = [
     subtitle: 'Authentic Community',
     timing: 'Fridays at 7:30 PM',
     location: 'The Loft Commons',
-    description: 'A vibrant, raw space for high school, university students, and young professionals navigating faith, career, relationships, and calling in modern culture.',
-    tags: ['Dinner Together', 'Live Music', 'Mentorship Rhythms'],
     imageUrl: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1000&q=80'
   },
   {
@@ -187,8 +181,6 @@ export const GATHERING_PILLARS: GatheringPillar[] = [
     subtitle: 'Faith in Action',
     timing: 'Saturdays at 9:00 AM',
     location: 'Community Action Hub',
-    description: 'Extending Christ’s hands through food justice, elderly visitations, counseling support scholarships, and active neighborhood renewal initiatives.',
-    tags: ['Food Relief', 'Community Advocacy', 'Compassion Fund'],
     imageUrl: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=1000&q=80'
   }
 ];

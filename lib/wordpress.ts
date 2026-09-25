@@ -472,9 +472,8 @@ const GATHERINGS_QUERY = /* GraphQL */ `
       nodes {
         databaseId
         title
-        content
         featuredImage { node { sourceUrl altText } }
-        gatheringFields { pillarNumber subtitle timing location tags { text } }
+        gatheringFields { pillarNumber subtitle timing location }
       }
     }
   }
@@ -483,14 +482,12 @@ const GATHERINGS_QUERY = /* GraphQL */ `
 interface GatheringNode {
   databaseId: number;
   title?: string | null;
-  content?: string | null;
   featuredImage?: ImageNode;
   gatheringFields?: {
     pillarNumber?: string | null;
     subtitle?: string | null;
     timing?: string | null;
     location?: string | null;
-    tags?: ({ text?: string | null } | null)[] | null;
   } | null;
 }
 
@@ -502,8 +499,6 @@ function mapGathering(node: GatheringNode, index: number): GatheringPillar {
     subtitle: text(f.subtitle),
     timing: text(f.timing),
     location: text(f.location),
-    description: stripHtml(node.content ?? ''),
-    tags: (f.tags ?? []).map((row) => text(row?.text)).filter(Boolean),
     imageUrl: image(node.featuredImage).url || undefined,
   };
 }

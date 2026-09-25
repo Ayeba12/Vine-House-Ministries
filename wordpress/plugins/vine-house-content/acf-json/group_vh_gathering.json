@@ -28,7 +28,7 @@
             "name": "subtitle",
             "aria-label": "",
             "type": "text",
-            "instructions": "A short line under the title, e.g. Reverence & Word.",
+            "instructions": "The small label above the title, e.g. Reverence & Word.",
             "required": false,
             "conditional_logic": false,
             "wrapper": {
@@ -81,50 +81,6 @@
             "maxlength": "",
             "prepend": "",
             "append": ""
-        },
-        {
-            "key": "field_vh_gathering_tags",
-            "label": "Tags",
-            "name": "tags",
-            "aria-label": "",
-            "type": "repeater",
-            "instructions": "Two to four short words shown under the facts, e.g. Communion, Kids Sanctuary.",
-            "required": false,
-            "conditional_logic": false,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "layout": "table",
-            "button_label": "Add tag",
-            "min": 0,
-            "max": 0,
-            "rows_per_page": 20,
-            "collapsed": "",
-            "sub_fields": [
-                {
-                    "key": "field_vh_gathering_tag_text",
-                    "label": "Tag",
-                    "name": "text",
-                    "aria-label": "",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 1,
-                    "conditional_logic": false,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "maxlength": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "parent_repeater": "field_vh_gathering_tags"
-                }
-            ]
         }
     ],
     "location": [
@@ -143,7 +99,7 @@
     "instruction_placement": "label",
     "hide_on_screen": [],
     "active": true,
-    "description": "The four gathering rhythms on the home page. The title and the editor content (a sentence or two) are native; these fields fill the rest of the tile.",
+    "description": "The four gathering rhythms on the home page. The title is native; these fields fill the rest of the tile: number, subtitle, when, where.",
     "show_in_rest": false,
     "display_title": "",
     "allow_ai_access": false,
@@ -154,5 +110,5 @@
     "graphql_types": [
         "Gathering"
     ],
-    "modified": 1790310000
+    "modified": 1790299855
 }

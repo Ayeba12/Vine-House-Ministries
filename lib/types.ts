@@ -55,8 +55,6 @@ export interface GatheringPillar {
   subtitle: string;
   timing: string;
   location: string;
-  description: string;
-  tags: string[];
   imageUrl?: string;
 }
 
