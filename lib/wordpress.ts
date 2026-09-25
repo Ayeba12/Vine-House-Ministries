@@ -97,6 +97,23 @@ async function fetchGraphQL<T>(query: string, variables: Record<string, unknown>
   return json.data;
 }
 
+/** Every node of a connection, page by page: WPGraphQL serves at most 100 per request. */
+const PAGE_SIZE = 100;
+const MAX_PAGES = 20;
+async function fetchAllNodes<T>(query: string, key: string, tags: string[]): Promise<T[]> {
+  const nodes: T[] = [];
+  let after: string | null = null;
+  for (let page = 0; page < MAX_PAGES; page++) {
+    const data: Record<string, Connection<T>> = await fetchGraphQL(query, { first: PAGE_SIZE, after }, tags);
+    const connection = data[key];
+    nodes.push(...(connection?.nodes ?? []).filter((n): n is T => Boolean(n)));
+    const info = connection?.pageInfo;
+    if (!info?.hasNextPage || !info.endCursor) break;
+    after = info.endCursor;
+  }
+  return nodes;
+}
+
 async function source<T>(name: string, seed: () => T, empty: T, read: () => Promise<T>): Promise<T> {
   if (!ENDPOINT) return seed();
   try {
@@ -109,7 +126,10 @@ async function source<T>(name: string, seed: () => T, empty: T, read: () => Prom
 
 // ---- helpers ---------------------------------------------------------------
 
-type Connection<T> = { nodes?: (T | null)[] | null } | null | undefined;
+type Connection<T> =
+  | { nodes?: (T | null)[] | null; pageInfo?: { hasNextPage?: boolean | null; endCursor?: string | null } | null }
+  | null
+  | undefined;
 type ImageNode = { node?: { sourceUrl?: string | null; altText?: string | null } | null } | null | undefined;
 
 const text = (value: unknown): string => (typeof value === 'string' ? value : '');
@@ -196,8 +216,9 @@ const today = (): string => {
 // ---- sermons ---------------------------------------------------------------
 
 const SERMONS_QUERY = /* GraphQL */ `
-  query Sermons {
-    sermons(first: 100, where: { status: PUBLISH }) {
+  query Sermons($first: Int!, $after: String) {
+    sermons(first: $first, after: $after, where: { status: PUBLISH }) {
+      pageInfo { hasNextPage endCursor }
       nodes {
         databaseId
         title
@@ -278,9 +299,8 @@ export function getSermons(): Promise<Sermon[]> {
     () => INITIAL_SERMONS,
     [],
     async () => {
-      const data = await fetchGraphQL<{ sermons: Connection<SermonNode> }>(SERMONS_QUERY, {}, [TAGS.sermons]);
-      return (data.sermons?.nodes ?? [])
-        .filter((n): n is SermonNode => Boolean(n))
+      const nodes = await fetchAllNodes<SermonNode>(SERMONS_QUERY, 'sermons', [TAGS.sermons]);
+      return nodes
         .map(mapSermon)
         .sort((a, b) => b.sortKey.localeCompare(a.sortKey))
         .map(({ sortKey: _sortKey, ...sermon }) => sermon);
@@ -291,8 +311,9 @@ export function getSermons(): Promise<Sermon[]> {
 // ---- events ----------------------------------------------------------------
 
 const EVENTS_QUERY = /* GraphQL */ `
-  query Events {
-    churchEvents(first: 100, where: { status: PUBLISH }) {
+  query Events($first: Int!, $after: String) {
+    churchEvents(first: $first, after: $after, where: { status: PUBLISH }) {
+      pageInfo { hasNextPage endCursor }
       nodes {
         databaseId
         title
@@ -369,10 +390,10 @@ export function getEvents(): Promise<ChurchEvent[]> {
     () => INITIAL_EVENTS,
     [],
     async () => {
-      const data = await fetchGraphQL<{ churchEvents: Connection<EventNode> }>(EVENTS_QUERY, {}, [TAGS.events]);
+      const nodes = await fetchAllNodes<EventNode>(EVENTS_QUERY, 'churchEvents', [TAGS.events]);
       const cutoff = today();
-      return (data.churchEvents?.nodes ?? [])
-        .filter((n): n is EventNode => Boolean(n) && text(n?.eventDate) >= cutoff)
+      return nodes
+        .filter((n) => text(n.eventDate) >= cutoff)
         .sort((a, b) => text(a.eventDate).localeCompare(text(b.eventDate)) || text(a.startTime).localeCompare(text(b.startTime)))
         .map(mapEvent);
     }
@@ -399,8 +420,9 @@ const MESSAGE_FIELDS = /* GraphQL */ `
 
 const MESSAGES_QUERY = /* GraphQL */ `
   ${MESSAGE_FIELDS}
-  query Messages {
-    posts(first: 100, where: { status: PUBLISH, orderby: { field: DATE, order: DESC } }) {
+  query Messages($first: Int!, $after: String) {
+    posts(first: $first, after: $after, where: { status: PUBLISH, orderby: { field: DATE, order: DESC } }) {
+      pageInfo { hasNextPage endCursor }
       nodes { ...MessageFields }
     }
   }
@@ -464,8 +486,8 @@ export function getMessages(): Promise<Message[]> {
     () => MESSAGES,
     [],
     async () => {
-      const data = await fetchGraphQL<{ posts: Connection<MessageNode> }>(MESSAGES_QUERY, {}, [TAGS.messages]);
-      return (data.posts?.nodes ?? []).filter((n): n is MessageNode => Boolean(n)).map(mapMessage);
+      const nodes = await fetchAllNodes<MessageNode>(MESSAGES_QUERY, 'posts', [TAGS.messages]);
+      return nodes.map(mapMessage);
     }
   );
 }
@@ -486,13 +508,13 @@ export function getMessage(slug: string): Promise<Message | null> {
 
 const GATHERINGS_QUERY = /* GraphQL */ `
   query Gatherings {
-    gatherings(first: 4, where: { status: PUBLISH, orderby: { field: DATE, order: DESC } }) {
+    gatherings(first: 100, where: { status: PUBLISH, orderby: { field: DATE, order: DESC } }) {
       nodes {
         databaseId
         title
         menuOrder
         featuredImage { node { sourceUrl altText } }
-        gatheringFields { pillarNumber subtitle timing location }
+        gatheringFields { showOnHome pillarNumber subtitle timing location }
       }
     }
   }
@@ -504,6 +526,7 @@ interface GatheringNode {
   menuOrder?: number | null;
   featuredImage?: ImageNode;
   gatheringFields?: {
+    showOnHome?: boolean | null;
     pillarNumber?: string | null;
     subtitle?: string | null;
     timing?: string | null;
@@ -523,16 +546,25 @@ function mapGathering(node: GatheringNode, index: number): GatheringPillar {
   };
 }
 
-/** The four most recently published gatherings, shown in their pillar (menu) order. */
+/** How many gathering tiles the home page holds. */
+const HOME_GATHERINGS = 4;
+
+/**
+ * The gatherings for the home page: those ticked "Show on home" (the newest
+ * four if more are ticked), or the four newest when none is ticked, shown in
+ * their pillar (menu) order.
+ */
 export function getGatherings(): Promise<GatheringPillar[]> {
   return source(
     'gatherings',
-    () => GATHERING_PILLARS.slice(0, 4),
+    () => GATHERING_PILLARS.slice(0, HOME_GATHERINGS),
     [],
     async () => {
       const data = await fetchGraphQL<{ gatherings: Connection<GatheringNode> }>(GATHERINGS_QUERY, {}, [TAGS.gatherings]);
-      return (data.gatherings?.nodes ?? [])
-        .filter((n): n is GatheringNode => Boolean(n))
+      const all = (data.gatherings?.nodes ?? []).filter((n): n is GatheringNode => Boolean(n));
+      const ticked = all.filter((n) => n.gatheringFields?.showOnHome === true);
+      return (ticked.length > 0 ? ticked : all)
+        .slice(0, HOME_GATHERINGS)
         .sort((a, b) => (a.menuOrder ?? 0) - (b.menuOrder ?? 0))
         .map(mapGathering);
     }

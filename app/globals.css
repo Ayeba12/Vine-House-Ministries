@@ -346,6 +346,37 @@
     }
   }
 
+  /* The foot of a paged list: a hairline that a gold sweep runs along while the next batch loads. */
+  .load-more-track {
+    position: relative;
+    display: block;
+    width: 8rem;
+    height: 1px;
+    overflow: hidden;
+    background: var(--color-hairline);
+  }
+
+  .load-more-track > span {
+    position: absolute;
+    inset: 0;
+    width: 40%;
+    background: var(--color-accent);
+    transform: translateX(-100%);
+  }
+
+  .load-more-track[data-pending='true'] > span {
+    animation: load-more-sweep 0.9s var(--motion-ease) infinite;
+  }
+
+  @keyframes load-more-sweep {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(250%);
+    }
+  }
+
   /* A quiet tile on the light ground: the "services" box. */
   .tile {
     display: flex;

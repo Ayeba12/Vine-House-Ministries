@@ -223,6 +223,31 @@ add_action(
 	}
 );
 
+/** A Home column in the gatherings list: which tiles the home page shows. */
+add_filter(
+	'manage_gathering_posts_columns',
+	function ( array $columns ): array {
+		$out = array();
+		foreach ( $columns as $key => $label ) {
+			$out[ $key ] = $label;
+			if ( 'title' === $key ) {
+				$out['vh_home'] = __( 'Home', 'vine-house-content' );
+			}
+		}
+		return $out;
+	}
+);
+add_action(
+	'manage_gathering_posts_custom_column',
+	function ( string $column, int $post_id ): void {
+		if ( 'vh_home' === $column && function_exists( 'get_field' ) ) {
+			echo get_field( 'show_on_home', $post_id ) ? esc_html__( 'Shown', 'vine-house-content' ) : '&mdash;';
+		}
+	},
+	10,
+	2
+);
+
 /** Gatherings list in pillar order, so the editor sees what the site shows. */
 add_action(
 	'pre_get_posts',

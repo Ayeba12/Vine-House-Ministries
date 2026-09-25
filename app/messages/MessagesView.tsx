@@ -13,10 +13,13 @@ import { SectionHeader } from '@/components/ui/SectionHeader';
 import { SearchField } from '@/components/ui/SearchField';
 import { Select } from '@/components/ui/Select';
 import { Reveal } from '@/components/ui/Reveal';
+import { LoadMore, useLoadMore } from '@/components/ui/LoadMore';
 import { Message } from '@/lib/types';
 
 const CATEGORIES = ['All', 'Pastoral Letter', 'Reflection', 'Teaching', 'Community'];
 const CONTAINER = 'mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12';
+/** How many messages the journal shows before the next batch loads: three rows of the three-column grid. */
+const PAGE_SIZE = 9;
 
 /** The journal index as a client island: search and the category select over the posts the server fetched. */
 export function MessagesView({ messages }: { messages: Message[] }) {
@@ -32,6 +35,7 @@ export function MessagesView({ messages }: { messages: Message[] }) {
       !q || [m.title, m.excerpt, m.author, ...m.tags].some((field) => field.toLowerCase().includes(q));
     return matchesQuery && (category === 'All' || m.category === category);
   });
+  const { shown, hasMore, pending, loadMore } = useLoadMore(visible, PAGE_SIZE, `${query}|${category}`);
   const writers = new Set(messages.map((m) => m.author)).size;
 
   return (
@@ -137,14 +141,16 @@ export function MessagesView({ messages }: { messages: Message[] }) {
         )}
 
         <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {visible.map((message, idx) => (
+          {shown.map((message, idx) => (
             <Reveal key={message.id} delay={(idx % 3) * 0.06}>
               <MessageCard message={message} />
             </Reveal>
           ))}
         </div>
 
-        {visible.length === 0 && (
+        {visible.length > 0 ? (
+          <LoadMore hasMore={hasMore} pending={pending} onMore={loadMore} shown={shown.length} total={visible.length} noun="messages" />
+        ) : (
           <p className="meta py-16 text-center text-ink-muted">Nothing matches. Try another category or clear the search.</p>
         )}
       </section>

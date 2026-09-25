@@ -3,6 +3,27 @@
     "title": "Gathering",
     "fields": [
         {
+            "key": "field_vh_gathering_show_on_home",
+            "label": "Show on home",
+            "name": "show_on_home",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Tick to place this gathering among the tiles on the home page. The home page shows up to four ticked gatherings in their Order; with none ticked it falls back to the four newest.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "allow_in_bindings": 0,
+            "ui": 1,
+            "ui_on_text": "On the home page",
+            "ui_off_text": "Not on the home page"
+        },
+        {
             "key": "field_vh_gathering_number",
             "label": "Pillar number",
             "name": "pillar_number",
@@ -99,7 +120,7 @@
     "instruction_placement": "label",
     "hide_on_screen": [],
     "active": true,
-    "description": "The four gathering rhythms on the home page. The title is native; these fields fill the rest of the tile: number, subtitle, when, where.",
+    "description": "The gathering rhythms on the home page. The title is native; these fields fill the rest of the tile: number, subtitle, when, where. Show on home chooses which tiles appear.",
     "show_in_rest": false,
     "display_title": "",
     "allow_ai_access": false,
@@ -110,5 +131,5 @@
     "graphql_types": [
         "Gathering"
     ],
-    "modified": 1790299855
+    "modified": 1790341631
 }

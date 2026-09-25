@@ -205,6 +205,13 @@ Arbitrary values are how the scale drifts.
 Scroll reveals are a 20px rise with a fade, `viewport={{ once: true }}`. Once only —
 elements never re-animate on scroll-back.
 
+Long lists (the sermon, event and message archives) page in place: the first batch
+shows at once and scrolling to the foot of the list loads the next, each new card
+arriving with the same reveal. The foot is `LoadMore`: a hairline with a gold sweep
+while a batch is on its way, a count line ("8 of 24 sermons"), and a "Load more"
+button that does the same for keyboards. A filter change starts the list again from
+the first page. Every archive shows every post; nothing is cut off at a fixed number.
+
 **Reduced motion is mandatory.** `globals.css` neutralises every CSS transition and
 animation under `prefers-reduced-motion: reduce`. JS-driven reveals must *also* call
 `useReducedMotion()` from `motion/react` and skip the transform, because inline

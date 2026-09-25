@@ -79,7 +79,7 @@ online link, highlights, and the booking rules — enabled, capacity, max guests
 booking, waitlist, opens/closes. `bookedCount` and `remaining` are **derived** from
 bookings, never authored.
 
-**Gathering** fields: `number`, `subtitle`, `timing`, `location`, `tags`.
+**Gathering** fields: `show_on_home`, `number`, `subtitle`, `timing`, `location`.
 
 Decisions worth making deliberately:
 

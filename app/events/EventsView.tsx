@@ -11,10 +11,13 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { SearchField } from '@/components/ui/SearchField';
 import { Reveal } from '@/components/ui/Reveal';
+import { LoadMore, useLoadMore } from '@/components/ui/LoadMore';
 import { ChurchEvent, RSVPRecord } from '@/lib/types';
 
 const CATEGORIES = ['All', 'Worship', 'Fellowship', 'Outreach', 'Study', 'Youth'];
 const CONTAINER = 'mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12';
+/** How many events the calendar shows before the next batch loads. */
+const PAGE_SIZE = 6;
 
 function splitDate(date: string): { day: string; month: string } | null {
   const parsed = new Date(date);
@@ -38,6 +41,7 @@ export function EventsView({ events: initialEvents }: { events: ChurchEvent[] })
     const matchesQuery = !q || [ev.title, ev.description, ev.location].some((f) => f.toLowerCase().includes(q));
     return matchesQuery && (category === 'All' || ev.category === category);
   });
+  const { shown, hasMore, pending, loadMore } = useLoadMore(visible, PAGE_SIZE, `${query}|${category}`);
 
   const confirm = (record: RSVPRecord) => {
     setEvents((prev) =>
@@ -87,7 +91,7 @@ export function EventsView({ events: initialEvents }: { events: ChurchEvent[] })
         </div>
 
         <ol className="mt-12 divide-y divide-hairline border-t border-hairline">
-          {visible.map((ev, idx) => {
+          {shown.map((ev, idx) => {
             const date = splitDate(ev.date);
             const left = Math.max(0, ev.capacity - ev.rsvpdCount);
             const full = ev.capacity > 0 && left === 0;
@@ -141,7 +145,9 @@ export function EventsView({ events: initialEvents }: { events: ChurchEvent[] })
           })}
         </ol>
 
-        {visible.length === 0 && (
+        {visible.length > 0 ? (
+          <LoadMore hasMore={hasMore} pending={pending} onMore={loadMore} shown={shown.length} total={visible.length} noun="events" />
+        ) : (
           <p className="meta py-16 text-center text-ink-muted">Nothing matches. Try another category or clear the search.</p>
         )}
       </section>

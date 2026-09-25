@@ -13,9 +13,12 @@ import { SectionHeader } from '@/components/ui/SectionHeader';
 import { SearchField } from '@/components/ui/SearchField';
 import { Select } from '@/components/ui/Select';
 import { Reveal } from '@/components/ui/Reveal';
+import { LoadMore, useLoadMore } from '@/components/ui/LoadMore';
 import { Sermon } from '@/lib/types';
 
 const CONTAINER = 'mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12';
+/** How many sermons the archive shows before the next batch loads: four rows of the two-column grid. */
+const PAGE_SIZE = 8;
 
 /** The sermons page as a client island: filters, search and the docked player over the list the server fetched. */
 export function SermonsView({ sermons }: { sermons: Sermon[] }) {
@@ -32,12 +35,15 @@ export function SermonsView({ sermons }: { sermons: Sermon[] }) {
   const allTopics = ['All', ...Array.from(new Set(sermons.flatMap((s) => s.tags)))];
   const filtering = query !== '' || series !== 'All' || topic !== 'All';
 
-  const visible = sermons.filter((s) => {
+  // The archive runs oldest to newest, the whole record in the order it was preached; the latest sits above it.
+  const archive = sermons.slice().reverse();
+  const visible = archive.filter((s) => {
     const q = query.toLowerCase();
     const matchesQuery =
       !q || [s.title, s.speaker, s.scripture, s.summary].some((field) => field.toLowerCase().includes(q));
     return matchesQuery && (series === 'All' || s.series === series) && (topic === 'All' || s.tags.includes(topic));
   });
+  const { shown, hasMore, pending, loadMore } = useLoadMore(visible, PAGE_SIZE, `${query}|${series}|${topic}`);
 
   const play = (sermon: Sermon) => {
     if (activeSermon?.id === sermon.id) setIsPlayingAudio((p) => !p);
@@ -109,7 +115,7 @@ export function SermonsView({ sermons }: { sermons: Sermon[] }) {
 
       {/* Archive */}
       <section className={`${CONTAINER} col-rules py-24 sm:py-32`}>
-        <SectionHeader eyebrow="The archive" title="Every sermon" meta={`${visible.length} of ${sermons.length} sermons`} />
+        <SectionHeader eyebrow="The archive, oldest first" title="Every sermon" meta={`${visible.length} of ${sermons.length} sermons`} />
 
         {/* One row: search, then two dropdowns. Applied filters appear as chips beneath. */}
         <div className="mt-8 grid grid-cols-1 gap-x-8 gap-y-6 lg:grid-cols-12 lg:items-end">
@@ -166,7 +172,7 @@ export function SermonsView({ sermons }: { sermons: Sermon[] }) {
         )}
 
         <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
-          {visible.map((sermon, idx) => {
+          {shown.map((sermon, idx) => {
             const playing = playingId === sermon.id;
             return (
               <Reveal key={sermon.id} delay={(idx % 2) * 0.08}>
@@ -210,7 +216,9 @@ export function SermonsView({ sermons }: { sermons: Sermon[] }) {
           })}
         </div>
 
-        {visible.length === 0 && (
+        {visible.length > 0 ? (
+          <LoadMore hasMore={hasMore} pending={pending} onMore={loadMore} shown={shown.length} total={visible.length} noun="sermons" />
+        ) : (
           <p className="meta py-16 text-center text-ink-muted">No sermons match. Try another series, topic or search term.</p>
         )}
       </section>
