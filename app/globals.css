@@ -447,11 +447,11 @@
    the footer ends flush with the page. The consent panel lifts above it
    the same way. Unlayered on purpose, so these outrank the utilities. */
 body:has(#docked-sermon-player) main {
-  padding-bottom: 9rem;
+  padding-bottom: var(--docked-player-height, 8rem);
 }
 
 body:has(#docked-sermon-player) #cookie-banner {
-  bottom: 8.75rem;
+  bottom: calc(var(--docked-player-height, 8rem) + 1rem);
 }
 
 .font-sans,

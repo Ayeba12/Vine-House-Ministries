@@ -37,12 +37,30 @@ const fmt = (sec: number) => {
 export function AudioPlayerBar({ sermon, isPlaying, onTogglePlay, onClose, onSelectSermon, allSermons }: AudioPlayerBarProps) {
   const reduceMotion = useReducedMotion();
   const audioRef = useRef<HTMLAudioElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [rate, setRate] = useState(1);
   const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
   const [panel, setPanel] = useState<'notes' | 'episodes' | 'share' | null>(null);
   const [shared, setShared] = useState<'copied' | null>(null);
+
+  /* The page reserves exactly the bar's height at its foot while the bar is
+     on screen (globals.css reads --docked-player-height), so the footer sits
+     flush against the player at every width. */
+  useEffect(() => {
+    const bar = barRef.current;
+    if (!bar) return;
+    const root = document.documentElement;
+    const observer = new ResizeObserver(([entry]) => {
+      root.style.setProperty('--docked-player-height', `${Math.ceil(entry.contentRect.height)}px`);
+    });
+    observer.observe(bar);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty('--docked-player-height');
+    };
+  }, [sermon]);
 
   /* Escape closes whichever panel is open. */
   useEffect(() => {
@@ -230,6 +248,7 @@ export function AudioPlayerBar({ sermon, isPlaying, onTogglePlay, onClose, onSel
       />
 
       <motion.div
+        ref={barRef}
         id="docked-sermon-player"
         initial={reduceMotion ? false : { y: 80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
