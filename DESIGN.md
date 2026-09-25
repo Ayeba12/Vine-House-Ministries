@@ -124,7 +124,10 @@ That relationship is intentional — don't pull the UI palette toward the logo, 
 use these three tokens for anything but the mark itself. The gold is close enough to
 Soft Honey to be mistaken for it; it isn't the same colour.
 
-Vector originals have not been supplied. Request them before favicon or print use.
+The favicon set (`app/icon.png` 512, `app/apple-icon.png` 180, `app/favicon.ico` 16 to 64) is
+the deep green emblem centred on a square warm-sand tile, cut from the 972px raster. The tile
+keeps the mark on its own ground whatever the browser chrome is. Vector originals have still
+not been supplied; request them before print use or a larger regeneration.
 
 ---
 
