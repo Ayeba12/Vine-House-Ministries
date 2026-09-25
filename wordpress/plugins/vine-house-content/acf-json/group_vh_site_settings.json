@@ -6,17 +6,30 @@
             "key": "field_vh_notice_enabled",
             "label": "Show notice banner",
             "name": "notice_banner_enabled",
+            "aria-label": "",
             "type": "true_false",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
             "ui": 1,
-            "default_value": 1
+            "default_value": 1,
+            "message": "",
+            "ui_on_text": "",
+            "ui_off_text": ""
         },
         {
             "key": "field_vh_notice_text",
             "label": "Notice banner",
             "name": "notice_banner",
+            "aria-label": "",
             "type": "text",
             "instructions": "The strip above the navigation. Keep it to one line.",
-            "default_value": "Sunday Sanctuary Gathering: 10:00 AM & 12:00 PM • In-Person & Broadcast Live",
+            "required": false,
             "conditional_logic": [
                 [
                     {
@@ -25,27 +38,62 @@
                         "value": "1"
                     }
                 ]
-            ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Sunday Sanctuary Gathering: 10:00 AM & 12:00 PM • In-Person & Broadcast Live",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_vh_office_email",
             "label": "Church office email",
             "name": "office_email",
+            "aria-label": "",
             "type": "email",
             "instructions": "Shown in the footer and the contact page.",
-            "default_value": "enquiries@vinehouseministries.org.uk"
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "enquiries@vinehouseministries.org.uk",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_vh_charity_number",
             "label": "Registered charity number",
             "name": "charity_number",
+            "aria-label": "",
             "type": "text",
-            "default_value": "1148977"
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 1148977,
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         },
         {
             "key": "field_vh_settings_region",
             "label": "Region",
             "name": "region",
+            "aria-label": "",
             "type": "text",
             "instructions": "Under the wordmark in the header and in the footer.",
             "required": 0,
@@ -66,6 +114,7 @@
             "key": "field_vh_settings_address_line",
             "label": "Address",
             "name": "address_line",
+            "aria-label": "",
             "type": "text",
             "instructions": "The sanctuary address, one line. Optional.",
             "required": 0,
@@ -86,6 +135,7 @@
             "key": "field_vh_settings_access_note",
             "label": "Access note",
             "name": "access_note",
+            "aria-label": "",
             "type": "text",
             "instructions": "The footer line about access and parking.",
             "required": 0,
@@ -106,6 +156,7 @@
             "key": "field_vh_settings_service_times",
             "label": "Service times",
             "name": "service_times",
+            "aria-label": "",
             "type": "repeater",
             "instructions": "The Gather column of the footer, in order.",
             "required": 0,
@@ -128,6 +179,7 @@
                     "key": "field_vh_settings_service_label",
                     "label": "Service",
                     "name": "label",
+                    "aria-label": "",
                     "type": "text",
                     "instructions": "",
                     "required": 1,
@@ -149,6 +201,7 @@
                     "key": "field_vh_settings_service_value",
                     "label": "When",
                     "name": "value",
+                    "aria-label": "",
                     "type": "text",
                     "instructions": "",
                     "required": 1,
@@ -183,9 +236,15 @@
     "style": "default",
     "label_placement": "top",
     "instruction_placement": "label",
+    "hide_on_screen": [],
     "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
     "show_in_graphql": 1,
     "graphql_field_name": "siteSettingsFields",
     "map_graphql_types_from_location_rules": 1,
-    "modified": 1790280000
+    "modified": 1790296554
 }

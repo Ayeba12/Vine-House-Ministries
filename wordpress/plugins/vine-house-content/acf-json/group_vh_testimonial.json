@@ -1,40 +1,74 @@
 {
-  "key": "group_vh_testimonial",
-  "title": "Testimonial",
-  "fields": [
-    {
-      "key": "field_vh_testimonial_role",
-      "label": "Role",
-      "name": "role",
-      "type": "text",
-      "instructions": "The title is the person's name and the content is the quote; this is how they are described, e.g. Member since 2019.",
-      "required": 1
-    },
-    {
-      "key": "field_vh_testimonial_tag",
-      "label": "Tag",
-      "name": "tag",
-      "type": "text",
-      "instructions": "The short eyebrow shown on the card, e.g. Community."
-    }
-  ],
-  "location": [
-    [
-      {
-        "param": "post_type",
-        "operator": "==",
-        "value": "testimonial"
-      }
-    ]
-  ],
-  "menu_order": 0,
-  "position": "normal",
-  "style": "default",
-  "label_placement": "top",
-  "instruction_placement": "label",
-  "active": true,
-  "show_in_graphql": 1,
-  "graphql_field_name": "testimonialFields",
-  "map_graphql_types_from_location_rules": 0,
-  "graphql_types": ["Testimonial"]
+    "key": "group_vh_testimonial",
+    "title": "Testimonial",
+    "fields": [
+        {
+            "key": "field_vh_testimonial_role",
+            "label": "Role",
+            "name": "role",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "The title is the person's name and the content is the quote; this is how they are described, e.g. Member since 2019.",
+            "required": 1,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_vh_testimonial_tag",
+            "label": "Tag",
+            "name": "tag",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "The short eyebrow shown on the card, e.g. Community.",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "testimonial"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "show_in_graphql": 1,
+    "graphql_field_name": "testimonialFields",
+    "map_graphql_types_from_location_rules": 0,
+    "graphql_types": [
+        "Testimonial"
+    ],
+    "modified": 1790296554
 }

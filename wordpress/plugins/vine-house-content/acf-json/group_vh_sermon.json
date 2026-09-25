@@ -1,117 +1,256 @@
 {
-  "key": "group_vh_sermon",
-  "title": "Sermon",
-  "fields": [
-    {
-      "key": "field_vh_sermon_speaker",
-      "label": "Speaker",
-      "name": "speaker",
-      "type": "text",
-      "required": 1,
-      "default_value": "Pastor Mercy Yerifor"
-    },
-    {
-      "key": "field_vh_sermon_speaker_role",
-      "label": "Speaker role",
-      "name": "speaker_role",
-      "type": "text",
-      "default_value": "Lead Pastor & Spiritual Director"
-    },
-    {
-      "key": "field_vh_sermon_date",
-      "label": "Preached on",
-      "name": "sermon_date",
-      "type": "date_picker",
-      "required": 1,
-      "display_format": "j F Y",
-      "return_format": "Y-m-d",
-      "first_day": 1
-    },
-    {
-      "key": "field_vh_sermon_duration",
-      "label": "Duration (seconds)",
-      "name": "duration_seconds",
-      "type": "number",
-      "instructions": "The site formats this as \"38 mins\" and uses it for the player scrubber.",
-      "min": 0,
-      "step": 1
-    },
-    {
-      "key": "field_vh_sermon_scripture",
-      "label": "Scripture",
-      "name": "scripture",
-      "type": "text",
-      "instructions": "Cite with an en dash, e.g. John 15:1–8.",
-      "placeholder": "John 15:1–8"
-    },
-    {
-      "key": "field_vh_sermon_summary",
-      "label": "Summary",
-      "name": "summary",
-      "type": "textarea",
-      "rows": 3,
-      "new_lines": ""
-    },
-    {
-      "key": "field_vh_sermon_takeaways",
-      "label": "Key takeaways",
-      "name": "key_takeaways",
-      "type": "repeater",
-      "layout": "row",
-      "button_label": "Add takeaway",
-      "sub_fields": [
+    "key": "group_vh_sermon",
+    "title": "Sermon",
+    "fields": [
         {
-          "key": "field_vh_sermon_takeaway_text",
-          "label": "Takeaway",
-          "name": "text",
-          "type": "text",
-          "required": 1
+            "key": "field_vh_sermon_speaker",
+            "label": "Speaker",
+            "name": "speaker",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 1,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Pastor Mercy Yerifor",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_vh_sermon_speaker_role",
+            "label": "Speaker role",
+            "name": "speaker_role",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Lead Pastor & Spiritual Director",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_vh_sermon_date",
+            "label": "Preached on",
+            "name": "sermon_date",
+            "aria-label": "",
+            "type": "date_picker",
+            "instructions": "",
+            "required": 1,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "display_format": "j F Y",
+            "return_format": "Y-m-d",
+            "first_day": 1,
+            "default_to_current_date": 0
+        },
+        {
+            "key": "field_vh_sermon_duration",
+            "label": "Duration (seconds)",
+            "name": "duration_seconds",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "The site formats this as \"38 mins\" and uses it for the player scrubber.",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "min": 0,
+            "step": 1,
+            "default_value": "",
+            "max": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_vh_sermon_scripture",
+            "label": "Scripture",
+            "name": "scripture",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Cite with an en dash, e.g. John 15:1–8.",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "John 15:1–8",
+            "default_value": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_vh_sermon_summary",
+            "label": "Summary",
+            "name": "summary",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "rows": 3,
+            "new_lines": "",
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_vh_sermon_takeaways",
+            "label": "Key takeaways",
+            "name": "key_takeaways",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "row",
+            "button_label": "Add takeaway",
+            "min": 0,
+            "max": 0,
+            "rows_per_page": 20,
+            "collapsed": "",
+            "sub_fields": [
+                {
+                    "key": "field_vh_sermon_takeaway_text",
+                    "label": "Takeaway",
+                    "name": "text",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_vh_sermon_takeaways"
+                }
+            ]
+        },
+        {
+            "key": "field_vh_sermon_audio_file",
+            "label": "Audio file",
+            "name": "audio_file",
+            "aria-label": "",
+            "type": "file",
+            "instructions": "Upload the recording here, or leave empty and use the URL field below for a podcast host or CDN.",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "url",
+            "library": "all",
+            "mime_types": "mp3,m4a,aac,wav",
+            "min_size": 0,
+            "max_size": 0
+        },
+        {
+            "key": "field_vh_sermon_audio_url",
+            "label": "Audio URL",
+            "name": "audio_url",
+            "aria-label": "",
+            "type": "url",
+            "instructions": "Used when no file is uploaded.",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_vh_sermon_transcript",
+            "label": "Transcript excerpt",
+            "name": "transcript_snippet",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "rows": 5,
+            "new_lines": "",
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": ""
         }
-      ]
-    },
-    {
-      "key": "field_vh_sermon_audio_file",
-      "label": "Audio file",
-      "name": "audio_file",
-      "type": "file",
-      "instructions": "Upload the recording here, or leave empty and use the URL field below for a podcast host or CDN.",
-      "return_format": "url",
-      "library": "all",
-      "mime_types": "mp3,m4a,aac,wav"
-    },
-    {
-      "key": "field_vh_sermon_audio_url",
-      "label": "Audio URL",
-      "name": "audio_url",
-      "type": "url",
-      "instructions": "Used when no file is uploaded."
-    },
-    {
-      "key": "field_vh_sermon_transcript",
-      "label": "Transcript excerpt",
-      "name": "transcript_snippet",
-      "type": "textarea",
-      "rows": 5,
-      "new_lines": ""
-    }
-  ],
-  "location": [
-    [
-      {
-        "param": "post_type",
-        "operator": "==",
-        "value": "sermon"
-      }
-    ]
-  ],
-  "menu_order": 0,
-  "position": "normal",
-  "style": "default",
-  "label_placement": "top",
-  "instruction_placement": "label",
-  "active": true,
-  "show_in_graphql": 1,
-  "graphql_field_name": "sermonFields",
-  "map_graphql_types_from_location_rules": 0,
-  "graphql_types": ["Sermon"]
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "sermon"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "show_in_graphql": 1,
+    "graphql_field_name": "sermonFields",
+    "map_graphql_types_from_location_rules": 0,
+    "graphql_types": [
+        "Sermon"
+    ],
+    "modified": 1790296554
 }
