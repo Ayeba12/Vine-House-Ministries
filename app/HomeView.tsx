@@ -17,6 +17,9 @@ import { RsvpModal } from '@/components/RsvpModal';
 
 import { Sermon, ChurchEvent, RSVPRecord, GatheringPillar, Testimonial, SiteSettings } from '@/lib/types';
 
+/** How many of the newest entries each home section shows; the full lists live on /sermons and /events. */
+const SECTION_LIMIT = 4;
+
 export interface HomeViewProps {
   sermons: Sermon[];
   events: ChurchEvent[];
@@ -64,6 +67,10 @@ export function HomeView({ sermons, events: initialEvents, gatherings, testimoni
 
   const goToVisit = () => router.push('/visit');
 
+  // Sermons arrive newest first and events soonest first; each section takes the top of its list.
+  const latestSermons = sermons.slice(0, SECTION_LIMIT);
+  const nextEvents = events.slice(0, SECTION_LIMIT);
+
   return (
     <main className="min-h-screen bg-surface text-ink selection:bg-surface-dark selection:text-ink-on-dark">
       <Navbar
@@ -85,7 +92,7 @@ export function HomeView({ sermons, events: initialEvents, gatherings, testimoni
       <BuiltOnReverence onPlanVisit={goToVisit} />
 
       <SermonArchive
-        sermons={sermons}
+        sermons={latestSermons}
         activeSermon={activeSermon}
         isPlaying={isPlayingAudio}
         onPlaySermon={handlePlaySermon}
@@ -93,7 +100,7 @@ export function HomeView({ sermons, events: initialEvents, gatherings, testimoni
 
       <GatheringsGrid pillars={gatherings} onPlanVisit={goToVisit} />
 
-      <EventsCalendar events={events} onOpenRsvp={(event) => setSelectedEventForRsvp(event)} />
+      <EventsCalendar events={nextEvents} onOpenRsvp={(event) => setSelectedEventForRsvp(event)} />
 
       <AboutLeadership onPlanVisit={goToVisit} />
 

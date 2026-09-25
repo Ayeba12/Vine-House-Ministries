@@ -34,7 +34,7 @@ Every page reads through WPGraphQL and maps into the frontend's own types in
 | Messages, the journal (`/messages`) | standard **posts**, relabelled Messages. Category = kind (Pastoral Letter, Reflection, Teaching, Community; seeded on activation). Tags = themes. Featured image + its alt text. Excerpt. | `posts { … messageFields { authorRole scripture readTime pullQuote } }` |
 | Sermons (`/sermons`, home) | CPT `sermon`; Series and Topics taxonomies; ACF group Sermon | `sermons { … sermonFields { speaker speakerRole sermonDate durationSeconds scripture summary keyTakeaways { text } audioFile audioUrl transcriptSnippet } }` |
 | Events (`/events`, home) | CPT `church_event`, native meta from Vine House Events | `churchEvents { eventDate startTime endTime location room host highlights capacity bookedCount remaining bookingStatus }` |
-| Gathering tiles (home) | CPT `gathering`, ordered by menu order | `gatherings { … gatheringFields { pillarNumber subtitle timing location tags { text } } }` |
+| Gathering tiles (home) | CPT `gathering`, the four newest, shown in menu order | `gatherings { … gatheringFields { pillarNumber subtitle timing location tags { text } } }` |
 | Voices (home) | CPT `testimonial`: title = author, content = quote, thumbnail = avatar | `testimonials { … testimonialFields { role tag } }` |
 | Notice banner, service times, office details | Site Settings options page | `siteSettings { siteSettingsFields { noticeBannerEnabled noticeBanner officeEmail charityNumber region addressLine accessNote serviceTimes { label value } } }` |
 

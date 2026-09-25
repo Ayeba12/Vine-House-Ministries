@@ -486,10 +486,11 @@ export function getMessage(slug: string): Promise<Message | null> {
 
 const GATHERINGS_QUERY = /* GraphQL */ `
   query Gatherings {
-    gatherings(first: 12, where: { status: PUBLISH, orderby: { field: MENU_ORDER, order: ASC } }) {
+    gatherings(first: 4, where: { status: PUBLISH, orderby: { field: DATE, order: DESC } }) {
       nodes {
         databaseId
         title
+        menuOrder
         featuredImage { node { sourceUrl altText } }
         gatheringFields { pillarNumber subtitle timing location }
       }
@@ -500,6 +501,7 @@ const GATHERINGS_QUERY = /* GraphQL */ `
 interface GatheringNode {
   databaseId: number;
   title?: string | null;
+  menuOrder?: number | null;
   featuredImage?: ImageNode;
   gatheringFields?: {
     pillarNumber?: string | null;
@@ -521,14 +523,18 @@ function mapGathering(node: GatheringNode, index: number): GatheringPillar {
   };
 }
 
+/** The four most recently published gatherings, shown in their pillar (menu) order. */
 export function getGatherings(): Promise<GatheringPillar[]> {
   return source(
     'gatherings',
-    () => GATHERING_PILLARS,
+    () => GATHERING_PILLARS.slice(0, 4),
     [],
     async () => {
       const data = await fetchGraphQL<{ gatherings: Connection<GatheringNode> }>(GATHERINGS_QUERY, {}, [TAGS.gatherings]);
-      return (data.gatherings?.nodes ?? []).filter((n): n is GatheringNode => Boolean(n)).map(mapGathering);
+      return (data.gatherings?.nodes ?? [])
+        .filter((n): n is GatheringNode => Boolean(n))
+        .sort((a, b) => (a.menuOrder ?? 0) - (b.menuOrder ?? 0))
+        .map(mapGathering);
     }
   );
 }
