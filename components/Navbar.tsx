@@ -105,11 +105,8 @@ export function Navbar({
               priority
               className="h-10 w-10 shrink-0 sm:h-11 sm:w-11"
             />
-            <span className="flex flex-col leading-none">
-              <span className="font-anton text-[1.35rem] uppercase text-ink-strong transition-colors group-hover:text-ink sm:text-2xl">
-                Vine House Ministries
-              </span>
-              <span className="eyebrow mt-1 text-ink-muted">Greater London &amp; Essex</span>
+            <span className="font-anton text-[1.35rem] uppercase leading-none text-ink-strong transition-colors group-hover:text-ink sm:text-2xl">
+              Vine House Ministries
             </span>
           </Link>
 
