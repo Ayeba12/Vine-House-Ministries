@@ -27,6 +27,22 @@ import { GATHERING_PILLARS, INITIAL_EVENTS, INITIAL_SERMONS, MESSAGES, TESTIMONI
 
 const ENDPOINT = (process.env.WORDPRESS_GRAPHQL_ENDPOINT ?? '').trim();
 const IS_DEV = process.env.NODE_ENV === 'development';
+
+/**
+ * WordPress behind a different public address than it knows itself by:
+ * a LocalWP site reached through a tunnel, say. WordPress writes media URLs
+ * with its own address (WORDPRESS_INTERNAL_URL); the site serves them from
+ * the public one (NEXT_PUBLIC_WORDPRESS_URL). Unset, nothing is rewritten.
+ */
+const INTERNAL_URL = (process.env.WORDPRESS_INTERNAL_URL ?? '').trim().replace(/\/$/, '');
+const PUBLIC_URL = (process.env.NEXT_PUBLIC_WORDPRESS_URL ?? '').trim().replace(/\/$/, '');
+
+function publicMediaUrl(url: string): string {
+  if (INTERNAL_URL && PUBLIC_URL && INTERNAL_URL !== PUBLIC_URL && url.startsWith(INTERNAL_URL)) {
+    return PUBLIC_URL + url.slice(INTERNAL_URL.length);
+  }
+  return url;
+}
 const TIMEOUT_MS = 8000;
 
 /** ISR window in production. The revalidate route shortens it on publish. */
@@ -97,7 +113,7 @@ type ImageNode = { node?: { sourceUrl?: string | null; altText?: string | null }
 const text = (value: unknown): string => (typeof value === 'string' ? value : '');
 const names = (connection: Connection<{ name?: string | null }>): string[] =>
   (connection?.nodes ?? []).map((n) => n?.name ?? '').filter(Boolean);
-const image = (node: ImageNode) => ({ url: node?.node?.sourceUrl ?? '', alt: node?.node?.altText ?? '' });
+const image = (node: ImageNode) => ({ url: publicMediaUrl(node?.node?.sourceUrl ?? ''), alt: node?.node?.altText ?? '' });
 
 const ENTITIES: Record<string, string> = {
   amp: '&',
