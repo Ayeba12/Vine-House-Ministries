@@ -24,20 +24,25 @@ export function GatheringsGrid({ pillars, onPlanVisit }: { pillars: GatheringPil
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-8">
           {pillars.map((pillar, idx) => (
             <Reveal key={pillar.number} delay={idx * 0.06}>
-              <article className="flex h-full min-h-[240px] flex-col justify-between rounded-xl bg-surface-tint p-6 sm:p-7">
+              {/* Every field the editor fills in WordPress is on the tile: title, subtitle, the description, when, where, tags. */}
+              <article className="flex h-full flex-col rounded-xl bg-surface-tint p-6 sm:p-7">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="eyebrow text-ink-muted">{pillar.subtitle}</p>
-                    <h3 className="font-anton scale-step-h5 mt-2 text-ink-strong">{pillar.title}</h3>
+                    <h3 className="font-anton scale-step-h5 text-balance text-ink-strong">{pillar.title}</h3>
+                    {pillar.subtitle && <p className="meta mt-1 text-ink-muted">{pillar.subtitle}</p>}
                   </div>
-                  <span className="font-anton scale-step-h5 text-ink-muted">{pillar.number}</span>
+                  <span className="font-anton scale-step-h5 tabular-nums text-ink-muted">{pillar.number}</span>
                 </div>
-                <dl className="meta mt-8 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-ink-muted">
+                {pillar.description && (
+                  <p className="scale-step-body mt-4 line-clamp-3 text-pretty text-ink">{pillar.description}</p>
+                )}
+                <dl className="meta mt-auto grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 pt-6 text-ink-muted">
                   <dt>When</dt>
                   <dd className="text-ink">{pillar.timing}</dd>
                   <dt>Where</dt>
                   <dd className="text-ink">{pillar.location}</dd>
                 </dl>
+                {pillar.tags.length > 0 && <p className="meta mt-4 text-pretty text-ink-muted">{pillar.tags.join(' · ')}</p>}
               </article>
             </Reveal>
           ))}

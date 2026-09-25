@@ -8,7 +8,7 @@
             "name": "pillar_number",
             "aria-label": "",
             "type": "text",
-            "instructions": "Shown top-right of the card in the display face, e.g. 01. Set the Order attribute to match.",
+            "instructions": "Shown top-right of the tile in the display face, e.g. 01. Set the Order attribute to match so the tiles sort the same way.",
             "required": false,
             "conditional_logic": false,
             "wrapper": {
@@ -28,7 +28,7 @@
             "name": "subtitle",
             "aria-label": "",
             "type": "text",
-            "instructions": "The eyebrow above the title, e.g. Reverence & Word.",
+            "instructions": "A short line under the title, e.g. Reverence & Word.",
             "required": false,
             "conditional_logic": false,
             "wrapper": {
@@ -48,7 +48,7 @@
             "name": "timing",
             "aria-label": "",
             "type": "text",
-            "instructions": "",
+            "instructions": "The When line, e.g. Sundays at 10:00 and 12:00.",
             "required": false,
             "conditional_logic": false,
             "wrapper": {
@@ -68,7 +68,7 @@
             "name": "location",
             "aria-label": "",
             "type": "text",
-            "instructions": "",
+            "instructions": "The Where line, e.g. Main Sanctuary Hall.",
             "required": false,
             "conditional_logic": false,
             "wrapper": {
@@ -88,7 +88,7 @@
             "name": "tags",
             "aria-label": "",
             "type": "repeater",
-            "instructions": "",
+            "instructions": "Two to four short words shown under the facts, e.g. Communion, Kids Sanctuary.",
             "required": false,
             "conditional_logic": false,
             "wrapper": {
@@ -143,7 +143,7 @@
     "instruction_placement": "label",
     "hide_on_screen": [],
     "active": true,
-    "description": "",
+    "description": "The four gathering rhythms on the home page. The title and the editor content (a sentence or two) are native; these fields fill the rest of the tile.",
     "show_in_rest": false,
     "display_title": "",
     "allow_ai_access": false,
@@ -154,5 +154,5 @@
     "graphql_types": [
         "Gathering"
     ],
-    "modified": 1790296553
+    "modified": 1790310000
 }
