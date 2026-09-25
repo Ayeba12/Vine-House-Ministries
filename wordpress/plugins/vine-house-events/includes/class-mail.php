@@ -157,6 +157,8 @@ final class Vine_Events_Mail {
 		if ( $attach_ics ) {
 			$ics = Vine_Events_ICS::build( $booking_id );
 			if ( '' !== $ics ) {
+				// wp_tempnam() lives in an admin include that REST and cron requests do not load.
+				require_once ABSPATH . 'wp-admin/includes/file.php';
 				$path = wp_tempnam( 'vine-house-event.ics' );
 				if ( $path && false !== file_put_contents( $path, $ics ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 					$renamed = preg_replace( '/\.tmp$/', '', $path ) . '.ics';
