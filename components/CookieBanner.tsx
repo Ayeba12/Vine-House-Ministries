@@ -10,9 +10,11 @@ const getSnapshot = () => readConsent() ?? 'none';
 const getServerSnapshot = () => 'unknown' as const;
 
 /**
- * The consent notice: a small raised panel at the foot of the page, shown
- * once until a choice is made. It floats over the page, so it takes the
- * one shadow the system allows for floating surfaces (DESIGN.md §4).
+ * The consent notice: a small olive panel at the foot of the page, in the
+ * voice of the site's dark blocks, shown once until a choice is made. It
+ * floats over the page, so it takes the one shadow the system allows for
+ * floating surfaces (DESIGN.md §4), and it rises in once, from an
+ * already-visible state under reduced motion.
  */
 export function CookieBanner() {
   const consent = useSyncExternalStore(subscribeConsent, getSnapshot, getServerSnapshot);
@@ -26,25 +28,25 @@ export function CookieBanner() {
       id="cookie-banner"
       role="region"
       aria-label="Cookie preferences"
-      className="fixed inset-x-4 bottom-4 z-[60] rounded-xl bg-surface-raised p-6 ring-1 ring-hairline shadow-[0_8px_24px_rgba(30,36,43,0.12)] sm:left-6 sm:right-auto sm:max-w-md"
+      className="rise-in fixed inset-x-4 bottom-4 z-[60] rounded-xl bg-surface-dark p-6 text-ink-on-dark ring-1 ring-hairline-dark shadow-[0_8px_24px_rgba(30,36,43,0.24)] sm:left-6 sm:right-auto sm:w-[26rem] sm:p-7"
     >
-      <h2 className="font-anton scale-step-lead text-ink-strong">Cookies</h2>
-      <p className="meta mt-2 text-pretty text-ink">
-        This site sets one small cookie to remember your choice here, and nothing that tracks you. If we add
-        visitor statistics later, they stay off unless you accept them.
+      <h2 className="font-anton scale-step-h5 text-balance text-ink-on-dark">One small cookie.</h2>
+      <p className="meta mt-3 max-w-[40ch] text-pretty text-ink-on-dark-muted">
+        It remembers the choice you make here, and nothing that tracks you. If we add visitor statistics later,
+        they stay off unless you accept them.
       </p>
-      <div className="mt-5 flex flex-wrap items-center gap-3">
-        <button type="button" onClick={() => choose('all')} className="btn btn-primary px-4 py-2.5">
+      <div className="mt-6 grid grid-cols-2 gap-3">
+        <button type="button" onClick={() => choose('all')} className="btn btn-on-dark px-4 py-3">
           Accept all
         </button>
-        <button type="button" onClick={() => choose('essential')} className="btn btn-outline px-4 py-2.5">
+        <button type="button" onClick={() => choose('essential')} className="btn btn-outline-on-dark px-4 py-3">
           Essential only
         </button>
-        <Link href="/cookies" className="link-arrow text-ink-muted sm:ms-auto">
-          <span>Cookie policy</span>
-          <ArrowUpRight className="size-3.5" />
-        </Link>
       </div>
+      <Link href="/cookies" className="link-arrow mt-5 text-ink-on-dark-muted">
+        <span>What it does</span>
+        <ArrowUpRight className="size-3.5" />
+      </Link>
     </aside>
   );
 }

@@ -307,6 +307,45 @@
     border-bottom-color: var(--color-ink-on-dark);
   }
 
+  /* The notice ticker: two copies of the text travel one text-width left, so
+     the loop is seamless. Transform only; paused under the pointer. The
+     component renders it only when the text overflows and motion is allowed. */
+  .notice-ticker {
+    display: flex;
+    width: max-content;
+    animation: notice-ticker var(--ticker-duration, 20s) linear infinite;
+  }
+
+  .notice-ticker:hover,
+  .notice-ticker:focus-within {
+    animation-play-state: paused;
+  }
+
+  @keyframes notice-ticker {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* One authored entrance for a floating panel: a short rise and fade. */
+  .rise-in {
+    animation: rise-in var(--motion-duration-base) var(--motion-ease) both;
+  }
+
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   /* A quiet tile on the light ground: the "services" box. */
   .tile {
     display: flex;
@@ -401,6 +440,12 @@
 .font-anton {
   font-family: var(--font-anton), sans-serif;
   letter-spacing: -0.02em;
+}
+
+/* The consent panel clears the docked sermon player when both are on screen.
+   Unlayered on purpose, so it outranks the panel's bottom-4 utility. */
+body:has(#docked-sermon-player) #cookie-banner {
+  bottom: 8.75rem;
 }
 
 .font-sans,

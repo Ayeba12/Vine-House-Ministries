@@ -5,7 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { ArrowUpRight, X } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
+import { NoticeBar } from '@/components/NoticeBar';
 
 interface NavbarProps {
   onOpenPlanVisit?: () => void;
@@ -61,28 +62,7 @@ export function Navbar({
 
   return (
     <>
-      {noticeVisible && (
-        <aside
-          id="top-sanctuary-notice-bar"
-          aria-label="Sanctuary notice"
-          className="relative z-50 bg-surface-dark text-ink-on-dark"
-        >
-          <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-5 py-2 sm:px-8 lg:px-12">
-            <p className="meta flex min-w-0 items-center gap-3">
-              <span className="eyebrow shrink-0 text-accent-on-dark">Live</span>
-              <span className="truncate text-ink-on-dark/90">{noticeBanner}</span>
-            </p>
-            <button
-              id="btn-dismiss-notice-banner"
-              onClick={() => setShowNotice(false)}
-              className="shrink-0 p-1 text-ink-on-dark-muted transition-colors hover:text-ink-on-dark"
-              aria-label="Dismiss notice"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        </aside>
-      )}
+      {noticeVisible && noticeBanner && <NoticeBar text={noticeBanner} onDismiss={() => setShowNotice(false)} />}
 
       <header
         id="main-navigation"
