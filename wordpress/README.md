@@ -46,8 +46,10 @@ Without `WORDPRESS_GRAPHQL_ENDPOINT` set, the frontend runs on the seed content 
 
 ## Install into LocalWP
 
-The Local site is expected at `C:\Users\Ayeba\Local Sites\vine-house-ministries`. From
-this repository's root, link all three plugins so edits here show up in WordPress
+The Local site is expected at `C:\Users\Ayeba\Local Sites\vine-house-ministries`. Local runs
+it in localhost mode, so it answers at `http://localhost:10030` (the `.local` domain is not
+in the hosts file); that is the URL for `.env.local`. Mailpit, which catches every email the
+plugins send, is at `http://localhost:10025`. From this repository's root, link all three plugins so edits here show up in WordPress
 immediately. Directory junctions do this without administrator rights:
 
 ```powershell
