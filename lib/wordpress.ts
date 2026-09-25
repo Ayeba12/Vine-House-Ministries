@@ -264,7 +264,7 @@ function mapSermon(node: SermonNode): Sermon & { sortKey: string } {
     scripture: text(f.scripture),
     summary: text(f.summary) || stripHtml(node.excerpt ?? ''),
     keyTakeaways: (f.keyTakeaways ?? []).map((row) => text(row?.text)).filter(Boolean),
-    audioUrl: audioFile || text(f.audioUrl),
+    audioUrl: publicMediaUrl(audioFile || text(f.audioUrl)),
     imageUrl: image(node.featuredImage).url,
     transcriptSnippet: text(f.transcriptSnippet) || stripHtml(node.content ?? '').slice(0, 600),
     tags: names(node.sermonTopics),

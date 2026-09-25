@@ -17,7 +17,7 @@ export const INITIAL_SERMONS: Sermon[] = [
       'Fruitfulness flows naturally from intimacy, not exhausted striving.',
       'Pruning seasons are not punitive; they are restorative preparation for deeper life.'
     ],
-    audioUrl: 'https://cdn.freesound.org/previews/557/557117_11861866-lq.mp3',
+    audioUrl: '',
     imageUrl: 'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1200&q=80',
     transcriptSnippet: 'When Jesus spoke of the vine and the branches, He was not giving an agricultural metaphor for productivity. He was giving a sanctuary of being. "Without me, you can do nothing." In our modern culture of endless doing, the sanctuary invites us back into sacred being...',
     tags: ['Spiritual Growth', 'Abiding', 'Peace', 'Grace']
@@ -38,7 +38,7 @@ export const INITIAL_SERMONS: Sermon[] = [
       'Learning to quiet internal noise before entering communal liturgy.',
       'Building regular Sabbath rhythms in modern city life.'
     ],
-    audioUrl: 'https://cdn.freesound.org/previews/563/563812_11861866-lq.mp3',
+    audioUrl: '',
     imageUrl: 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&w=1200&q=80',
     transcriptSnippet: 'God passed by—not in the tearing wind, not in the shattered rocks, but in the sound of sheer silence. When we create space for silence, we discover that God has been speaking all along...',
     tags: ['Prayer', 'Contemplation', 'Sabbath', 'Quietness']
@@ -59,7 +59,7 @@ export const INITIAL_SERMONS: Sermon[] = [
       'True fellowship requires the courage to be seen and loved.',
       'Nothing can sever the branch firmly grafted into the living Vine.'
     ],
-    audioUrl: 'https://cdn.freesound.org/previews/530/530415_11861866-lq.mp3',
+    audioUrl: '',
     imageUrl: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&q=80',
     transcriptSnippet: 'For I am convinced that neither death nor life, neither angels nor demons... will be able to separate us from the love of God. We are held by grace that does not waver with our performance...',
     tags: ['Grace', 'Assurance', 'Fellowship', 'Vulnerability']
@@ -80,7 +80,7 @@ export const INITIAL_SERMONS: Sermon[] = [
       'Transforming routine interactions into conduits of mercy and peace.',
       'Singing psalms and spiritual hymns in the rhythm of daily commutes.'
     ],
-    audioUrl: 'https://cdn.freesound.org/previews/495/495539_11861866-lq.mp3',
+    audioUrl: '',
     imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
     transcriptSnippet: 'Whatever you do, whether in word or deed, do it all in the name of the Lord Jesus, giving thanks to God the Father through Him. Our daily work is liturgy in action...',
     tags: ['Vocation', 'Culture', 'Worship', 'Daily Life']
