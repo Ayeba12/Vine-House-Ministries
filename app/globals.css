@@ -442,8 +442,14 @@
   letter-spacing: -0.02em;
 }
 
-/* The consent panel clears the docked sermon player when both are on screen.
-   Unlayered on purpose, so it outranks the panel's bottom-4 utility. */
+/* While the docked sermon player is on screen, the page reserves its height
+   at the foot so the footer's last row is never under it; with no player
+   the footer ends flush with the page. The consent panel lifts above it
+   the same way. Unlayered on purpose, so these outrank the utilities. */
+body:has(#docked-sermon-player) main {
+  padding-bottom: 9rem;
+}
+
 body:has(#docked-sermon-player) #cookie-banner {
   bottom: 8.75rem;
 }

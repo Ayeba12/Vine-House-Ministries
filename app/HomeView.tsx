@@ -65,7 +65,7 @@ export function HomeView({ sermons, events: initialEvents, gatherings, testimoni
   const goToVisit = () => router.push('/visit');
 
   return (
-    <main className="min-h-screen bg-surface pb-24 text-ink selection:bg-surface-dark selection:text-ink-on-dark">
+    <main className="min-h-screen bg-surface text-ink selection:bg-surface-dark selection:text-ink-on-dark">
       <Navbar
         noticeBanner={noticeBanner}
         isPlayingAudio={isPlayingAudio}

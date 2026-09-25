@@ -50,7 +50,7 @@ export function SermonsView({ sermons }: { sermons: Sermon[] }) {
   const latest = sermons[0];
 
   return (
-    <main className="min-h-screen bg-surface pb-28 text-ink selection:bg-surface-dark selection:text-ink-on-dark">
+    <main className="min-h-screen bg-surface text-ink selection:bg-surface-dark selection:text-ink-on-dark">
       <Navbar isPlayingAudio={isPlayingAudio} onToggleAudio={() => setIsPlayingAudio((p) => !p)} activeSermonTitle={activeSermon?.title} />
 
       <PageHeader
