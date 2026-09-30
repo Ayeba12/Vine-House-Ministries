@@ -269,7 +269,12 @@ add_action(
  * editor never types a length that the file contradicts. A sermon with only
  * an external URL keeps whatever the editor entered.
  */
-function vine_content_sync_sermon_duration( int $post_id ): void {
+function vine_content_sync_sermon_duration( $post_id ): void {
+	// acf/save_post also fires for the options page ('options'), users ('user_3') and terms: only posts are numeric.
+	if ( ! is_numeric( $post_id ) ) {
+		return;
+	}
+	$post_id = (int) $post_id;
 	if ( 'sermon' !== get_post_type( $post_id ) || ! function_exists( 'get_field' ) ) {
 		return;
 	}
