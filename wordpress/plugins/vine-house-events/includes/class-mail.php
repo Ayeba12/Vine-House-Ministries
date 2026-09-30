@@ -98,7 +98,7 @@ final class Vine_Events_Mail {
 		$counts   = Vine_Events_Bookings::counts( $event_id );
 		$capacity = (int) get_post_meta( $event_id, 'vh_capacity', true );
 		$lines    = array(
-			sprintf( 'Event: %s', get_the_title( $event_id ) ),
+			sprintf( 'Event: %s', self::event_title( $event_id ) ),
 			sprintf( 'When: %s', Vine_Events_Event_Type::when( $event_id ) ),
 			'',
 			sprintf( 'Name: %s', self::meta( $booking_id, 'vh_name' ) ),
@@ -121,7 +121,7 @@ final class Vine_Events_Mail {
 
 		wp_mail(
 			self::office_address(),
-			sprintf( '[Vine House] New booking: %s', get_the_title( $event_id ) ),
+			sprintf( '[Vine House] New booking: %s', self::event_title( $event_id ) ),
 			implode( "\n", $lines ),
 			self::headers()
 		);
@@ -140,7 +140,7 @@ final class Vine_Events_Mail {
 			$body_lines,
 			array(
 				'',
-				get_the_title( $event_id ),
+				self::event_title( $event_id ),
 				Vine_Events_Event_Type::when( $event_id ),
 				trim( $details['location'] . ( $details['room'] ? ', ' . $details['room'] : '' ) ),
 				sprintf( /* translators: %d: guests */ __( 'Guests: %d', 'vine-house-events' ), (int) self::meta( $booking_id, 'vh_guests' ) ),
@@ -172,7 +172,7 @@ final class Vine_Events_Mail {
 
 		wp_mail(
 			self::meta( $booking_id, 'vh_email' ),
-			sprintf( '%s — %s', $subject, get_the_title( $event_id ) ),
+			sprintf( '%s — %s', $subject, self::event_title( $event_id ) ),
 			implode( "\n", $lines ),
 			self::headers(),
 			$attachments
@@ -181,6 +181,11 @@ final class Vine_Events_Mail {
 		foreach ( $attachments as $path ) {
 			wp_delete_file( $path );
 		}
+	}
+
+	/** The event's title as plain text: get_the_title() encodes "&" and quotes for HTML, and these emails are not HTML. */
+	private static function event_title( int $event_id ): string {
+		return html_entity_decode( get_the_title( $event_id ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 	}
 
 	private static function headers(): array {

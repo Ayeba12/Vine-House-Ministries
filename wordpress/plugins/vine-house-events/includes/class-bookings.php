@@ -299,7 +299,7 @@ final class Vine_Events_Bookings {
 			'checkedIn'   => (bool) get_post_meta( $booking_id, 'vh_checked_in', true ),
 			'event'       => array(
 				'id'        => $event_id,
-				'title'     => get_the_title( $event_id ),
+				'title'     => html_entity_decode( get_the_title( $event_id ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
 				'when'      => Vine_Events_Event_Type::when( $event_id ),
 				'eventDate' => $details['eventDate'],
 				'startTime' => $details['startTime'],
