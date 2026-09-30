@@ -194,6 +194,22 @@ holds Bluehost's starter site and is not used). The public site is on Vercel at
 - Permalinks are post name, the timezone is Europe/London, and search engines are
   discouraged: the CMS is not the public site.
 
+## Emails to guests
+
+The five emails a guest can receive (confirmed, waitlisted, place opened, cancelled,
+reminder) are designed HTML with a plain-text copy alongside, built in
+`vine-house-events/includes/class-email.php`. Events → Settings holds the sender name, the
+office address they come from, the website address their links point to, and **Email
+photograph**: the address of a Media Library image shown under the masthead (about 1200
+pixels wide, landscape; empty for none). To look at one without sending it:
+
+```
+wp eval 'echo Vine_Events_Mail::preview( "confirmation", 123 );' > preview.html
+```
+
+where `123` is a booking's ID and the kind is one of `confirmation`, `waitlisted`,
+`promoted`, `cancelled`, `reminder`.
+
 ## Cron on Bluehost
 
 Day-before reminders run from WP-Cron, which fires on page views — and a headless site

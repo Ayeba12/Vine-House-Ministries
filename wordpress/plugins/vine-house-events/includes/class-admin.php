@@ -350,6 +350,7 @@ final class Vine_Events_Admin {
 		register_setting( 'vine_events', Vine_Events_Mail::OPTION_NOTIFY, array( 'type' => 'string', 'sanitize_callback' => 'sanitize_email', 'default' => '' ) );
 		register_setting( 'vine_events', Vine_Events_Mail::OPTION_FRONTEND, array( 'type' => 'string', 'sanitize_callback' => 'esc_url_raw', 'default' => '' ) );
 		register_setting( 'vine_events', Vine_Events_Mail::OPTION_FROM_NAME, array( 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field', 'default' => '' ) );
+		register_setting( 'vine_events', Vine_Events_Mail::OPTION_IMAGE, array( 'type' => 'string', 'sanitize_callback' => 'esc_url_raw', 'default' => '' ) );
 		register_setting( 'vine_events', Vine_Events_Mail::OPTION_REMINDERS, array( 'type' => 'boolean', 'sanitize_callback' => static fn( $v ): bool => (bool) $v, 'default' => true ) );
 
 		add_settings_section( 'vine_events_main', '', '__return_false', self::PAGE_SETTINGS );
@@ -368,6 +369,10 @@ final class Vine_Events_Admin {
 		add_settings_field( Vine_Events_Mail::OPTION_FRONTEND, __( 'Website address', 'vine-house-events' ), static function () use ( $text ): void {
 			$text( Vine_Events_Mail::OPTION_FRONTEND, 'url', home_url() );
 			echo '<p class="description">' . esc_html__( 'Where "manage my booking" links in emails point. The Next.js site, not this WordPress install.', 'vine-house-events' ) . '</p>';
+		}, self::PAGE_SETTINGS, 'vine_events_main' );
+		add_settings_field( Vine_Events_Mail::OPTION_IMAGE, __( 'Email photograph', 'vine-house-events' ), static function () use ( $text ): void {
+			$text( Vine_Events_Mail::OPTION_IMAGE, 'url', 'https://…/wp-content/uploads/….jpg' );
+			echo '<p class="description">' . esc_html__( 'The picture under the masthead of every email to a guest. Paste the address of an image from the Media Library, about 1200 pixels wide and landscape. Leave empty for no picture.', 'vine-house-events' ) . '</p>';
 		}, self::PAGE_SETTINGS, 'vine_events_main' );
 		add_settings_field( Vine_Events_Mail::OPTION_REMINDERS, __( 'Reminders', 'vine-house-events' ), static function (): void {
 			printf(

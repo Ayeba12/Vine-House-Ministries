@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Vine House Events
  * Description: Events with bookings for the Vine House Ministries website — capacity, waitlists, pass codes, check-in, attendee emails with calendar files, day-before reminders and CSV export, plus the booking endpoints the site posts to.
- * Version: 0.1.0
+ * Version: 0.2.0
  * Requires at least: 6.4
  * Requires PHP: 8.1
  * Author: Vine House Ministries
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'VINE_EVENTS_VERSION', '0.1.0' );
+define( 'VINE_EVENTS_VERSION', '0.2.0' );
 define( 'VINE_EVENTS_DIR', plugin_dir_path( __FILE__ ) );
 
 /** Shared with Vine House Forms: the one capability the website's API user holds. */
@@ -28,6 +28,7 @@ require_once VINE_EVENTS_DIR . 'includes/class-booking-type.php';
 require_once VINE_EVENTS_DIR . 'includes/class-bookings.php';
 require_once VINE_EVENTS_DIR . 'includes/class-validation.php';
 require_once VINE_EVENTS_DIR . 'includes/class-ics.php';
+require_once VINE_EVENTS_DIR . 'includes/class-email.php';
 require_once VINE_EVENTS_DIR . 'includes/class-mail.php';
 require_once VINE_EVENTS_DIR . 'includes/class-meta-box.php';
 require_once VINE_EVENTS_DIR . 'includes/class-rest.php';
