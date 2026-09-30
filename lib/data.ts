@@ -18,7 +18,7 @@ export const INITIAL_SERMONS: Sermon[] = [
       'Pruning seasons are not punitive; they are restorative preparation for deeper life.'
     ],
     audioUrl: '',
-    imageUrl: 'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1698768676413-e49b729dafa6?auto=format&fit=crop&w=1200&q=80',
     transcriptSnippet: 'When Jesus spoke of the vine and the branches, He was not giving an agricultural metaphor for productivity. He was giving a sanctuary of being. "Without me, you can do nothing." In our modern culture of endless doing, the sanctuary invites us back into sacred being...',
     tags: ['Spiritual Growth', 'Abiding', 'Peace', 'Grace']
   },
@@ -39,7 +39,7 @@ export const INITIAL_SERMONS: Sermon[] = [
       'Building regular Sabbath rhythms in modern city life.'
     ],
     audioUrl: '',
-    imageUrl: 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1776851772656-adb80e4aa6cb?auto=format&fit=crop&w=1200&q=80',
     transcriptSnippet: 'God passed by—not in the tearing wind, not in the shattered rocks, but in the sound of sheer silence. When we create space for silence, we discover that God has been speaking all along...',
     tags: ['Prayer', 'Contemplation', 'Sabbath', 'Quietness']
   },
@@ -60,7 +60,7 @@ export const INITIAL_SERMONS: Sermon[] = [
       'Nothing can sever the branch firmly grafted into the living Vine.'
     ],
     audioUrl: '',
-    imageUrl: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1778949367481-04f79bfc76fb?auto=format&fit=crop&w=1200&q=80',
     transcriptSnippet: 'For I am convinced that neither death nor life, neither angels nor demons... will be able to separate us from the love of God. We are held by grace that does not waver with our performance...',
     tags: ['Grace', 'Assurance', 'Fellowship', 'Vulnerability']
   },
@@ -100,7 +100,7 @@ export const INITIAL_EVENTS: ChurchEvent[] = [
     rsvpdCount: 94,
     description: 'An immersive candlelit evening of reverent acoustic praise, communal prayers of intercession, scripture immersion, and quiet communion.',
     host: 'Pastor Mercy Yerifor & Worship Ensemble',
-    imageUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?auto=format&fit=crop&w=1200&q=80',
     highlights: ['Candlelit Sanctuary Setting', 'Communal Bread & Cup', 'Personal Prayer Ministry', 'Live Acoustic Hymns']
   },
   {
@@ -115,7 +115,7 @@ export const INITIAL_EVENTS: ChurchEvent[] = [
     rsvpdCount: 32,
     description: 'A relaxed, warm gathering for anyone new to Vine House or exploring faith. Meet Pastor Mercy, connect with fellow seekers, and enjoy artisanal pastries & pour-over coffee.',
     host: 'Mercy Yerifor & Welcome Team',
-    imageUrl: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1790749870697-c12308454407?auto=format&fit=crop&w=1200&q=80',
     highlights: ['Artisan Coffee & Light Brunch', 'Meet Pastoral Leadership', 'No Pressure Dialogue', 'Welcome Gift Pack']
   },
   {
@@ -157,7 +157,7 @@ export const GATHERING_PILLARS: GatheringPillar[] = [
     subtitle: 'Reverence & Word',
     timing: '10:00 AM & 12:00 PM',
     location: 'Main Sanctuary Hall',
-    imageUrl: 'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1000&q=80'
+    imageUrl: 'https://images.unsplash.com/photo-1789387900304-430a144339de?auto=format&fit=crop&w=1000&q=80'
   },
   {
     number: '02',
@@ -231,7 +231,7 @@ export const TESTIMONIALS = [
     author: 'Marcus & Jessica Vance',
     role: 'Young Family & Volunteers',
     tag: 'Family Sanctuary',
-    avatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=300&q=80'
+    avatarUrl: 'https://images.unsplash.com/photo-1663579167845-c73285e3805b?auto=format&fit=crop&w=300&q=80'
   },
   {
     id: 'test-3',
@@ -277,7 +277,7 @@ export const MESSAGES: Message[] = [
     author: 'Pastor Mercy Yerifor',
     authorRole: 'Lead Pastor & Spiritual Director',
     scripture: 'John 15:4',
-    imageUrl: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=1800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1543418219-44e30b057fea?auto=format&fit=crop&w=1800&q=80',
     imageAlt: 'Vineyard rows in evening light',
     body: [
       'Dear friends, I have noticed something over the last few Sundays. More of you are arriving tired. Not the ordinary tiredness of a long week, but the deeper kind that comes from carrying something for months without setting it down. I want to write to you about that, because I think the Vine has a word for it.',
@@ -300,7 +300,7 @@ export const MESSAGES: Message[] = [
     author: 'Minister David K. Sterling',
     authorRole: 'Associate Minister of Liturgy & Teaching',
     scripture: 'Psalm 46:10',
-    imageUrl: 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&w=1800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1563671897-756873648699?auto=format&fit=crop&w=1800&q=80',
     imageAlt: 'Light falling across an empty sanctuary',
     body: [
       'Visitors sometimes ask about the silence. Our services open with the call to worship, and then, before a single hymn, the room goes quiet for a minute and a half. On the first Sunday it can feel like a mistake. By the fourth it is the part people miss most when they are away.',
@@ -368,8 +368,8 @@ export const MESSAGES: Message[] = [
     author: 'Pastor Mercy Yerifor',
     authorRole: 'Lead Pastor & Spiritual Director',
     scripture: 'Exodus 20:8',
-    imageUrl: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1800&q=80',
-    imageAlt: 'A quiet dinner table set for guests',
+    imageUrl: 'https://images.unsplash.com/photo-1604881988758-f76ad2f7aac1?auto=format&fit=crop&w=1800&q=80',
+    imageAlt: 'Two people with mugs of coffee at a quiet table',
     body: [
       'London does not stop, and most of us have made peace with that by not stopping either. I want to suggest that the fourth commandment was written for exactly this. It was given to a people fresh out of Egypt, who had never in living memory been allowed a day off. Rest had to be commanded because nobody would have believed it was permitted.',
       'Sabbath is not primarily about church attendance, though I am glad you come. It is about a weekly, deliberate declaration that the world will carry on without your effort for one day, and that God is not anxious about the gap. Every seventh day is a small act of trust that the universe is held by someone other than you.',

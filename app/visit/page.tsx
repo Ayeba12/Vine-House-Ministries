@@ -16,17 +16,17 @@ const STEPS = [
   {
     title: 'Arrival & coffee',
     desc: 'Doors open thirty minutes early. Pour-over coffee and fresh sourdough pastries in the glass atrium.',
-    image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1604881988758-f76ad2f7aac1?auto=format&fit=crop&w=800&q=80',
   },
   {
     title: 'Acoustic liturgy & word',
     desc: 'Take a seat in the oak pews. Choral chant and hymns, then thoughtful, verse-by-verse scripture exegesis.',
-    image: 'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1737820544699-511fd917156d?auto=format&fit=crop&w=800&q=80',
   },
   {
     title: 'Eucharist & quiet prayer',
     desc: 'Open communion every Sunday. Pastoral prayer teams wait quietly in the side alcoves for anyone who wants them.',
-    image: 'https://images.unsplash.com/photo-1544427920-c49ccfb85579?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1531627467965-e9c3dd19209c?auto=format&fit=crop&w=800&q=80',
   },
   {
     title: 'Courtyard fellowship',
@@ -173,7 +173,7 @@ export default function VisitPage() {
             </Reveal>
             <Reveal delay={0.1} className="lg:col-span-6">
               <figure className="relative aspect-[4/3] overflow-hidden rounded-xl bg-surface-deep">
-                <Image src="https://images.unsplash.com/photo-1514890547357-a9ee288728e0?auto=format&fit=crop&w=1200&q=80" alt="The atrium at Sanctuary Hall" fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" referrerPolicy="no-referrer" />
+                <Image src="https://images.unsplash.com/photo-1784476457176-b4ee6cefdbcd?auto=format&fit=crop&w=1200&q=80" alt="The atrium at Sanctuary Hall" fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" referrerPolicy="no-referrer" />
                 <div className="absolute inset-0 bg-gradient-to-t from-surface-deep/80 via-transparent to-transparent" />
                 <figcaption className="absolute bottom-5 left-5 right-5 flex flex-wrap items-end justify-between gap-3">
                   <span className="font-anton scale-step-h5 text-ink-on-dark">Every Sunday</span>

@@ -35,7 +35,7 @@ export function BuiltOnReverence({}: { onPlanVisit: () => void }) {
           <figure className="relative overflow-hidden rounded-xl bg-surface-deep">
             <div className="relative aspect-[16/10] w-full sm:aspect-[21/9]">
               <Image
-                src="https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=1800&q=80"
+                src="https://images.unsplash.com/photo-1543418219-44e30b057fea?auto=format&fit=crop&w=1800&q=80"
                 alt="Vineyard rows in evening light, the True Vine of John 15"
                 fill
                 sizes="(min-width: 1440px) 1344px, 100vw"

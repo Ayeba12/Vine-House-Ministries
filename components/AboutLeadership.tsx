@@ -47,7 +47,7 @@ export function AboutLeadership({ onPlanVisit }: { onPlanVisit: () => void }) {
         <Reveal className="lg:col-span-5">
           <figure className="relative aspect-[4/5] overflow-hidden rounded-xl bg-surface-deep">
             <Image
-              src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1000&q=80"
+              src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1000&q=80"
               alt="Pastor Mercy Yerifor, Lead Pastor of Vine House Ministries"
               fill
               sizes="(min-width: 1024px) 40vw, 100vw"

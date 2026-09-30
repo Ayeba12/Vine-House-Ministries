@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Vine House Forms
- * Description: Receives the website's newsletter sign-ups, enquiries and visit plans through authenticated REST endpoints, and keeps them as private records the church office can manage and export. Event bookings live in Vine House Events.
- * Version: 0.2.0
+ * Description: Receives the website's newsletter sign-ups, enquiries and visit plans through authenticated REST endpoints, and keeps them as private records the church office can manage and export, and sends each visitor an acknowledgement. Event bookings live in Vine House Events.
+ * Version: 0.3.0
  * Requires at least: 6.4
  * Requires PHP: 8.1
  * Author: Vine House Ministries
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'VINE_FORMS_VERSION', '0.2.0' );
+define( 'VINE_FORMS_VERSION', '0.3.0' );
 define( 'VINE_FORMS_DIR', plugin_dir_path( __FILE__ ) );
 
 /** The one capability the website's API user holds. Shared with Vine House Events. */
@@ -26,6 +26,7 @@ define( 'VINE_FORMS_CAP_MANAGE', 'manage_vine_submissions' );
 require_once VINE_FORMS_DIR . 'includes/class-cpt.php';
 require_once VINE_FORMS_DIR . 'includes/class-validation.php';
 require_once VINE_FORMS_DIR . 'includes/class-notify.php';
+require_once VINE_FORMS_DIR . 'includes/class-mail.php';
 require_once VINE_FORMS_DIR . 'includes/class-rest.php';
 require_once VINE_FORMS_DIR . 'includes/class-admin.php';
 require_once VINE_FORMS_DIR . 'includes/class-export.php';

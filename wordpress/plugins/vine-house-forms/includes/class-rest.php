@@ -81,6 +81,8 @@ final class Vine_Forms_REST {
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;
 		}
+		// A welcome only to a new subscriber: signing up twice must not send it twice.
+		Vine_Forms_Mail::subscribed( $post_id );
 		return new WP_REST_Response(
 			array(
 				'id'                => $post_id,
@@ -127,6 +129,7 @@ final class Vine_Forms_REST {
 			return $post_id;
 		}
 		Vine_Forms_Notify::send( Vine_Forms_CPT::ENQUIRY, $post_id, $data + array( 'gathering' => $gathering_title ) );
+		Vine_Forms_Mail::enquiry( $post_id );
 		return new WP_REST_Response( array( 'id' => $post_id ), 201 );
 	}
 
@@ -163,6 +166,7 @@ final class Vine_Forms_REST {
 			return $post_id;
 		}
 		Vine_Forms_Notify::send( Vine_Forms_CPT::VISIT_PLAN, $post_id, $data );
+		Vine_Forms_Mail::visit( $post_id );
 		return new WP_REST_Response(
 			array(
 				'id'       => $post_id,

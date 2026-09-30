@@ -210,6 +210,12 @@ wp eval 'echo Vine_Events_Mail::preview( "confirmation", 123 );' > preview.html
 where `123` is a booking's ID and the kind is one of `confirmation`, `waitlisted`,
 `promoted`, `cancelled`, `reminder`.
 
+The forms send an acknowledgement in the same design (`vine-house-forms/includes/class-mail.php`):
+a welcome to a new newsletter subscriber, a receipt for an enquiry or prayer request, and
+the pass for a planned visit. They use the template from Vine House Events and the same
+photograph, sender name and website address; with Events inactive they go out as plain
+text. Preview one with `Vine_Forms_Mail::preview( "subscribed" | "enquiry" | "visit", <record ID> )`.
+
 ## Cron on Bluehost
 
 Day-before reminders run from WP-Cron, which fires on page views — and a headless site

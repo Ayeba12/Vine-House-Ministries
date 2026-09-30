@@ -56,7 +56,7 @@ const LEADERS = [
     name: 'Minister David K. Sterling',
     role: 'Associate Minister of Liturgy & Teaching',
     bio: 'David oversees the liturgical rhythm, weekly exegesis research, and adult discipleship. His passion lies at the intersection of historical church liturgy and contemporary UK community life.',
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1624797432677-6f803a98acb3?auto=format&fit=crop&crop=faces&w=800&q=80',
     education: 'M.T.S. Applied Theology & Liturgy',
   },
   {
@@ -113,13 +113,13 @@ const SPACE = [
     tag: 'Harmonics',
     title: 'Acoustic clarity',
     desc: 'Tuned for warm unamplified choral singing and clear speech, fostering an intimate dialogue between scripture reader and congregation.',
-    image: 'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1737820544699-511fd917156d?auto=format&fit=crop&w=800&q=80',
   },
   {
     tag: 'Sacred light',
     title: 'Natural skylights',
     desc: 'Three high clerestory light wells illuminate the communion table and altar, marking the transit of daylight across the sanctuary during liturgy.',
-    image: 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1772878488148-3ce0d9f60347?auto=format&fit=crop&w=800&q=80',
   },
 ];
 
@@ -158,7 +158,7 @@ export default function AboutPage() {
           <figure className="relative overflow-hidden rounded-xl bg-surface-deep">
             <div className="relative aspect-[16/10] w-full sm:aspect-[21/9]">
               <Image
-                src="https://images.unsplash.com/photo-1543783207-ec64e4d95325?auto=format&fit=crop&w=1800&q=80"
+                src="https://images.unsplash.com/photo-1784476457176-b4ee6cefdbcd?auto=format&fit=crop&w=1800&q=80"
                 alt="The interior of Sanctuary Hall"
                 fill
                 sizes="(min-width: 1440px) 1344px, 100vw"

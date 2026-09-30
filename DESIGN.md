@@ -215,7 +215,8 @@ plugin's `Vine_Events_Email`): the olive masthead with the gold emblem, one phot
 people at worship, a honey eyebrow, the heading in Anton (Impact where web fonts are
 blocked), body in DM Sans, the `SanctuaryPass` card, one olive button, and the deep footer.
 Tables and inline styles, tokens written as hex. A plain-text copy always travels with it.
-Emails to the office stay plain text.
+The form acknowledgements (newsletter welcome, enquiry receipt, visit pass) use the same
+template. Emails to the office stay plain text.
 
 Long lists (the sermon, event and message archives) page in place: the first batch
 shows at once and scrolling to the foot of the list loads the next, each new card
