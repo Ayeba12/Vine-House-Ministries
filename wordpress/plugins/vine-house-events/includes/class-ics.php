@@ -25,7 +25,7 @@ final class Vine_Events_ICS {
 			get_post_meta( $booking_id, 'vh_pass_code', true ),
 			(int) get_post_meta( $booking_id, 'vh_guests', true )
 		);
-		$host = wp_parse_url( home_url(), PHP_URL_HOST ) ?: 'vinehouseministries.org.uk';
+		$host = wp_parse_url( home_url(), PHP_URL_HOST ) ?: 'vinehouseministeries.co.uk';
 
 		$lines = array(
 			'BEGIN:VCALENDAR',

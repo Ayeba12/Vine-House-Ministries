@@ -13,7 +13,7 @@ const SECTIONS: LegalSection[] = [
     id: 'about-these-terms',
     heading: 'About these terms',
     blocks: [
-      'This website is published by Vine House Ministries, a registered charity in England and Wales, number 1148977. By using it you agree to these terms. They are written to be read, not to catch anyone out; if anything is unclear, ask the ministry office at enquiries@vinehouseministries.org.uk.',
+      'This website is published by Vine House Ministries, a registered charity in England and Wales, number 1148977. By using it you agree to these terms. They are written to be read, not to catch anyone out; if anything is unclear, ask the ministry office at office@vinehouseministeries.co.uk.',
     ],
   },
   {

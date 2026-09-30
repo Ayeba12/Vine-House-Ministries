@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { ArrowUpRight, X } from 'lucide-react';
+import { SanctuaryPass } from '@/components/SanctuaryPass';
 import { ChurchEvent, RSVPRecord } from '@/lib/types';
 import { Select } from '@/components/ui/Select';
 
@@ -160,24 +161,21 @@ export function RsvpModal({ event, onClose, onConfirmRsvp }: RsvpModalProps) {
                 </p>
               </div>
 
-              <div className="rounded-xl bg-surface-dark p-6 text-ink-on-dark">
-                <div className="flex items-start justify-between gap-4 border-b border-hairline-dark pb-4">
-                  <div>
-                    <p className="font-anton scale-step-lead text-ink-on-dark">Vine House Ministries</p>
-                    <p className="meta text-ink-on-dark-muted">Sanctuary pass</p>
-                  </div>
-                  <p className="meta text-ink-on-dark-muted">{confirmed.guestsCount} guest{confirmed.guestsCount === 1 ? '' : 's'}</p>
-                </div>
-                <p className="font-anton scale-step-h3 mt-5 text-accent-on-dark">{confirmed.qrPassCode}</p>
-                <dl className="meta mt-5 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-ink-on-dark-muted">
-                  <dt>Event</dt><dd className="text-ink-on-dark">{event.title}</dd>
-                  <dt>When</dt><dd className="text-ink-on-dark">{event.date} · {event.time}</dd>
-                  <dt>Attendee</dt><dd className="text-ink-on-dark">{confirmed.name}</dd>
-                </dl>
-                <p className="meta mt-5 border-t border-hairline-dark pt-4 text-ink-on-dark-muted">
-                  Show this at the sanctuary entrance. On your phone or written down — either is fine.
-                </p>
-              </div>
+              <SanctuaryPass
+                code={confirmed.qrPassCode}
+                guests={confirmed.guestsCount}
+                status={waitlisted ? 'Waitlist' : undefined}
+                rows={[
+                  { label: 'Event', value: event.title },
+                  { label: 'When', value: `${event.date} · ${event.time}` },
+                  { label: 'Attendee', value: confirmed.name },
+                ]}
+                note={
+                  waitlisted
+                    ? 'This code becomes your pass the moment a place opens. We will email you.'
+                    : 'Show this at the sanctuary entrance. On your phone or written down — either is fine.'
+                }
+              />
 
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <button onClick={downloadCalendar} className="link-arrow text-ink-strong">

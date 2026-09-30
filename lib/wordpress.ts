@@ -65,7 +65,7 @@ export const contentSource: ContentSource = ENDPOINT ? 'wordpress' : 'seed';
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   noticeBanner: 'Sunday Sanctuary Gathering: 10:00 AM & 12:00 PM • In-Person & Broadcast Live',
-  officeEmail: 'enquiries@vinehouseministries.org.uk',
+  officeEmail: 'office@vinehouseministeries.co.uk',
   charityNumber: '1148977',
   region: 'Greater London & Essex',
   addressLine: '',

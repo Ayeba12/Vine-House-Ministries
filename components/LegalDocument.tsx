@@ -50,8 +50,8 @@ export function LegalDocument({ eyebrow, crumb, title, titleSecond, lead, update
             <dd className="text-ink">No. 1148977, England &amp; Wales</dd>
             <dt>Questions</dt>
             <dd className="text-ink">
-              <a href="mailto:enquiries@vinehouseministries.org.uk" className="transition-opacity hover:opacity-70">
-                enquiries@vinehouseministries.org.uk
+              <a href="mailto:office@vinehouseministeries.co.uk" className="transition-opacity hover:opacity-70">
+                office@vinehouseministeries.co.uk
               </a>
             </dd>
           </dl>

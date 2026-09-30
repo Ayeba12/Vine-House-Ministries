@@ -205,6 +205,11 @@ Arbitrary values are how the scale drifts.
 Scroll reveals are a 20px rise with a fade, `viewport={{ once: true }}`. Once only —
 elements never re-animate on scroll-back.
 
+The booking pass (`SanctuaryPass`) is one object in two places: the confirmation in the
+booking modal and the manage-my-booking page (`/events/booking?token=…`). A dark card, the
+church's name, the pass code in the display face in gold, the facts beneath. A cancelled
+pass keeps its shape with the code struck through.
+
 Long lists (the sermon, event and message archives) page in place: the first batch
 shows at once and scrolling to the foot of the list loads the next, each new card
 arriving with the same reveal. The foot is `LoadMore`: a hairline with a gold sweep

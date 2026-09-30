@@ -14,7 +14,7 @@ const SECTIONS: LegalSection[] = [
     heading: 'Who we are',
     blocks: [
       'Vine House Ministries is a Christian church and a registered charity in England and Wales, number 1148977, serving Greater London and Essex. For the purposes of the UK General Data Protection Regulation and the Data Protection Act 2018, the charity is the data controller for the personal information collected through this website.',
-      'You can reach us about anything in this policy at enquiries@vinehouseministries.org.uk, or by writing to the ministry office at Sanctuary Hall, Greater London and Essex.',
+      'You can reach us about anything in this policy at office@vinehouseministeries.co.uk, or by writing to the ministry office at Sanctuary Hall, Greater London and Essex.',
     ],
   },
   {
@@ -71,7 +71,7 @@ const SECTIONS: LegalSection[] = [
     id: 'your-rights',
     heading: 'Your rights',
     blocks: [
-      'You have the right to ask what information we hold about you, to have it corrected, to have it deleted, to restrict or object to how it is used, and to receive a copy of it. Email enquiries@vinehouseministries.org.uk and we will respond within one month.',
+      'You have the right to ask what information we hold about you, to have it corrected, to have it deleted, to restrict or object to how it is used, and to receive a copy of it. Email office@vinehouseministeries.co.uk and we will respond within one month.',
       'To stop the newsletter, reply to any issue or email the office and we will remove you.',
       'If you are unhappy with how we have handled your information, you can complain to the Information Commissioner’s Office at ico.org.uk or on 0303 123 1113. We would welcome the chance to put things right first.',
     ],

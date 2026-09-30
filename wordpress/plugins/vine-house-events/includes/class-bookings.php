@@ -303,6 +303,7 @@ final class Vine_Events_Bookings {
 				'when'      => Vine_Events_Event_Type::when( $event_id ),
 				'eventDate' => $details['eventDate'],
 				'startTime' => $details['startTime'],
+				'endTime'   => $details['endTime'],
 				'location'  => $details['location'],
 				'room'      => $details['room'],
 				'remaining' => $details['remaining'],

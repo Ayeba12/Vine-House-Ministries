@@ -164,8 +164,8 @@ export function Footer({ onSubscribe, onPlanVisit, gather = GATHER }: FooterProp
               <address className="meta mt-5 flex flex-col gap-2.5 not-italic text-ink-on-dark">
                 <span>Greater London &amp; Essex</span>
                 <span className="text-ink-on-dark-muted">Step-free access · free visitor parking</span>
-                <a href="mailto:enquiries@vinehouseministries.org.uk" className="break-all transition-opacity hover:opacity-70">
-                  enquiries@vinehouseministries.org.uk
+                <a href="mailto:office@vinehouseministeries.co.uk" className="break-all transition-opacity hover:opacity-70">
+                  office@vinehouseministeries.co.uk
                 </a>
                 <span className="text-ink-on-dark-muted">Registered charity No. 1148977</span>
               </address>

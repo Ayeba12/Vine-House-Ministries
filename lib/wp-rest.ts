@@ -58,13 +58,32 @@ export function reject(message: string, field?: string, status = 400): NextRespo
   return NextResponse.json({ message, field }, { status });
 }
 
+const authorization = (): string => `Basic ${Buffer.from(`${USER}:${PASSWORD}`).toString('base64')}`;
+
+/**
+ * GET a plugin route from a server component. Answers with the HTTP status
+ * and the decoded body on 200; 503 when WordPress cannot be reached.
+ */
+export async function readFromWordPress<T>(path: string): Promise<{ status: number; data: T | null }> {
+  try {
+    const response = await fetch(`${BASE}/wp-json/vine/v1/${path}`, {
+      headers: { Accept: 'application/json', Authorization: authorization() },
+      cache: 'no-store',
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    return { status: response.status, data: response.ok ? ((await response.json()) as T) : null };
+  } catch (error) {
+    console.error(`[wp-rest] ${path}: ${error instanceof Error ? error.message : String(error)}`);
+    return { status: 503, data: null };
+  }
+}
+
 /**
  * POST to a plugin route and relay its answer. A WP_Error comes back as
  * `{ code, message, data: { status, field } }`; it is flattened to
  * `{ message, field }` with the same status so forms can mark the field.
  */
 export async function forwardToWordPress(path: string, body: Record<string, unknown>, request: Request): Promise<NextResponse> {
-  const authorization = `Basic ${Buffer.from(`${USER}:${PASSWORD}`).toString('base64')}`;
   let response: Response;
   try {
     response = await fetch(`${BASE}/wp-json/vine/v1/${path}`, {
@@ -72,7 +91,7 @@ export async function forwardToWordPress(path: string, body: Record<string, unkn
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        Authorization: authorization,
+        Authorization: authorization(),
         'X-Vine-Client-IP': clientIp(request),
       },
       body: JSON.stringify(body),

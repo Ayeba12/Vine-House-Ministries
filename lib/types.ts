@@ -104,3 +104,29 @@ export interface SiteSettings {
   accessNote: string;
   serviceTimes: { label: string; value: string }[];
 }
+
+/** A booking as Vine House Events answers with it: on creation, on lookup by token and on cancellation. */
+export interface Booking {
+  id: number;
+  status: 'confirmed' | 'waitlisted' | 'cancelled';
+  passCode: string;
+  /** The private token from the manage link. Whoever holds it can cancel the booking. */
+  token: string;
+  name: string;
+  guests: number;
+  checkedIn: boolean;
+  event: {
+    id: number;
+    title: string;
+    /** The date and time written out, e.g. "Saturday, 10 October 2026, 9:00 am – 1:00 pm". */
+    when: string;
+    /** YYYY-MM-DD in the site timezone. */
+    eventDate: string;
+    /** HH:MM, 24-hour. */
+    startTime: string;
+    endTime?: string;
+    location: string;
+    room: string;
+    remaining: number | null;
+  };
+}

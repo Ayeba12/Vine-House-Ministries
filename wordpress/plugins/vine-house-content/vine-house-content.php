@@ -306,7 +306,7 @@ add_action( 'acf/save_post', 'vine_content_sync_sermon_duration', 30 );
  *
  * Configure in wp-config.php (never in a field a GraphQL client could read):
  *
- *   define( 'VINE_FRONTEND_URL', 'https://vinehouseministries.org.uk' );
+ *   define( 'VINE_FRONTEND_URL', 'https://www.vinehouseministeries.co.uk' );
  *   define( 'VINE_REVALIDATE_SECRET', 'the same value as REVALIDATE_SECRET on Vercel' );
  *
  * Left undefined, nothing is sent and the site simply waits out its window.

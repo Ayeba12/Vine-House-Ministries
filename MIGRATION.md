@@ -193,6 +193,7 @@ Order, easiest first, so the pattern is proven on low-risk pages:
 | 2 | `/events` | events | `EventsView` (search, tabs, booking modal) | done |
 | 3 | `/sermons` | sermons | `SermonsView` (filters, search, audio) | done |
 | 4 | `/` | sermons, events, gatherings, testimonials, settings | `HomeView` (player, booking modal) | done |
+| 5 | `/events/booking?token=…` | the booking, by its private token, over the authenticated REST route; settings | `BookingView` (pass, calendar file, cancel) | done |
 | 5 | `/about`, `/contact`, `/visit` | none | the whole page | still client pages; no content to fetch |
 
 Each converted route is a server `page.tsx` that fetches, plus a `*View.tsx` client island
@@ -242,7 +243,7 @@ previews at the Bluehost instance or accept empty-collection fallbacks in previe
 6. Verify: publish a sermon in wp-admin and confirm it appears on the Vercel site.
 
 WordPress serves no public HTML in this setup — only GraphQL and REST. Worth deciding
-whether the WP install sits on a subdomain (`cms.vinehouseministries.org.uk`) and whether
+whether the WP install sits on a subdomain (`cms.vinehouseministeries.co.uk`) and whether
 its own frontend is blocked outright.
 
 ---
