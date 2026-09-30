@@ -176,6 +176,24 @@ curl -s -X POST http://vine-house-ministries.local/graphql \
 If WPGraphQL for ACF names a field differently from the table above (the `audioFile`
 media field is the likeliest), the fix is in the query strings in `lib/wordpress.ts`.
 
+## Production on Bluehost
+
+The production CMS is `https://cms.vinehouseministeries.co.uk` (document root
+`~/cms.vinehouseministeries.co.uk` on the Bluehost account; the account's `public_html`
+holds Bluehost's starter site and is not used). The public site is on Vercel at
+`https://www.vinehouseministeries.co.uk`.
+
+- The three plugins are copied into `wp-content/plugins/` (not symlinked, as in Local), so
+  a plugin change in this repository has to be uploaded again.
+- `wp-config.php` defines `VINE_FRONTEND_URL` as the `www` address above and
+  `VINE_REVALIDATE_SECRET` equal to Vercel's `REVALIDATE_SECRET`.
+- Vercel needs `WORDPRESS_GRAPHQL_ENDPOINT=https://cms.vinehouseministeries.co.uk/graphql`
+  and `NEXT_PUBLIC_WORDPRESS_URL=https://cms.vinehouseministeries.co.uk`, no
+  `WORDPRESS_INTERNAL_URL`, and the `vine-forms` application password created in
+  production wp-admin.
+- Permalinks are post name, the timezone is Europe/London, and search engines are
+  discouraged: the CMS is not the public site.
+
 ## Cron on Bluehost
 
 Day-before reminders run from WP-Cron, which fires on page views — and a headless site
@@ -183,5 +201,5 @@ gets few. On Bluehost, add `define( 'DISABLE_WP_CRON', true );` to `wp-config.ph
 real cron entry every fifteen minutes:
 
 ```
-*/15 * * * * php -q /home/<account>/public_html/wp-cron.php >/dev/null 2>&1
+*/15 * * * * php -q /home1/<account>/cms.vinehouseministeries.co.uk/wp-cron.php >/dev/null 2>&1
 ```
